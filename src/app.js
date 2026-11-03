@@ -1,3 +1,4 @@
+import { createGuestTransfer } from './guest-transfer.js';
 import { createAuthorizedTransfer } from './authorized-transfer.js';
 import { createTransfersMenu } from './transfers-menu.js';
 import { createTransferScreen } from './transfer-screen.js';
@@ -121,16 +122,8 @@ const welcome = createWelcomeScreen({
     document.body.classList.remove('is-welcome');
     window.scrollTo(0, 0);
   },
-  onGuest: () => {
-    welcome.hidden = true;
-    document.body.classList.remove('is-welcome');
-    openScreen({ title: 'Перевод без авторизации', card: demoData.cards[0] });
-    root.querySelector('.tabbar').hidden = true;
-    detail.querySelector('.back').onclick = () => {
-      home.hidden = true; detail.hidden = true; welcome.hidden = false;
-      document.body.classList.add('is-welcome');rememberPage({title:'Старт'});
-    };
-  },
+  onGuest: openGuestTransfer,
+
 });
 outlet.prepend(welcome);
 home.hidden = true;
@@ -142,7 +135,7 @@ document.body.classList.add('is-welcome');
 try {
   authenticated=sessionStorage.getItem('c2c-auth')==='true';
   const page=JSON.parse(sessionStorage.getItem('c2c-current-page')||'null');
-  if(authenticated && page && page.title!=='Старт') {
+  if(authenticated && page && page.title!=='Старт' && page.title!=='Гостевой перевод') {
     welcome.hidden=true;home.hidden=false;document.body.classList.remove('is-welcome');
     root.querySelector('.tabbar').hidden=false;
     if(page.title!=='Главная') openScreen({
@@ -188,4 +181,21 @@ if (new URLSearchParams(location.search).get('preview') === 'success') {
   preview.querySelector('.success-transfers').onclick=()=>exit('Переводы');
   preview.querySelector('.success-home').onclick=()=>exit('Главная');
   import('./confetti.js').then(({celebrate})=>celebrate(preview));
+}
+
+
+function openGuestTransfer() {
+  welcome.hidden=true;home.hidden=true;detail.hidden=true;
+  outlet.querySelector('.guest-transfer')?.remove();
+  root.querySelector('.tabbar').hidden=true;
+  document.body.classList.remove('is-welcome');
+  rememberPage({title:'Гостевой перевод'});
+  const guest=createGuestTransfer({onBack:()=>{
+    guest.remove();welcome.hidden=false;document.body.classList.add('is-welcome');
+    rememberPage({title:'Старт'});window.scrollTo(0,0);
+  }});
+  outlet.append(guest);window.scrollTo(0,0);
+}
+if(new URLSearchParams(location.search).get('preview')!=='success'){
+  try { if(JSON.parse(sessionStorage.getItem('c2c-current-page')||'null')?.title==='Гостевой перевод')openGuestTransfer(); } catch {}
 }

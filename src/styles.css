@@ -887,3 +887,10 @@ body { background:#e9e9ec; }
 }
 @keyframes success-pop { from { transform:scale(.65); opacity:0; } to { transform:scale(1); opacity:1; } }
 @keyframes success-reveal { from { transform:translateY(8px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+.guest-transfer h1 { margin-left:0; }
+.guest-source .destination-field { height:83px; padding:16px; }
+.guest-source .destination-field input { margin-top:9px; }
+.guest-transfer .guest-destination { margin-top:24px; }
+.guest-next { margin-top:80px; }
+.guest-next > p { margin:0 0 12px; text-align:center; color:#72727c; font:400 12px/16px Inter,sans-serif; }
+.guest-amount { margin-top:24px; }
