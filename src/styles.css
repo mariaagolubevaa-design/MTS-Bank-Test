@@ -895,3 +895,10 @@ body { background:#e9e9ec; }
 .guest-next > p { margin:0 0 12px; text-align:center; color:#72727c; font:400 12px/16px Inter,sans-serif; }
 .guest-amount { margin-top:24px; }
 .recipient-bank:empty { display:none; }
+
+/* Guest transfer: consistent 8 px vertical rhythm. */
+.guest-transfer .destination-field { height:72px; padding:12px 16px; display:flex; flex-direction:column; justify-content:center; gap:4px; }
+.guest-transfer .destination-field input { margin:0; padding:0; flex-shrink:0; }
+.guest-transfer .scan-card { top:23px; }
+.guest-next { margin-top:32px; }
+.guest-next > p { margin-bottom:16px; }
