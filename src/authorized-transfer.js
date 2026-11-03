@@ -45,7 +45,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
           <div id="source-options" class="source-options" hidden>${cards.map(c=>`<button type="button" data-source="${c.id}"><span>${escapeHTML(c.name)} •• ${escapeHTML(c.last4)}</span><small>${c.external ? 'Баланс недоступен' : 'Доступно '+money(c.balance, c.currency)}</small></button>`).join('')}<button type="button" data-add-card>＋ Добавить карту</button></div>
         </div>
       </section>
-      <section class="destination-section"><h2>Номер карты получателя</h2><div class="destination-field"><label for="destination-number">Номер карты</label><input id="destination-number" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" aria-describedby="destination-error"><button type="button" class="scan-card" aria-label="Сканировать карту"><img src="./assets/images/scan-card.svg" alt=""></button></div><p id="destination-error" class="field-error" role="alert"></p><p class="recipient-bank" role="status"></p><label class="demo-bank-choice" hidden>Банк не определён · выберите для демонстрации<select aria-label="Банк получателя для демонстрации"><option value="">Выберите банк</option><option value="mts">МТС Банк · Россия</option><option value="other">Другой российский банк</option><option value="foreign">Банк Узбекистана</option></select></label></section>
+      <section class="destination-section"><h2>Номер карты получателя</h2><div class="destination-field"><label for="destination-number">Номер карты</label><input id="destination-number" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" aria-describedby="destination-error"><button type="button" class="scan-card" aria-label="Сканировать карту"><img src="./assets/images/scan-card.svg" alt=""></button></div><p id="destination-error" class="field-error" role="alert"></p><p class="recipient-bank" role="status"></p></section>
       <section class="inline-amount"><h2>Сумма</h2><div class="destination-field amount-field"><label for="transfer-amount">Сумма перевода</label><div class="amount-input-row"><input id="transfer-amount" class="transfer-amount-inline" inputmode="decimal" placeholder="0" aria-describedby="amount-error"><span class="amount-currency">₽</span></div><button type="button" class="clear-amount" aria-label="Очистить сумму" hidden>×</button></div><p id="amount-error" class="field-error" role="alert"></p><button type="button" class="add-shortfall" hidden></button><div class="inline-quote" hidden>${international ? '<dl class="quote-summary international-summary"><dt>Курс перевода</dt><dd data-rate>—</dd><dt>Получатель получит</dt><dd data-receive>—</dd></dl>' : ''}<dl class="quote-summary"><dt>Комиссия</dt><dd data-fee>—</dd><dt>Всего к списанию</dt><dd data-total>—</dd></dl><p class="quote-note"></p></div></section>
       <div class="recipient-next"><button class="authorized-continue" disabled>Продолжить</button></div>
     </form>
@@ -79,20 +79,12 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   const next = screen.querySelector('.authorized-continue');
   const error = screen.querySelector('#destination-error');
   const bankStatus=screen.querySelector('.recipient-bank');
-  const bankChoice=screen.querySelector('.demo-bank-choice');
-  const bankSelect=bankChoice.querySelector('select');
-  bankSelect.onchange=()=>{
-    ++lookupVersion; clearTimeout(lookupTimer);
-    bank=bankSelect.value?{name:bankSelect.value==='mts'?'МТС Банк':bankSelect.value==='other'?'Другой российский банк':'Банк Узбекистана',country:bankSelect.value==='foreign'?'UZ':'RU',sameBank:bankSelect.value==='mts',demo:true}:null;
-    bankStatus.textContent=bank?'Демонстрационный выбор: '+bank.name:'Банк не определён';
-    update();
-  };
   function detectBank() {
     const version=++lookupVersion;clearTimeout(lookupTimer);
-    bank=null;bankSelect.value='';bankChoice.hidden=true;
+    bank=null;bankStatus.textContent='';
     const digits=input.value.replace(/\D/g,'');
-    if(digits.length<8){bankStatus.textContent='Банк определится по первым 8 цифрам';return;}
-    bankStatus.textContent='Определяем банк…';
+    if(digits.length<8){bankStatus.textContent='';return;}
+    bankStatus.textContent='';
     lookupTimer=setTimeout(async()=>{
       try {
         const response=await fetch('/api/bank/'+digits.slice(0,8));
@@ -103,10 +95,10 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
           bank={...info,sameBank:info.country==='RU'&&/mts|мтс/i.test(info.name)};
           bankStatus.textContent=bank.name+' · '+bank.country;
           if(savedRecipient?.id?.startsWith('saved-')){savedRecipient.bankInfo=bank;saveDemoTransfers();}
-        } else {bankStatus.textContent='Не удалось определить банк';bankChoice.hidden=false;}
+        } else {bankStatus.textContent='';}
       } catch {
         if(version!==lookupVersion)return;
-        bankStatus.textContent='Не удалось определить банк';bankChoice.hidden=false;
+        bankStatus.textContent='';
       }
       if(version===lookupVersion)update();
     },350);
@@ -217,7 +209,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     quoteBox.hidden=!raw;
     quoteBox.querySelector('[data-fee]').textContent=currentQuote?money(currentQuote.fee):'—';
     quoteBox.querySelector('[data-total]').textContent=currentQuote?money(currentQuote.total):'—';
-    quoteBox.querySelector('.quote-note').textContent=!source?'Выберите карту списания':source.external?'Демонстрационный расчёт · баланс и комиссия банка добавленной карты не проверяются':!bank?'Определите банк получателя для расчёта комиссии':!bankSupported?'Страна банка не соответствует выбранному направлению':!supported?(international?'Выберите направление и получите расчёт курса и комиссии — перевод пока недоступен':'Для этого направления нужен отдельный тариф и курс конвертации'):international?'Пример: курс 1 ₽ = 150 UZS, комиссия 0 ₽ · не является текущим предложением МТС':bank.sameBank?'На карту МТС Банка · без комиссии':'В другой российский банк · 1,5%, минимум 50 ₽';
+    quoteBox.querySelector('.quote-note').textContent=!source?'Выберите карту списания':source.external?'Демонстрационный расчёт · баланс и комиссия банка добавленной карты не проверяются':!bank?'Комиссия пока недоступна':!bankSupported?'Страна банка не соответствует выбранному направлению':!supported?(international?'Выберите направление и получите расчёт курса и комиссии — перевод пока недоступен':'Для этого направления нужен отдельный тариф и курс конвертации'):international?'Пример: курс 1 ₽ = 150 UZS, комиссия 0 ₽ · не является текущим предложением МТС':bank.sameBank?'На карту МТС Банка · без комиссии':'В другой российский банк · 1,5%, минимум 50 ₽';
     amountError.textContent=raw&&!valid?'Введите сумму больше нуля, не более двух знаков после запятой':currentQuote?.insufficient?'Недостаточно средств с учётом комиссии · не хватает '+money(currentQuote.total-source.balance):'';
     amountInput.setAttribute('aria-invalid',String(!!amountError.textContent));
     addShortfall.hidden=!currentQuote?.insufficient;
@@ -275,7 +267,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     };
     form.append(review);review.scrollIntoView({block:'nearest',behavior:'smooth'});
   };
-  if(savedRecipient){bankStatus.textContent=bank?bank.name:'Банк сохранённого получателя не определён';bankChoice.hidden=!!bank;}
+  if(savedRecipient){bankStatus.textContent=bank?bank.name:'';}
   if(repeatAmount != null){amountInput.value=String(repeatAmount);if(source)screen.querySelector('.source-value').textContent='•• '+source.last4+' · '+(source.external?'баланс недоступен':money(source.balance,source.currency));updateQuote();}
   return screen;
 }
