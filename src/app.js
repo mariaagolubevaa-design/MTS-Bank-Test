@@ -135,7 +135,7 @@ document.body.classList.add('is-welcome');
 try {
   authenticated=sessionStorage.getItem('c2c-auth')==='true';
   const page=JSON.parse(sessionStorage.getItem('c2c-current-page')||'null');
-  if(authenticated && page && page.title!=='Старт' && page.title!=='Гостевой перевод') {
+  if(new URLSearchParams(location.search).get('screen')!=='guest' && authenticated && page && page.title!=='Старт' && page.title!=='Гостевой перевод') {
     welcome.hidden=true;home.hidden=false;document.body.classList.remove('is-welcome');
     root.querySelector('.tabbar').hidden=false;
     if(page.title!=='Главная') openScreen({
@@ -146,7 +146,7 @@ try {
     });
   }
   const pending=JSON.parse(sessionStorage.getItem('c2c-pending-transfer')||'null');
-  if(pending && authenticated) {
+  if(new URLSearchParams(location.search).get('screen')!=='guest' && pending && authenticated) {
     outlet.querySelector('.authorized-transfer')?.remove();
     home.hidden=true;detail.hidden=true;root.querySelector('.tabbar').hidden=true;
     const processing=document.createElement('main');processing.className='authorized-transfer is-processing';
@@ -191,11 +191,11 @@ function openGuestTransfer() {
   document.body.classList.remove('is-welcome');
   rememberPage({title:'Гостевой перевод'});
   const guest=createGuestTransfer({onBack:()=>{
-    guest.remove();welcome.hidden=false;document.body.classList.add('is-welcome');
+    guest.remove();history.replaceState(null,'',location.pathname);welcome.hidden=false;document.body.classList.add('is-welcome');
     rememberPage({title:'Старт'});window.scrollTo(0,0);
   }});
   outlet.append(guest);window.scrollTo(0,0);
 }
 if(new URLSearchParams(location.search).get('preview')!=='success'){
-  try { if(JSON.parse(sessionStorage.getItem('c2c-current-page')||'null')?.title==='Гостевой перевод')openGuestTransfer(); } catch {}
+  try { if(new URLSearchParams(location.search).get('screen')==='guest' || JSON.parse(sessionStorage.getItem('c2c-current-page')||'null')?.title==='Гостевой перевод')openGuestTransfer(); } catch {}
 }
