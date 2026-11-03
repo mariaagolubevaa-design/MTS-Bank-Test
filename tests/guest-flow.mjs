@@ -8,6 +8,7 @@ try {
  await page.goto('http://localhost:5173/?screen=guest');
  await page.locator('#guest-source').fill('4111111111111111');
  await page.locator('#guest-destination').fill('5555555555554444');
+ await page.locator('.guest-source .card-details-row').hover();
  await page.locator('.guest-next button').click();
  await page.locator('#transfer-amount').fill('100');
  await page.waitForFunction(()=>document.querySelector('[data-total]').textContent.includes('150'));

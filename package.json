@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js && node --check src/app.js && node --check src/authorized-transfer.js && node --check src/guest-transfer.js && node --check src/card-availability.js && node --check src/confetti.js && node --check src/data.js && node --check src/home-screen.js && node --check src/transfer-screen-legacy.js && node --check src/transfer-screen.js && node --check src/transfers-menu.js && node --check src/welcome-screen.js",
+    "check": "node --check server.js && node --check src/app.js && node --check src/authorized-transfer.js && node --check src/guest-transfer.js && node --check src/card-details.js && node --check src/card-availability.js && node --check src/confetti.js && node --check src/data.js && node --check src/home-screen.js && node --check src/transfer-screen-legacy.js && node --check src/transfer-screen.js && node --check src/transfers-menu.js && node --check src/welcome-screen.js",
     "test": "node --test tests/data.test.js",
     "test:ui": "node tests/ui.mjs"
   },

@@ -1,3 +1,4 @@
+import { createDemoCardDetails } from './card-details.js';
 import { demoCardAvailability } from './card-availability.js';
 import { validCard, createAuthorizedTransfer } from './authorized-transfer.js';
 
@@ -11,9 +12,11 @@ export function createGuestTransfer({ onBack, onHome = onBack, onTransfers = onB
   <dialog class="scan-info"><h2>Сканирование карты</h2><p>В прототипе введите номер вручную</p><button type="button">Понятно</button></dialog>`;
   const fields=[...screen.querySelectorAll('input')];
   const next=screen.querySelector('.authorized-continue');
+  const details=createDemoCardDetails(()=>update());
+  screen.querySelector('.guest-source').append(details);
   const update=()=>{
     fields.forEach(n=>{const error=screen.querySelector('#'+n.id+'-error');const unavailable=validCard(n.value)&&!demoCardAvailability(n.value).available;error.textContent=unavailable?demoCardAvailability(n.value).message:'';n.setAttribute('aria-invalid',String(unavailable));});
-    next.disabled=!fields.every(n=>validCard(n.value)&&demoCardAvailability(n.value).available)||fields[0].value===fields[1].value;
+    next.disabled=!details.demoComplete()||!fields.every(n=>validCard(n.value)&&demoCardAvailability(n.value).available)||fields[0].value===fields[1].value;
   };
   fields.forEach(n=>{
     n.oninput=()=>{n.value=n.value.replace(/\D/g,'').slice(0,19).replace(/(.{4})/g,'$1 ').trim();screen.querySelector('#'+n.id+'-error').textContent='';n.setAttribute('aria-invalid','false');update();};

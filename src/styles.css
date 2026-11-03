@@ -904,3 +904,10 @@ body { background:#e9e9ec; }
 .guest-next > p { margin-bottom:16px; }
 .guest-shared-transfer .source-trigger:disabled { opacity:1; color:#141414; }
 .guest-transfer:has(+ .guest-shared-transfer) { display:none; }
+
+.card-details-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; margin-top:16px; }
+.card-details-row[hidden] { display:none; }
+.card-details-row label { display:block; min-width:0; margin:0; color:#141414; font:400 15px/20px 'Inter Tight',sans-serif; }
+.card-details-row input,.add-card-dialog .card-details-row input { display:block; width:100%; height:56px; margin-top:8px; padding:16px; border:1.5px solid #d8cff3; border-radius:16px; background:#fff; color:#141414; font:500 15px/20px 'Inter Tight',sans-serif; box-sizing:border-box; cursor:pointer; }
+.card-details-row input::placeholder { color:#14141470; }
+.card-details-row input:focus { outline:none; border-color:#735a91; }

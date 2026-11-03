@@ -1,3 +1,4 @@
+import { createDemoCardDetails } from './card-details.js';
 import { demoCardAvailability } from './card-availability.js';
 import { celebrate } from './confetti.js';
 import { escapeHTML } from './home-screen.js';
@@ -56,6 +57,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   addDialog.className='add-card-dialog';
   addDialog.innerHTML='<form novalidate><div class="add-card-heading"><h2>Добавить карту</h2><button type="button" class="close-add-card" aria-label="Закрыть">×</button></div><label for="new-card-number">Номер карты</label><input id="new-card-number" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" aria-describedby="new-card-error"><p id="new-card-error" class="field-error" role="alert"></p><p class="quote-note">Демонстрационная карта — реальная привязка и проверка банком не выполняются</p><button class="authorized-continue">Добавить</button></form>';
   screen.append(addDialog);
+  const addDetails=createDemoCardDetails();
+  addDialog.querySelector('#new-card-number').after(addDetails);
   const addInput=addDialog.querySelector('input');
   const addError=addDialog.querySelector('[role=alert]');
   addDialog.querySelector('.close-add-card').onclick=()=>addDialog.close();
@@ -64,6 +67,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     e.preventDefault();
     if(validCard(addInput.value)&&!demoCardAvailability(addInput.value).available){addError.textContent=demoCardAvailability(addInput.value).message;addInput.setAttribute('aria-invalid','true');return;}
     if(!validCard(addInput.value)){addError.textContent='Проверьте номер карты';addInput.setAttribute('aria-invalid','true');addInput.focus();return;}
+    if(!addDetails.demoComplete()){addError.textContent='Наведите на поля срока действия и CVC/CVV для демозаполнения';addDetails.querySelector('input').focus();return;}
     const last4=addInput.value.replace(/\D/g,'').slice(-4);
     const newCard={id:'added-'+Date.now(),name:'Добавленная карта',last4,balance:null,currency:'RUB',external:true};
     cards.push(newCard);
@@ -72,8 +76,9 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     button.innerHTML='<span>Добавленная карта •• '+last4+'</span><small>Баланс недоступен</small>';
     options.insertBefore(button,options.querySelector('[data-add-card]'));
     source=newCard;
+    sourceDetails.dispatchEvent(new Event('pointerenter'));
     screen.querySelector('.source-value').textContent='Добавленная карта •• '+last4;
-    addInput.value='';addError.textContent='';addDialog.close();update();
+    addInput.value='';addDetails.clearDemo();addError.textContent='';addDialog.close();update();
   };
   const form = screen.querySelector('form');
   const input = screen.querySelector('input');
@@ -81,6 +86,9 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   const options = screen.querySelector('.source-options');
   const next = screen.querySelector('.authorized-continue');
   const error = screen.querySelector('#destination-error');
+  const sourceDetails=createDemoCardDetails(()=>update());
+  sourceDetails.hidden=true;
+  screen.querySelector('.source-section').append(sourceDetails);
   const bankStatus=screen.querySelector('.recipient-bank');
   const availabilityStatus=screen.querySelector('.card-availability');
   function detectBank() {
@@ -203,6 +211,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     pendingTopup=null;topup.close();updateQuote();
   };
   function updateQuote() {
+    sourceDetails.hidden=!source?.external || guest;
     screen.querySelector('.transfer-review')?.remove();
     const currency=source?.currency || 'RUB';
     screen.querySelector('.amount-currency').textContent=currency==='USD'?'$':'₽';
@@ -230,7 +239,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       const shortfall=(Math.round(currentQuote.total*100)-Math.round(source.balance*100))/100;
       addShortfall.textContent='Добавить '+money(shortfall);
     }
-    next.disabled=!ready()||!currentQuote||currentQuote.insufficient;
+    next.disabled=!ready()||!currentQuote||currentQuote.insufficient||(!guest&&source?.external&&!sourceDetails.demoComplete());
   }
   amountInput.oninput=updateQuote;
   form.onsubmit=e=>{
