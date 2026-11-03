@@ -1,0 +1,191 @@
+[
+  {
+    "file": "./assets/images/cellular.svg",
+    "slot": "levels",
+    "width": 19.1875,
+    "height": 12.203125,
+    "x": 288.6875,
+    "y": 26.390625,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/wifi.svg",
+    "slot": "levels",
+    "width": 17.109375,
+    "height": 12.296875,
+    "x": 314.875,
+    "y": 26.34375,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/battery.svg",
+    "slot": "levels",
+    "width": 27.3125,
+    "height": 12.984375,
+    "x": 338.984375,
+    "y": 26,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/welcome-hands.png",
+    "slot": "welcome-hand left",
+    "width": 0,
+    "height": 0,
+    "x": 0,
+    "y": 0,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/welcome-hands.png",
+    "slot": "welcome-hand right",
+    "width": 0,
+    "height": 0,
+    "x": 0,
+    "y": 0,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/mastercard.png",
+    "slot": "card-bottom",
+    "width": 0,
+    "height": 0,
+    "x": 0,
+    "y": 0,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/welcome-fingers.png",
+    "slot": "welcome-fingers",
+    "width": 0,
+    "height": 0,
+    "x": 0,
+    "y": 0,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/profile.png",
+    "slot": "profile hit-target",
+    "width": 42.34375,
+    "height": 56.578125,
+    "x": 14.484375,
+    "y": 64.015625,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/search.svg",
+    "slot": "search hit-target",
+    "width": 24,
+    "height": 24,
+    "x": 362,
+    "y": 76,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/mastercard.png",
+    "slot": "card-bottom",
+    "width": 40,
+    "height": 24,
+    "x": 327,
+    "y": 291.5,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/mastercard.png",
+    "slot": "card-bottom",
+    "width": 40,
+    "height": 24,
+    "x": 713,
+    "y": 291.5,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/plus.svg",
+    "slot": "",
+    "width": 24,
+    "height": 24,
+    "x": 153,
+    "y": 404,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/arrow.svg",
+    "slot": "",
+    "width": 24,
+    "height": 24,
+    "x": 340.40625,
+    "y": 404,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/sber.svg",
+    "slot": "avatar",
+    "width": 24,
+    "height": 24,
+    "x": 52.75,
+    "y": 542,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/chevron.svg",
+    "slot": "history-collapse",
+    "width": 16,
+    "height": 16,
+    "x": 118.875,
+    "y": 694,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/divider.svg",
+    "slot": "operation",
+    "width": 277.40625,
+    "height": 0.984375,
+    "x": 84.984375,
+    "y": 797.015625,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/divider.svg",
+    "slot": "operation",
+    "width": 277.40625,
+    "height": 0.984375,
+    "x": 84.984375,
+    "y": 867.015625,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/divider.svg",
+    "slot": "operation",
+    "width": 0,
+    "height": 0,
+    "x": 0,
+    "y": 0,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/home.svg",
+    "slot": "tab-icon",
+    "width": 18.0625,
+    "height": 18.0625,
+    "x": 71.96875,
+    "y": 777.96875,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/transfers.svg",
+    "slot": "tab-icon",
+    "width": 16.203125,
+    "height": 19.859375,
+    "x": 192.890625,
+    "y": 777.0625,
+    "loaded": true
+  },
+  {
+    "file": "./assets/images/support.svg",
+    "slot": "tab-icon",
+    "width": 18.0625,
+    "height": 18.0625,
+    "x": 311.96875,
+    "y": 777.96875,
+    "loaded": true
+  }
+]
