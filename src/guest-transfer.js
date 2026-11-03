@@ -1,6 +1,7 @@
-import { validCard } from './authorized-transfer.js';
+import { demoCardAvailability } from './card-availability.js';
+import { validCard, createAuthorizedTransfer } from './authorized-transfer.js';
 
-export function createGuestTransfer({ onBack }) {
+export function createGuestTransfer({ onBack, onHome = onBack, onTransfers = onBack }) {
   const screen=document.createElement('main');
   screen.className='authorized-transfer guest-transfer';
   screen.innerHTML=`<button class="authorized-back" aria-label="Назад"><img src="./assets/images/back-chevron.svg" alt=""></button><h1>По карте в Россию</h1><form novalidate>
@@ -10,7 +11,10 @@ export function createGuestTransfer({ onBack }) {
   <dialog class="scan-info"><h2>Сканирование карты</h2><p>В прототипе введите номер вручную</p><button type="button">Понятно</button></dialog>`;
   const fields=[...screen.querySelectorAll('input')];
   const next=screen.querySelector('.authorized-continue');
-  const update=()=>{next.disabled=!fields.every(n=>validCard(n.value))||fields[0].value===fields[1].value;};
+  const update=()=>{
+    fields.forEach(n=>{const error=screen.querySelector('#'+n.id+'-error');const unavailable=validCard(n.value)&&!demoCardAvailability(n.value).available;error.textContent=unavailable?demoCardAvailability(n.value).message:'';n.setAttribute('aria-invalid',String(unavailable));});
+    next.disabled=!fields.every(n=>validCard(n.value)&&demoCardAvailability(n.value).available)||fields[0].value===fields[1].value;
+  };
   fields.forEach(n=>{
     n.oninput=()=>{n.value=n.value.replace(/\D/g,'').slice(0,19).replace(/(.{4})/g,'$1 ').trim();screen.querySelector('#'+n.id+'-error').textContent='';n.setAttribute('aria-invalid','false');update();};
     n.onblur=()=>{const error=screen.querySelector('#'+n.id+'-error');if(n.value&&!validCard(n.value)){error.textContent='Проверьте номер карты';n.setAttribute('aria-invalid','true');}else if(fields[0].value&&fields[0].value===fields[1].value){error.textContent='Карты отправителя и получателя должны отличаться';n.setAttribute('aria-invalid','true');}};
@@ -21,10 +25,18 @@ export function createGuestTransfer({ onBack }) {
   screen.querySelector('.authorized-back').onclick=onBack;
   screen.querySelector('form').onsubmit=e=>{
     e.preventDefault();if(next.disabled)return;
-    screen.querySelector('.guest-amount')?.remove();
-    const amount=document.createElement('section');amount.className='guest-amount';
-    amount.innerHTML='<h2>Сумма перевода</h2><div class="destination-field"><label for="guest-amount">Сумма в рублях</label><input id="guest-amount" inputmode="decimal" placeholder="0 ₽"></div><p class="quote-note">Курс и комиссия должны быть рассчитаны для карты отправителя · реальные списания в прототипе не выполняются</p>';
-    screen.append(amount);amount.querySelector('input').focus();
+    const guestCard={id:'guest-'+crypto.randomUUID(),name:'Карта отправителя',last4:fields[0].value.replace(/\D/g,'').slice(-4),balance:null,currency:'RUB',external:true};
+    const shared=createAuthorizedTransfer({
+      cards:[guestCard],card:guestCard,guest:true,sourceNumber:fields[0].value,initialNumber:fields[1].value,transferKind:'russia',
+      onBack:()=>{shared.remove();screen.querySelector('form').hidden=false;screen.querySelector('h1').hidden=false;screen.querySelector('.authorized-back').hidden=false;window.scrollTo(0,0);},
+      onHome:()=>{shared.remove();screen.remove();onHome();},onTransfers:()=>{shared.remove();screen.remove();onTransfers();}
+    });
+    screen.querySelector('form').hidden=true;screen.querySelector('h1').hidden=true;screen.querySelector('.authorized-back').hidden=true;
+    // Keep the shared screen as a sibling to avoid duplicate nested page chrome.
+    screen.after(shared);
+    shared.dataset.guestFlow='true';
+    window.scrollTo(0,0);
+
   };
   return screen;
 }

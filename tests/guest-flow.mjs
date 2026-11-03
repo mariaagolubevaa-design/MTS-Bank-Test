@@ -1,0 +1,32 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch();
+try {
+ const page=await browser.newPage({viewport:{width:402,height:874}});
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/api/bank/*',r=>r.fulfill({status:404,body:''}));
+ await page.goto('http://localhost:5173/?screen=guest');
+ await page.locator('#guest-source').fill('4111111111111111');
+ await page.locator('#guest-destination').fill('5555555555554444');
+ await page.locator('.guest-next button').click();
+ await page.locator('#transfer-amount').fill('100');
+ await page.waitForFunction(()=>document.querySelector('[data-total]').textContent.includes('150'));
+ assert.equal(await page.locator('.save-recipient-sheet[open]').count(),0);
+ await page.locator('#destination-number').fill('4000000000000002');
+ await page.waitForFunction(()=>document.querySelector('.card-availability').textContent.includes('недоступен'));
+ assert.equal(await page.locator('.recipient-next button').isDisabled(),true);
+ assert.equal(await page.locator('#destination-number').getAttribute('aria-invalid'),'true');
+ await page.locator('#destination-number').fill('5555555555554444');
+ await page.waitForFunction(()=>!document.querySelector('.recipient-next button').disabled);
+ await page.locator('.recipient-next button').click();
+ assert.match(await page.locator('.review-total').textContent(),/150/);
+ await page.locator('.transfer-review button').click();
+ assert.equal(await page.locator('.transfer-processing').isVisible(),true);
+ await page.locator('.transfer-success').waitFor({timeout:8000});
+ assert.equal(await page.locator('.success-transfers').isVisible(),true);
+ assert.equal(await page.locator('.success-home').isVisible(),true);
+ await page.locator('.success-home').click();
+ assert.equal(await page.locator('.welcome-screen').isVisible(),true);
+ assert.deepEqual(errors,[]);
+ console.log('PASS: guest quote, unavailable card, correction, confirmation, processing, success and exit; no bank API required');
+} finally {await browser.close();}

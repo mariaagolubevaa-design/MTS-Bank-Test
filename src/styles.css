@@ -902,3 +902,5 @@ body { background:#e9e9ec; }
 .guest-transfer .scan-card { top:23px; }
 .guest-next { margin-top:32px; }
 .guest-next > p { margin-bottom:16px; }
+.guest-shared-transfer .source-trigger:disabled { opacity:1; color:#141414; }
+.guest-transfer:has(+ .guest-shared-transfer) { display:none; }
