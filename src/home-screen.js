@@ -1,6 +1,6 @@
 import { money, operationsFor } from './data.js';
 
-export const image = (name, className = '') => `<img class="${className}" src="./assets/images/${name}.${['profile', 'mastercard'].includes(name) ? 'png' : 'svg'}" alt="" draggable="false">`;
+export const image = (name, className = '') => `<img class="${className}" src="./assets/images/${name}.${['profile', 'mastercard', 'home-profile'].includes(name) ? 'png' : 'svg'}" alt="" draggable="false">`;
 export const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 /** Standalone authorized home. Navigation is injected for future auth routing. */
@@ -12,14 +12,14 @@ export function createHomeScreen({ data, onNavigate }) {
   screen.setAttribute('aria-label', 'Главная');
   screen.innerHTML = `
     <header class="header">
-      <button class="profile hit-target" aria-label="Профиль" data-action="Профиль">${image('profile')}</button>
-      <button class="search hit-target" aria-label="Поиск" data-action="Поиск">${image('search')}</button>
+      <button class="profile hit-target" aria-label="Профиль" data-action="Профиль">${image('home-profile')}</button>
+      <div class="home-header-actions"><button class="search hit-target" aria-label="Поиск" data-action="Поиск">${image('search')}</button><button class="home-qr hit-target" aria-label="Оплата по QR-коду" data-action="Оплата по QR-коду">${image('home-qr')}</button></div>
     </header>
     <section class="cards-section" aria-label="Банковские карты">
       <div class="card-track" tabindex="0" aria-label="Карты. Используйте стрелки для переключения">
         ${data.cards.map(card => `<article class="bank-card ${card.appearance === 'spectrum' ? 'bank-card--spectrum' : ''}" aria-label="${escapeHTML(card.name)} ${escapeHTML(card.last4)}">
-          <div class="card-top"><span>${escapeHTML(card.name)}</span><span>*${escapeHTML(card.last4)}</span></div>
-          <div class="card-bottom"><span class="balance">${card.balance === null ? 'Баланс недоступен' : money(card.balance, card.currency)}</span>${image('mastercard')}</div>
+          <div class="card-top"><span>${escapeHTML(card.id === 'debit' ? 'МТС Банк' : card.name)}</span><span>•• ${escapeHTML(card.last4)}</span></div>
+          <div class="card-bottom"><span class="balance ${card.balance === null ? 'balance-unknown' : ''}">${card.balance === null ? 'Баланс недоступен' : money(card.balance, card.currency)}</span>${image('mastercard')}</div>
         </article>`).join('')}
       </div>
       <div class="pagination" ${data.cards.length <= 1 ? 'hidden' : ''}>
@@ -29,10 +29,11 @@ export function createHomeScreen({ data, onNavigate }) {
       </div>
     </section>
     <div class="quick-actions">
-      <button data-action="Пополнить карту"><span>Пополнить<br>карту</span>${image('plus')}</button>
-      <button data-action="Перевести"><span>Перевести<br>или оплатить</span>${image('arrow', 'transfer-arrow')}</button>
+      <button data-action="Оплатить">${image('home-wallet')}<span>Оплатить</span></button>
+      <button data-action="Пополнить карту">${image('plus')}<span>Пополнить</span></button>
+      <button data-action="Перевести">${image('arrow', 'transfer-arrow')}<span>Перевести</span></button>
     </div>
-    <section class="favorites" aria-labelledby="favorites-title">
+    <section hidden class="favorites" aria-labelledby="favorites-title">
       <h2 id="favorites-title">Кому перевести</h2>
       <div class="recipients">
         ${data.recipients.map(recipient => `<button class="recipient" data-recipient="${escapeHTML(recipient.id)}" aria-label="Перевести: ${escapeHTML(recipient.name)} ${escapeHTML(recipient.subtitle)}">
@@ -43,8 +44,12 @@ export function createHomeScreen({ data, onNavigate }) {
       </div>
     </section>
     <section class="history" aria-labelledby="history-title">
-      <div class="history-heading"><button class="history-collapse" aria-expanded="true"><h2 id="history-title">История</h2>${image('chevron')}</button><button class="all-history" data-action="Все операции">Все</button></div>
+      <div class="history-heading"><button class="history-collapse" aria-expanded="true"><h2 id="history-title">История</h2>${image('home-chevron')}</button><button class="all-history" data-action="Все операции">Все${image('home-all-chevron')}</button></div>
       <div class="operations"></div>
+    </section>
+    <section class="home-analytics" aria-labelledby="analytics-title">
+      <div class="history-heading"><button class="analytics-collapse" aria-expanded="true"><h2 id="analytics-title">Аналитика</h2>${image('home-chevron')}</button><button class="all-history" data-action="Аналитика">Все${image('home-all-chevron')}</button></div>
+      <div class="analytics-grid"><div class="analytics-tile">${image('home-ring')}<div><p>Расходы в ноябре</p><span>0 Р</span></div></div><div class="analytics-tile"><div class="analytics-bars" aria-hidden="true"><i></i><i></i><i></i></div><div><p>Доходы в ноябре</p><span>0 Р</span></div></div></div>
     </section>`;
 
   const track = screen.querySelector('.card-track');
@@ -55,7 +60,7 @@ export function createHomeScreen({ data, onNavigate }) {
         <span class="avatar" style="--avatar:${item.color}">${escapeHTML(item.initials)}</span>
         <span class="operation-copy"><span class="operation-name">${escapeHTML(item.name)}</span><span class="operation-date">${escapeHTML(item.date)}</span></span>
         <span class="operation-amount">${item.amount < 0 ? '−' : '+'}${money(item.amount)}</span>
-        ${image('divider', 'divider')}
+        <span class="divider" aria-hidden="true"></span>
       </button>`).join('') || '<p class="empty-history">Пока нет операций</p>';
   }
   function syncCard(index) {
@@ -106,6 +111,11 @@ export function createHomeScreen({ data, onNavigate }) {
     if (target.dataset.recipient) onNavigate({ title: 'Начать перевод', recipient: data.recipients.find(item => item.id === target.dataset.recipient), card: data.cards[active] });
     if (target.dataset.operation) onNavigate({ title: 'Детали перевода', operation: data.transactions.find(item => item.id === target.dataset.operation), card: data.cards[active] });
     if (target.dataset.action) onNavigate({ title: target.dataset.action, card: data.cards[active] });
+    if (target.classList.contains('analytics-collapse')) {
+      const grid = screen.querySelector('.analytics-grid');
+      grid.hidden = !grid.hidden;
+      target.setAttribute('aria-expanded', String(!grid.hidden));
+    }
     if (target.classList.contains('history-collapse')) {
       list.hidden = !list.hidden;
       screen.querySelector('.history').classList.toggle('is-collapsed', list.hidden);
@@ -122,7 +132,7 @@ export function createHomeScreen({ data, onNavigate }) {
       b.innerHTML='<span class="avatar" style="--avatar:'+r.color+'">'+escapeHTML(r.initials)+'</span><span class="recipient-name">'+escapeHTML(r.name)+'</span><span class="recipient-subtitle">'+escapeHTML(r.subtitle)+'</span>';
       recipients.insertBefore(b,addButton);
     });
-    track.innerHTML = data.cards.map(card => `<article class="bank-card ${card.appearance === 'spectrum' ? 'bank-card--spectrum' : ''}" aria-label="${escapeHTML(card.name)} ${escapeHTML(card.last4)}"><div class="card-top"><span>${escapeHTML(card.name)}</span><span>*${escapeHTML(card.last4)}</span></div><div class="card-bottom"><span class="balance ${card.balance === null ? 'balance-unknown' : ''}">${card.balance === null ? 'Баланс недоступен' : money(card.balance, card.currency)}</span>${image('mastercard')}</div></article>`).join('');
+    track.innerHTML = data.cards.map(card => `<article class="bank-card ${card.appearance === 'spectrum' ? 'bank-card--spectrum' : ''}" aria-label="${escapeHTML(card.name)} ${escapeHTML(card.last4)}"><div class="card-top"><span>${escapeHTML(card.id === 'debit' ? 'МТС Банк' : card.name)}</span><span>•• ${escapeHTML(card.last4)}</span></div><div class="card-bottom"><span class="balance ${card.balance === null ? 'balance-unknown' : ''}">${card.balance === null ? 'Баланс недоступен' : money(card.balance, card.currency)}</span>${image('mastercard')}</div></article>`).join('');
     screen.querySelector('.next-card').innerHTML = data.cards.map((card, i) => `<span data-dot="${i}"></span>`).join('');
     screen.querySelector('.pagination').hidden = data.cards.length <= 1;
     active = Math.max(0, data.cards.findIndex(c => c.id === activeId));
