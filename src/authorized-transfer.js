@@ -30,7 +30,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     const country = recipient.bankInfo?.country || recipient.subtitle?.match(/^(RU|UZ)\b/)?.[1];
     if (country) transferKind = country === 'RU' ? 'russia' : 'abroad';
   }
-  const foreignDemoNumber='4242424242424242';
+  const foreignDemoNumber='4916827350491289';
   const figmaDemoCards={foreign:foreignDemoNumber,sender:'9112381015213812',recipient:'2200789332541984'};
   const isFigmaDemoCard=number=>guest&&Object.values(figmaDemoCards).includes(number.replace(/\D/g,''));
   const validTransferCard=number=>validCard(number)||isFigmaDemoCard(number);

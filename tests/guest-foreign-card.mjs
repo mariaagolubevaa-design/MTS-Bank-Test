@@ -6,7 +6,7 @@ try {
  assert.equal(await p.locator('.source-section .demo-card-suggestion button').count(),2);
  await p.screenshot({path:'screenshots/guest-foreign-card-options.png'});
  await p.getByRole('button',{name:'Заполнить иностранную демо-карту отправителя',exact:true}).click();
- assert.equal(await p.locator('#guest-source').inputValue(),'4242 4242 4242 4242');assert.equal(await p.locator('.currency-select').inputValue(),'USD');
+ assert.equal(await p.locator('#guest-source').inputValue(),'4916 8273 5049 1289');assert.equal(await p.locator('.currency-select').inputValue(),'USD');
  await p.locator('#destination-number').focus();await p.getByRole('button',{name:'Заполнить демо-карту получателя',exact:true}).click();
  await p.locator('.source-section [data-expiry]').focus();await p.locator('.source-section [data-cvc]').focus();await p.locator('#transfer-amount').fill('500');
  await p.waitForFunction(()=>!document.querySelector('.recipient-next button').disabled);
