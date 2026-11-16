@@ -587,7 +587,8 @@ body:has(.tabbar:not([hidden])) #app { width:100%; transform:none; }
 .welcome-actions button { height:56px; min-height:56px; border-radius:20px; font:600 15px/18px Inter,sans-serif; }
 .welcome-actions .welcome-login { font:500 15px/18px 'Inter Tight',sans-serif; }
 .welcome-login,.auth-submit { background:#141414; color:white; }
-.welcome-guest { background:#e5e2f6; color:#9747ff; }
+.welcome-guest { background:#e5e2f6; color:#6641fb; }
+.welcome-actions .welcome-guest { font:500 15px/18px 'Inter Tight',sans-serif; }
 .auth-dialog { width:calc(100% - 32px); max-width:370px; padding:24px; border:0; border-radius:28px; }
 .auth-dialog::backdrop { background:rgba(20,20,20,.35); backdrop-filter:blur(6px); }
 .auth-dialog h2 { font-size:24px; padding-right:20px; }
@@ -1332,7 +1333,7 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 
 .guest-transfer .guest-transfer-title { display:flex; align-items:center; gap:8px; }
 .guest-direction-label { color:#6641fb; }
-.guest-direction-icon { display:flex; align-items:center; justify-content:center; flex:0 0 24px; width:24px; height:24px; border-radius:8px; background:#e5e2f6; }
+.guest-direction-icon { display:flex; align-items:center; justify-content:center; flex:0 0 24px; width:24px; height:24px; border-radius:8px; background:#f0ecff; }
 .guest-direction-icon img { width:16px; height:16px; transform:scaleY(-1); }
 
 .guest-direction-trigger { display:inline-flex; align-items:center; vertical-align:middle; gap:8px; padding:0; margin:0; background:transparent; font:inherit; line-height:inherit; }
