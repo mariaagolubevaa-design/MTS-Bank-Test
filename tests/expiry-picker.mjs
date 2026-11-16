@@ -37,6 +37,7 @@ try {
  await page.waitForTimeout(800);
  assert.ok(await page.locator('.recipient-next button').isDisabled());
  assert.equal(await page.locator('.source-section .expiry-field-error').textContent(),'Неверный срок действия');
+ assert.equal(await page.locator('.source-section .expiry-field-error').evaluate(el=>getComputedStyle(el).color),await expiry.evaluate(el=>getComputedStyle(el).borderTopColor));
  await page.locator('.source-section').screenshot({path:'screenshots/expiry-field-error.png'});
  await expiry.click();await month.focus();await page.keyboard.press('End');await year.focus();await page.keyboard.press('Home');
  for(let i=0;i<2030-new Date().getFullYear();i++)await page.keyboard.press('ArrowDown');
