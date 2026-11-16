@@ -1312,3 +1312,7 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 @media(hover:hover) {
   .guest-inline-source .recipient-card-field:hover:not(:has(input[aria-invalid=true])) { border-color:#414141; }
 }
+
+/* Guest destination includes a heading: status captions belong below the field. */
+.guest-inline-source .destination-section .recipient-bank,
+.guest-inline-source .destination-section .card-availability { position:static; margin:4px 18px 0; }
