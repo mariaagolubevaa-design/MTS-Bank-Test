@@ -582,10 +582,11 @@ body:has(.tabbar:not([hidden])) #app { width:100%; transform:none; }
 .welcome-card .card-bottom img { width:24px; height:14.4px; }
 .welcome-card:before { background-size:4.2px 100%; }
 .welcome-screen h1 { position:absolute; top:521px; left:24px; margin:0; font:700 36px/40px 'Actay Wide',sans-serif; color:#252529; }
-.welcome-actions { position:absolute; top:665px; left:30px; right:30px; display:grid; gap:16px; }
-.welcome-actions button { min-height:56px; border-radius:28px; font:600 15px Inter,sans-serif; }
+.welcome-actions { position:absolute; top:668px; left:16px; right:16px; display:grid; gap:8px; }
+.welcome-actions button { height:56px; min-height:56px; border-radius:20px; font:600 15px/18px Inter,sans-serif; }
+.welcome-actions .welcome-login { font:500 15px/18px 'Inter Tight',sans-serif; }
 .welcome-login,.auth-submit { background:#141414; color:white; }
-.welcome-guest { background:transparent; color:#9747ff; }
+.welcome-guest { background:#e5e2f6; color:#9747ff; }
 .auth-dialog { width:calc(100% - 32px); max-width:370px; padding:24px; border:0; border-radius:28px; }
 .auth-dialog::backdrop { background:rgba(20,20,20,.35); backdrop-filter:blur(6px); }
 .auth-dialog h2 { font-size:24px; padding-right:20px; }
