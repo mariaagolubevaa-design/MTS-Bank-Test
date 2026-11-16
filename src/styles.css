@@ -1390,3 +1390,10 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .guest-inline-source .quote-summary { row-gap:8px; }
 .guest-inline-source.has-quote .recipient-next { margin-top:24px; }
 .guest-inline-source.has-quote .inline-amount h2 { height:24px; line-height:24px; margin-bottom:12px; }
+
+.card-transfer .recipient-card-field:focus-within:not(:has(input[aria-invalid=true])),
+.card-transfer .amount-field:focus-within:not(:has(input[aria-invalid=true])) { border-color:#414141; }
+@media(hover:hover) {
+  .card-transfer .recipient-card-field:hover:not(:has(input[aria-invalid=true])),
+  .card-transfer .amount-field:hover:not(:has(input[aria-invalid=true])) { border-color:#414141; }
+}
