@@ -13,7 +13,7 @@ try {
  await cvc.focus();assert.equal(await cvc.inputValue(),'123');
  assert.equal(await cvc.evaluate(el=>getComputedStyle(el).borderColor),'rgb(65, 65, 65)');
  const row=page.locator('.source-section .card-details-row');
- await row.locator('.cvc-eye').click();assert.equal(await cvc.getAttribute('type'),'text');await row.locator('.cvc-eye').click();assert.equal(await cvc.getAttribute('type'),'password');
+ await row.locator('.cvc-eye').click();assert.equal(await cvc.getAttribute('type'),'text');assert.ok((await row.locator('.cvc-eye img').getAttribute('src')).endsWith('cvc-eye-open.svg'));await row.locator('.cvc-eye').click();assert.equal(await cvc.getAttribute('type'),'password');assert.ok((await row.locator('.cvc-eye img').getAttribute('src')).endsWith('cvc-eye.svg'));
  await row.locator('.cvc-clear').click();assert.equal(await cvc.inputValue(),'');
  await cvc.fill('456');await page.locator('.guest-transfer h1').click();
  assert.equal(await cvc.getAttribute('aria-invalid'),'true');assert.equal(await row.locator('[id^=cvc-error]').textContent(),'Неверный CVC/CVV');

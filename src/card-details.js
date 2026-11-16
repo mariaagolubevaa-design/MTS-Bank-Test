@@ -28,6 +28,13 @@ export function createDemoCardDetails(onChange = () => {}) {
   cvcWrap.className='cvc-input-wrap';
   cvc.before(cvcWrap);cvcWrap.append(cvc);
   cvcWrap.insertAdjacentHTML('beforeend','<button type="button" class="cvc-eye" aria-label="Показать CVC/CVV" aria-pressed="false" hidden><img src="./assets/images/cvc-eye.svg" alt=""></button><button type="button" class="cvc-clear" aria-label="Очистить CVC/CVV" hidden><img src="./assets/images/cvc-clear.svg" alt=""></button>');
+  const syncCvcVisibility=()=>{
+    const visible=cvc.type==='text';
+    const button=cvcWrap.querySelector('.cvc-eye');
+    button.setAttribute('aria-pressed',String(visible));
+    button.setAttribute('aria-label',visible?'Скрыть CVC/CVV':'Показать CVC/CVV');
+    button.querySelector('img').src='./assets/images/'+(visible?'cvc-eye-open.svg':'cvc-eye.svg');
+  };
   const cvcError=document.createElement('span');cvcError.className='expiry-field-error';cvcError.hidden=true;
   cvcError.id='cvc-error-'+crypto.randomUUID();cvcError.setAttribute('role','status');cvcWrap.after(cvcError);
   cvc.setAttribute('aria-describedby',cvcError.id);
@@ -42,12 +49,12 @@ export function createDemoCardDetails(onChange = () => {}) {
   };
   cvc.addEventListener('focus',()=>{if(!cvc.value)cvc.value='123';syncCvc();});
   cvc.oninput=()=>{cvc.value=cvc.value.replace(/\D/g,'').slice(0,3);syncCvc();};
-  cvc.onblur=()=>{cvcTouched=true;cvc.type='password';cvcWrap.querySelector('.cvc-eye').setAttribute('aria-pressed','false');syncCvc();};
+  cvc.onblur=()=>{cvcTouched=true;cvc.type='password';syncCvcVisibility();syncCvc();};
   cvcWrap.querySelectorAll('button').forEach(button=>button.onpointerdown=event=>event.preventDefault());
   cvcWrap.querySelector('.cvc-clear').onclick=()=>{cvc.focus();cvc.value='';cvcTouched=false;syncCvc();};
   cvcWrap.querySelector('.cvc-eye').onclick=()=>{
     const visible=cvc.type==='password';cvc.type=visible?'text':'password';
-    const button=cvcWrap.querySelector('.cvc-eye');button.setAttribute('aria-pressed',String(visible));button.setAttribute('aria-label',visible?'Скрыть CVC/CVV':'Показать CVC/CVV');
+    syncCvcVisibility();
   };
   const picker=document.createElement('dialog');
   picker.className='expiry-picker';
