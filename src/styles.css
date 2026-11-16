@@ -1090,12 +1090,11 @@ body:has(.is-processing) .home-indicator {
 }
 
 /* Card transfer states — Figma 137:4089, 137:3999, 140:2165, 140:2385. */
-body:has(.card-transfer:not(.is-processing)) #app { width:100%; transform:none; background:white; }
+body:has(.card-transfer:not(.is-processing)) #app { width:100%; min-height:100dvh; transform:none; background:white; }
 body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inset-bottom)); padding-top:20px; }
-.card-transfer { padding:16px 16px 67px; }
+.card-transfer { min-height:calc(100dvh - 62px - env(safe-area-inset-top)); padding:16px 16px calc(67px + env(safe-area-inset-bottom)); }
 .card-transfer>h1 { margin:4px 0 16px; font:500 24px/25px 'Inter Tight',sans-serif; }
-.card-transfer>form { position:relative; display:flex; flex-direction:column; }
-.card-transfer.has-quote>form { min-height:calc(100dvh - 230px - env(safe-area-inset-top)); }
+.card-transfer>form { position:relative; display:flex; flex-direction:column; min-height:calc(var(--transfer-viewport-height,100dvh) - 230px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
 .card-transfer .source-trigger { gap:4px; border-color:var(--c2c-border-default); }
 .card-transfer .field-caption,.card-transfer .destination-field label { font:500 11px/16px 'Inter Tight',sans-serif; color:#141414; }
 .card-transfer .source-value { color:#d5d5da; }
@@ -1130,7 +1129,7 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .card-transfer .inline-amount h2 { height:25px; line-height:25px; margin:0 0 16px; }
 .card-transfer .amount-field { gap:4px; }
 .card-transfer .amount-input-row { flex-shrink:0; }
-.card-transfer .transfer-footer { margin-top:52px; }
+.card-transfer .transfer-footer { margin-top:auto; padding-top:52px; }
 .card-transfer.has-quote .transfer-footer { margin-top:auto; padding-top:32px; }
 .card-transfer .inline-quote { margin:0; padding:0; font-size:15px; line-height:18px; }
 .card-transfer .quote-summary { margin:0; gap:24px 12px; }
@@ -1210,3 +1209,6 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .card-transfer--russia .source-trigger .source-chevron { right:16.5px; top:33px; }
 .card-transfer--russia .source-trigger[aria-expanded=true] .source-chevron { top:31.5px; }
 .card-transfer--russia .source-options { top:80px; border-width:1.5px; max-height:min(360px,calc(100dvh - 300px)); overflow-y:auto; }
+
+/* The scan notice uses the same primary action as the transfer form. */
+.scan-info button { display:flex; align-items:center; justify-content:center; width:100%; height:56px; margin-top:24px; padding:0 16px; border-radius:20px; background:#141414; color:#fff; font:500 15px/18px 'Inter Tight',sans-serif; }

@@ -14,7 +14,7 @@ try {
  const actual=await page.locator(selector).boundingBox();
  for(const[key,value]of Object.entries(expected))assert.ok(Math.abs(actual[key]-value)<1,`${selector} ${key}: ${actual[key]} vs ${value}`);
  };
- for(const [selector,x,y,width,height] of [['.card-transfer>h1',16,122,370,25],['.source-trigger',16,163,370,72],['.destination-section .destination-field',16,259,370,72],['.inline-amount h2',16,379,370,25],['.amount-field',16,420,370,72],['.recipient-next button',16,544,370,56]])await geometry(selector,{x,y,width,height});
+ for(const [selector,x,y,width,height] of [['.card-transfer>h1',16,122,370,25],['.source-trigger',16,163,370,72],['.destination-section .destination-field',16,259,370,72],['.inline-amount h2',16,379,370,25],['.amount-field',16,420,370,72],['.recipient-next button',16,751,370,56]])await geometry(selector,{x,y,width,height});
  assert.ok(await page.locator('.inline-quote').isHidden());
  assert.equal(await page.locator('.source-trigger').evaluate(e=>getComputedStyle(e).borderColor),'rgb(213, 213, 218)');
  await mkdir('screenshots',{recursive:true});

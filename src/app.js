@@ -7,6 +7,16 @@ import { createWelcomeScreen } from './welcome-screen.js';
 import { demoData, money, saveDemoTransfers } from './data.js';
 import { createHomeScreen, image, escapeHTML } from './home-screen.js';
 
+// visualViewport also changes when a mobile keyboard opens without resizing layout.
+function syncTransferViewport() {
+  const viewport=window.visualViewport;
+  if(viewport && Math.abs(viewport.scale-1)>.01)return;
+  document.documentElement.style.setProperty('--transfer-viewport-height',`${viewport?.height ?? window.innerHeight}px`);
+}
+window.visualViewport?.addEventListener('resize',syncTransferViewport,{passive:true});
+window.addEventListener('resize',syncTransferViewport,{passive:true});
+syncTransferViewport();
+
 const root = document.querySelector('#app');
 root.innerHTML = `
   <div class="status-bar" aria-hidden="true"><span class="time">9:41</span><span class="levels">${image('cellular')}${image('wifi')}${image('battery')}</span></div>
