@@ -1307,3 +1307,8 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .demo-card-suggestion strong { color:#141414; font:500 15px/18px 'Inter Tight',sans-serif; }
 .demo-card-suggestion:hover,.demo-card-suggestion:focus-visible { background:#e5e2f6; outline:none; }
 .guest-inline-source .source-section>.demo-card-suggestion { top:122px; }
+
+.guest-inline-source .recipient-card-field:focus-within:not(:has(input[aria-invalid=true])) { border-color:#414141; }
+@media(hover:hover) {
+  .guest-inline-source .recipient-card-field:hover:not(:has(input[aria-invalid=true])) { border-color:#414141; }
+}
