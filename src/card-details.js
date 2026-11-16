@@ -20,7 +20,7 @@ export function createDemoCardDetails(onChange = () => {}) {
   row.append(picker);
   const now=new Date();
   const currentYear=now.getFullYear();
-  const values=[Array.from({length:12},(_,i)=>String(i+1).padStart(2,'0')),Array.from({length:21},(_,i)=>String(currentYear+i))];
+  const values=[Array.from({length:12},(_,i)=>String(i+1).padStart(2,'0')),Array.from({length:11},(_,i)=>String(currentYear+i))];
   const wheels=[...picker.querySelectorAll('.expiry-wheel')];
   const selected=[0,0];
   const confirm=picker.querySelector('.expiry-confirm');

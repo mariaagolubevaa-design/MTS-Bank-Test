@@ -11,6 +11,9 @@ try {
  await dialog.waitFor({state:'visible'});
  const month=dialog.getByRole('listbox',{name:'Месяц',exact:true});
  const year=dialog.getByRole('listbox',{name:'Год',exact:true});
+ assert.equal(await year.getByRole('option').count(),11);
+ assert.equal(await year.getByRole('option').first().textContent(),String(new Date().getFullYear()));
+ assert.equal(await year.getByRole('option').last().textContent(),String(new Date().getFullYear()+10));
  await month.focus();await page.keyboard.press('Home');await page.keyboard.press('ArrowDown');
  await year.focus();await page.keyboard.press('Home');await page.keyboard.press('ArrowDown');
  const expectedYear=String(new Date().getFullYear()+1).slice(-2);
