@@ -12,6 +12,7 @@ try {
  const input=page.locator('#destination-number');
  const field=page.locator('.recipient-card-field');
  const scan=field.locator('.scan-card');
+ const clear=field.locator('.recipient-card-clear');
  const color=()=>field.evaluate(e=>({border:getComputedStyle(e).borderColor,label:getComputedStyle(e.querySelector('label')).color,input:getComputedStyle(e.querySelector('input')).color,button:getComputedStyle(e.querySelector('button')).backgroundColor}));
  const close=(a,b)=>assert.ok(Math.abs(a-b)<.1,`${a} != ${b}`);
  let bounds=await field.boundingBox(),button=await scan.boundingBox(),image=await scan.locator('img').boundingBox();
@@ -22,6 +23,7 @@ try {
  await mkdir('screenshots',{recursive:true});
  await field.screenshot({path:'screenshots/recipient-default.png'});
  await field.hover();assert.equal((await color()).button,'rgb(229, 226, 246)');await page.screenshot({path:'screenshots/recipient-hover.png',clip:await field.boundingBox()});
+ await scan.click();assert.ok(await page.locator('.scan-info').isVisible());await page.locator('.scan-info button').click();
  await page.locator('.source-trigger').click();await page.locator('[data-source="debit"]').click();
  await input.fill('5555555555554444');
  await page.waitForFunction(()=>!document.querySelector('.inline-quote').hidden);
@@ -29,11 +31,12 @@ try {
  assert.deepEqual(await color(),{border:'rgb(213, 213, 218)',label:'rgb(213, 213, 218)',input:'rgb(20, 20, 20)',button:'rgb(229, 226, 246)'});
  assert.equal(await input.inputValue(),'5555 5555 5555 4444');await field.screenshot({path:'screenshots/recipient-filled.png'});
  await page.locator('#transfer-amount').fill('100');
- await scan.click();assert.ok(await page.locator('.scan-info').isVisible());assert.equal(await page.locator('.transfer-review').count(),0);await page.locator('.scan-info button').click();
+ assert.ok(await clear.isVisible());assert.ok(await scan.isHidden());await clear.click();assert.equal(await input.inputValue(),'');assert.ok(await scan.isVisible());assert.ok(await page.locator('.recipient-next button').isDisabled());
  await input.fill('220012345678901');await page.locator('.card-transfer>h1').click();
  assert.equal(await input.getAttribute('aria-invalid'),'true');
  assert.equal(await page.locator('#destination-error').innerText(),'Неверный номер карты');
- assert.equal((await color()).border,'rgb(184, 61, 69)');assert.equal((await color()).input,'rgb(184, 61, 69)');assert.equal((await color()).label,'rgb(20, 20, 20)');
+ assert.equal((await color()).border,'rgb(255, 21, 36)');assert.equal((await color()).input,'rgb(255, 21, 36)');assert.equal((await color()).label,'rgb(20, 20, 20)');
+ assert.ok(await clear.isVisible());assert.ok(await scan.isHidden());
  assert.equal((await page.locator('.destination-section').boundingBox()).height,92);
  assert.ok(await page.locator('.inline-quote').isHidden());assert.ok(await page.locator('.recipient-next button').isDisabled());
  await page.locator('.destination-section').screenshot({path:'screenshots/recipient-error.png'});
@@ -46,7 +49,7 @@ try {
  assert.equal(await page.locator('[data-total]').innerText(),'150 ₽');
  for(const width of [320,375,402,430]) {
  await page.setViewportSize({width,height:874});
- bounds=await field.boundingBox();button=await scan.boundingBox();image=await scan.locator('img').boundingBox();
+ bounds=await field.boundingBox();button=await clear.boundingBox();image=await clear.locator('img').boundingBox();
  close(button.y+button.height/2,bounds.y+bounds.height/2);assert.ok(image.x>=bounds.x&&image.x+image.width<bounds.x+bounds.width);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth===innerWidth));
  }
  assert.deepEqual(errors,[]);

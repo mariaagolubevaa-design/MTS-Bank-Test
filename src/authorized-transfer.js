@@ -143,8 +143,6 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     };
     sender.onblur=()=>{if(sender.value&&!validTransferCard(sender.value)){senderError.textContent='Неверный номер карты';sender.setAttribute('aria-invalid','true');}syncSenderState();};
     screen.querySelector('.destination-section').insertAdjacentHTML('afterbegin','<h2>Куда перевести</h2>');
-    input.closest('.destination-field').insertAdjacentHTML('beforeend','<button type="button" class="recipient-card-clear" aria-label="Очистить номер карты получателя" hidden><img src="./assets/images/sender-card-clear.svg" alt=""></button>');
-    screen.querySelector('.recipient-card-clear').onclick=()=>{input.value='';input.oninput();input.focus();};
     for(const [field,kind] of [[sender,'sender'],[input,'recipient']]) {
       const suggestion=document.createElement('div');suggestion.className='demo-card-suggestion';suggestion.hidden=true;
       const getChoices=()=>kind==='sender'?[{number:figmaDemoCards.sender,label:'Пример для демо / Россия, RUB',name:'Заполнить демо-карту отправителя'},{number:foreignDemoNumber,label:'Пример для демо / Иностранная карта, USD',name:'Заполнить иностранную демо-карту отправителя'}]:[{number:international?figmaDemoCards.internationalRecipient:figmaDemoCards.recipient,label:international?'Пример для демо / Узбекистан, UZS':'Пример для демо',name:'Заполнить демо-карту получателя'}];
@@ -176,6 +174,10 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
 
 
   }
+
+  input.closest('.destination-field').insertAdjacentHTML('beforeend','<button type="button" class="recipient-card-clear" aria-label="Очистить номер карты получателя" hidden><img src="./assets/images/sender-card-clear.svg" alt=""></button>');
+  const clearRecipient=screen.querySelector('.recipient-card-clear');
+  clearRecipient.onclick=()=>{savedRecipient=null;input.readOnly=false;input.value='';input.oninput();input.focus();};
 
   const bankStatus=screen.querySelector('.recipient-bank');
   const availabilityStatus=screen.querySelector('.card-availability');
@@ -338,10 +340,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       button.querySelector('.source-radio').src='./assets/images/'+(selected?'card-radio-selected.svg':'card-radio-empty.svg');
     });
     input.closest('.destination-field').classList.toggle('is-filled',!!input.value);
-    if(inlineGuestSource){
-      screen.querySelector('.recipient-card-clear').hidden=!input.value;
-      input.closest('.destination-field').querySelector('.scan-card').hidden=!!input.value;
-    }
+    clearRecipient.hidden=!input.value;
+    input.closest('.destination-field').querySelector('.scan-card').hidden=!!input.value;
 
     amountInput.closest('.destination-field').classList.toggle('is-filled',!!amountInput.value);
     screen.querySelector('.transfer-review')?.remove();

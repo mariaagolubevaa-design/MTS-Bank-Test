@@ -1363,3 +1363,8 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .card-transfer .add-card-dialog input[aria-invalid=true] { border-color:#ff1524; }
 .card-transfer .destination-field input[aria-invalid=true],
 .card-transfer .add-card-dialog input[aria-invalid=true] { color:#ff1524; }
+
+.card-transfer .destination-section .recipient-card-clear { position:absolute; right:16px; top:50%; transform:translateY(-50%); width:24px; height:24px; padding:0; background:transparent; }
+.card-transfer .recipient-card-clear img { display:block; width:24px; height:24px; }
+.card-transfer .recipient-card-clear[hidden],
+.card-transfer .destination-section .scan-card[hidden] { display:none; }
