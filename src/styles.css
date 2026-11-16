@@ -1152,7 +1152,7 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .phone-country>img { position:absolute; right:12px; top:50%; width:16px; height:16px; transform:translateY(-50%) rotate(180deg); pointer-events:none; }
 
 /* Original Mir artwork includes its own transparent padding (Figma 161:4193). */
-.home-screen .card-bottom .card-payment-mir { position:absolute; right:-25px; bottom:-9px; width:107px; height:60px; margin:0; object-fit:cover; }
+.home-screen .card-bottom .card-payment-mir { position:absolute; right:-25px; bottom:-13px; width:107px; height:60px; margin:0; object-fit:cover; }
 
 /* The currency selector shares the amount's baseline and leaves room for clear. */
 .currency-picker { position:relative; flex:0 0 44px; height:28px; }
