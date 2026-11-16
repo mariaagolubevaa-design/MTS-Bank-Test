@@ -8,6 +8,7 @@ export const demoData = {
     { id: 'self', name: 'Себе', subtitle: 'на Сбер', initials: '', color: '#2ba538', bank: 'Сбер', destination: 'Своя карта Сбер', logo: 'sber' },
     { id: 'mom', name: 'Мама', subtitle: 'RU •• 4820', initials: 'М', color: '#d4b6ff', destination: 'RU •• 4820' },
     { id: 'pavel', name: 'Павел', subtitle: 'UZ · •• 6204', initials: 'П', color: '#fb9338', destination: 'UZ · •• 6204' },
+    { id: 'marina', name: 'Марина Б.', subtitle: 'RU •• 6382', initials: 'М', color: '#e3e3e8', destination: 'RU •• 6382' },
   ],
   transactions: [
     { id: 't1', cardId: 'debit', name: 'Татьяна Ш.', initials: 'ТШ', color: '#d4b6ff', date: 'Сегодня, 14:32', amount: -5000, status: 'Выполнен' },

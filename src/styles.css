@@ -976,3 +976,61 @@ body:has(.home-screen:not([hidden])) #app { background:#f3f4f5; width:100%; tran
 .home-screen .quick-actions { grid-template-columns:112fr 113fr 113fr; }
 .home-screen .quick-actions button:nth-child(3) img { translate:0 -4px; }
 .home-screen .quick-actions button:nth-child(3) span { translate:0 4px; }
+
+/* Transfers menu — Figma 161:4907. */
+body:has(.transfers-menu) { background:#f3f4f5; }
+body:has(.transfers-menu) #app { background:#f3f4f5; width:100%; transform:none; }
+.transfers-menu { padding:16px 16px 124px; }
+.transfers-menu-header { height:32px; margin-bottom:16px; }
+.transfers-menu-header h1 { font-size:24px; line-height:29px; }
+.menu-header-actions { display:flex; align-items:center; gap:24px; }
+.transfers-menu-header .menu-qr { display:flex; align-items:center; justify-content:center; width:32px; height:32px; background:#e5e2f6; border-radius:8px; }
+.transfers-menu .transfer-options { grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:90px 66px 90px; gap:8px; }
+.transfers-menu .transfer-options button { align-items:flex-end; }
+.transfers-menu .option-russia { grid-column:1; grid-row:1 / 3; }
+.transfers-menu .option-own { grid-column:2; grid-row:1; }
+.transfers-menu .option-abroad { grid-column:2; grid-row:2 / 4; }
+.transfers-menu .option-details { grid-column:1; grid-row:3; }
+.transfers-menu .option-russia img { width:196px; height:125px; left:25px; top:-11px; object-fit:cover; }
+.transfers-menu .option-abroad img { width:128px; height:128px; left:61px; top:-11px; object-fit:cover; }
+.transfers-menu .option-own img { width:63px; height:40px; left:5px; top:9px; object-fit:cover; }
+.transfers-menu .option-details img { width:48px; height:43px; left:16px; top:9px; object-fit:cover; }
+.transfers-menu .payment-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:24px; margin-right:-3px; }
+.transfers-menu .payment-options button { width:auto; height:78px; padding:14px 16px; flex-direction:column; align-items:flex-start; justify-content:center; gap:8px; white-space:nowrap; }
+.transfers-menu .payment-options button:not(:first-child) { font:500 14px/17px Inter,sans-serif; }
+.transfers-menu .menu-favorites { margin-top:24px; background:#fff; border-radius:20px; overflow:hidden; height:168px; padding-top:10px; }
+.transfers-menu .menu-favorites h2 { font-size:24px; line-height:29px; margin:0 16px 17px; }
+.transfers-menu .menu-favorites .recipients { border-radius:0; background:none; padding:0 8px; gap:8px; min-height:102px; justify-content:flex-start; }
+.transfers-menu .recipient { width:78px; min-height:102px; font-size:11px; line-height:16px; }
+.transfers-menu .recipient .avatar { width:52px; height:52px; background:#e3e3e8; color:#666978; font:500 15px/18px 'Inter Tight',sans-serif; }
+.transfers-menu .recipient .avatar.add { background:#e5e2f6; color:#6641fb; font:500 24px/24px 'Inter Tight',sans-serif; }
+.transfers-menu .recipient-name { margin-top:4px; }
+.transfers-menu .recipient-subtitle { font-size:11px; line-height:16px; margin-top:2px; }
+.transfers-menu [data-recipient=self] .recipient-subtitle { margin-top:0; }
+.menu-currency { margin:16px -2px 0; padding:10px 17px 16px; border-radius:20px; background:white; font-size:11px; line-height:16px; }
+.currency-heading,.currency-row { display:grid; grid-template-columns:minmax(0,1fr) 56px 56px; align-items:center; }
+.currency-heading { margin-bottom:10px; }
+.currency-heading h2 { font-size:24px; line-height:28px; }
+.currency-heading>span { color:#414141; text-align:center; }
+.currency-row { min-height:16px; }
+.currency-row>span:first-child { display:flex; gap:8px; align-items:center; }
+.currency-row>span:not(:first-child) { text-align:center; }
+.currency-row img { width:16px; height:16px; }
+.currency-rows { display:flex; flex-direction:column; gap:8px; }
+body:has(.transfers-menu) .tabbar { bottom:calc(32px + env(safe-area-inset-bottom)); max-width:402px; width:100%; height:52px; padding:0; border:0; gap:0; border-radius:0; box-shadow:none; }
+body:has(.transfers-menu) .tabbar button { border-radius:0; font:500 11px/16px 'Inter Tight',sans-serif; color:#141414; }
+body:has(.transfers-menu) .tabbar [aria-current=page] { background:none; color:#6641fb; }
+body:has(.transfers-menu) .tabbar [data-tab=Переводы] .tab-icon img { content:url('../assets/images/menu-transfer-active.svg'); }
+body:has(.transfers-menu) .home-indicator { background:white; height:calc(32px + env(safe-area-inset-bottom)); padding-top:20px; }
+@media(max-width:360px) {
+  .transfers-menu .payment-options button { padding:12px 8px; }
+  .transfers-menu .payment-options button:not(:first-child) { font-size:12px; }
+  .transfers-menu .transfer-options button { padding:12px; font-size:14px; }
+  .transfers-menu .option-abroad img { left:35px; }
+  .transfers-menu .option-russia img { left:10px; }
+}
+.transfers-menu .menu-currency { margin-right:2px; padding-left:19px; padding-right:5px; }
+body:has(.transfers-menu) .tabbar [data-tab=Главная] .tab-icon img { content:url('../assets/images/menu-home-inactive.svg'); }
+.transfers-menu .recipient .avatar.add { position:relative; font-size:0; }
+.transfers-menu .recipient .avatar.add::before,.transfers-menu .recipient .avatar.add::after { content:''; position:absolute; width:12px; height:2px; background:#6641fb; }
+.transfers-menu .recipient .avatar.add::after { transform:rotate(90deg); }
