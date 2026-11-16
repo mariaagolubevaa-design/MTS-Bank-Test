@@ -176,7 +176,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     bankStatus.textContent='';
     lookupTimer=setTimeout(async()=>{
       availability=guest&&digits===sourceNumber?.replace(/\D/g,'')?{available:false,message:'Карты отправителя и получателя должны отличаться'}:transferCardAvailability(digits);
-      availabilityStatus.textContent=availability.available?'Карта доступна · демо':availability.message;
+      availabilityStatus.textContent=availability.available?'':availability.message;
       input.setAttribute('aria-invalid',String(!availability.available));
       update();
       if(isFigmaDemoCard(digits)){bank={name:'Демо-карта',country:'RU',sameBank:false};bankLookupPending=false;update();return;}
@@ -427,7 +427,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     input.value=initialNumber || '';
     detectBank();
   }
-  if(savedRecipient){bankStatus.textContent=bank?bank.name:'';availabilityStatus.textContent=availability.available?'Карта доступна · демо':availability.message;}
+  if(savedRecipient){bankStatus.textContent=bank?bank.name:'';availabilityStatus.textContent=availability.available?'':availability.message;}
   if(repeatAmount != null){amountInput.value=String(repeatAmount);if(source)screen.querySelector('.source-value').textContent='•• '+source.last4+' · '+(source.external?'баланс недоступен':money(source.balance,source.currency));updateQuote();}
   updateQuote();
   return screen;
