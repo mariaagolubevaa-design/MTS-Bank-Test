@@ -1034,3 +1034,37 @@ body:has(.transfers-menu) .tabbar [data-tab=Главная] .tab-icon img { cont
 .transfers-menu .recipient .avatar.add { position:relative; font-size:0; }
 .transfers-menu .recipient .avatar.add::before,.transfers-menu .recipient .avatar.add::after { content:''; position:absolute; width:12px; height:2px; background:#6641fb; }
 .transfers-menu .recipient .avatar.add::after { transform:rotate(90deg); }
+
+/* Transfer loading — Figma 105:3118; shared by live and restored transfers. */
+body:has(.is-processing) #app {
+  width:100%; min-height:100dvh; transform:none;
+  background:linear-gradient(202.92863430894894deg,#8f8fff 7.2663%,#98a1fc 52.914%,#a3bbfb 98.562%);
+}
+body:has(.is-processing) #app .status-bar { position:relative; z-index:1; background:transparent; }
+.authorized-transfer.is-processing {
+  position:relative; height:calc(100dvh - 62px - env(safe-area-inset-top));
+  min-height:0; padding:0; background:transparent;
+}
+.is-processing .transfer-processing {
+  position:absolute; inset:calc(-62px - env(safe-area-inset-top)) 0 0;
+  padding:0; display:block; text-align:center;
+}
+.transfer-processing .loading-globe {
+  position:absolute; top:calc(50% - 219px); left:50%; transform:translateX(-50%);
+  width:calc(100% - 8px); max-width:394px; height:auto; aspect-ratio:1; object-fit:cover;
+}
+.transfer-processing .processing-track {
+  position:absolute; top:calc(50% + 183px); left:19px; right:21px;
+  width:auto; height:8px; background:none; border-radius:0; overflow:visible;
+}
+.transfer-processing .processing-track img { width:100%; height:8px; object-fit:fill; }
+.transfer-processing p {
+  position:absolute; top:calc(50% + 203px); left:16px; right:16px;
+  margin:0; color:white; font:500 15px/18px 'Inter Tight',sans-serif;
+}
+body:has(.is-processing) .tabbar { display:none; }
+body:has(.is-processing) .home-indicator {
+  background:transparent; height:calc(32px + env(safe-area-inset-bottom)); padding-top:20px;
+}
+/* Figma exports the white rail as a zero-height SVG rect; browsers omit it. */
+.transfer-processing .processing-track { background:#fff; border-radius:4px; }

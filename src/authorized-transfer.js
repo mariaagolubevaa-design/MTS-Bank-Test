@@ -1,3 +1,4 @@
+import { createProcessingScreen } from './processing-screen.js';
 import { createDemoCardDetails } from './card-details.js';
 import { demoCardAvailability } from './card-availability.js';
 import { celebrate } from './confetti.js';
@@ -262,11 +263,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       form.hidden=true;
       screen.classList.add('is-processing');
       screen.querySelector('.authorized-back').disabled=true;
-      const processing=document.createElement('section');
-      processing.className='transfer-processing';
-      processing.setAttribute('role','status');
-      processing.setAttribute('aria-live','polite');
-      processing.innerHTML='<img src="./assets/images/transfer-processing.png" alt=""><h2>Переводим деньги</h2><div class="processing-track" role="progressbar" aria-label="Обработка перевода"><span></span></div><p>Это может занять немного времени</p>';
+      const processing=createProcessingScreen();
       screen.append(processing);
       window.scrollTo(0,0);
       await new Promise(resolve=>setTimeout(resolve,5000));

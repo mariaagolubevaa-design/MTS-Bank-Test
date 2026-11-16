@@ -1,3 +1,4 @@
+import { createProcessingScreen } from './processing-screen.js';
 import { createGuestTransfer } from './guest-transfer.js';
 import { createAuthorizedTransfer } from './authorized-transfer.js';
 import { createTransfersMenu } from './transfers-menu.js';
@@ -150,7 +151,7 @@ try {
     outlet.querySelector('.authorized-transfer')?.remove();
     home.hidden=true;detail.hidden=true;root.querySelector('.tabbar').hidden=true;
     const processing=document.createElement('main');processing.className='authorized-transfer is-processing';
-    processing.innerHTML='<section class="transfer-processing" role="status"><img src="./assets/images/transfer-processing.png" alt=""><h2>Переводим деньги</h2><div class="processing-track" role="progressbar" aria-label="Обработка перевода"><span></span></div><p>Это может занять немного времени</p></section>';
+    processing.append(createProcessingScreen());
     outlet.append(processing);
     setTimeout(()=>{
       if(!demoData.transactions.some(t=>t.id===pending.operation.id)) {
