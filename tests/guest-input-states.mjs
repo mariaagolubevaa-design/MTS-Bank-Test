@@ -1,0 +1,40 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch();
+try {
+ const page=await browser.newPage({viewport:{width:402,height:874}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/api/bank/*',r=>r.fulfill({status:404,body:''}));
+ await page.goto('http://localhost:5173');await page.locator('.welcome-guest').click();
+ const expiry=page.locator('.source-section [data-expiry]'),cvc=page.locator('.source-section [data-cvc]');
+ assert.equal(await expiry.inputValue(),'');assert.equal(await cvc.inputValue(),'');
+ await page.locator('.source-section .card-details-row').hover();assert.equal(await expiry.inputValue(),'');assert.equal(await cvc.inputValue(),'');
+ await expiry.focus();assert.equal(await expiry.inputValue(),'12/30');assert.equal(await cvc.inputValue(),'');
+ assert.equal(await expiry.evaluate(el=>getComputedStyle(el).borderColor),'rgb(65, 65, 65)');
+ await cvc.focus();assert.equal(await cvc.inputValue(),'123');
+ assert.equal(await cvc.evaluate(el=>getComputedStyle(el).borderColor),'rgb(65, 65, 65)');
+ const row=page.locator('.source-section .card-details-row');
+ await row.locator('.cvc-eye').click();assert.equal(await cvc.getAttribute('type'),'text');await row.locator('.cvc-eye').click();assert.equal(await cvc.getAttribute('type'),'password');
+ await row.locator('.cvc-clear').click();assert.equal(await cvc.inputValue(),'');
+ await cvc.fill('456');await page.locator('.guest-transfer h1').click();
+ assert.equal(await cvc.getAttribute('aria-invalid'),'true');assert.equal(await row.locator('[id^=cvc-error]').textContent(),'Неверный CVC/CVV');
+ assert.equal(await row.locator('[id^=cvc-error]').evaluate(el=>getComputedStyle(el).color),await cvc.evaluate(el=>getComputedStyle(el).borderColor));
+ await row.screenshot({path:'screenshots/guest-cvc-error.png'});
+ await cvc.fill('123');await page.locator('.guest-transfer h1').click();assert.equal(await cvc.getAttribute('aria-invalid'),'false');
+ await page.locator('#guest-source').fill('4111111111111111');
+ const recipient=page.locator('#destination-number');
+ await recipient.fill('123');await page.locator('.guest-transfer h1').click();assert.equal(await recipient.getAttribute('aria-invalid'),'true');
+ assert.ok(await page.locator('.recipient-card-clear').isVisible());assert.ok(await page.locator('.destination-section .scan-card').isHidden());
+ assert.equal(await page.locator('#destination-error').evaluate(el=>getComputedStyle(el).color),await recipient.evaluate(el=>getComputedStyle(el.parentElement).borderColor));
+ await page.locator('.destination-section').screenshot({path:'screenshots/guest-recipient-error.png'});
+ await page.locator('.recipient-card-clear').click();assert.equal(await recipient.inputValue(),'');assert.equal(await recipient.getAttribute('aria-invalid'),'false');
+ await recipient.fill('5555555555554444');await page.locator('#transfer-amount').fill('0');await page.locator('.guest-transfer h1').click();
+ assert.equal(await page.locator('#transfer-amount').getAttribute('aria-invalid'),'true');
+ assert.equal(await page.locator('#amount-error').evaluate(el=>getComputedStyle(el).color),await page.locator('.amount-field').evaluate(el=>getComputedStyle(el).borderColor));
+ await page.locator('.inline-amount').screenshot({path:'screenshots/guest-amount-error.png'});
+ await page.locator('.clear-amount').click();assert.equal(await page.locator('#transfer-amount').inputValue(),'');
+ await page.locator('#transfer-amount').fill('100');await page.waitForFunction(()=>!document.querySelector('.recipient-next button').disabled);
+ await page.locator('.source-section').screenshot({path:'screenshots/guest-inputs-filled.png'});
+ for(const width of [320,375,402,430]){await page.setViewportSize({width,height:874});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
+ assert.ok(await page.locator('img:visible').evaluateAll(es=>es.every(el=>el.complete&&el.naturalWidth>0)));
+ assert.deepEqual(errors,[]);console.log('PASS: guest per-field states, CVC reveal/clear/validation, recipient clear/error, amount error, consistent reds, assets and four widths');
+} finally {await browser.close();}

@@ -1271,3 +1271,31 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .card-details-row input[data-expiry][aria-invalid=true] { border-color:#ff1524; color:#ff1524; }
 .card-details-row .expiry-field-error { display:block; margin:4px 2px 0; color:#ff1524; font:500 11px/16px 'Inter Tight',sans-serif; }
 .card-details-row .expiry-field-error[hidden] { display:none; }
+
+/* Consistent guest input states; prior user decisions override the master error variant. */
+.guest-inline-source .recipient-card-field:has(input[aria-invalid=true]),
+.guest-inline-source .amount-field:has(input[aria-invalid=true]) { border-color:#ff1524; }
+.guest-inline-source .recipient-card-field input[aria-invalid=true],
+.guest-inline-source .amount-field input[aria-invalid=true],
+.guest-inline-source .field-error { color:#ff1524; }
+.guest-inline-source .destination-section .recipient-card-clear { position:absolute; right:16px; top:50%; transform:translateY(-50%); width:24px; height:24px; padding:0; background:transparent; }
+.guest-inline-source .recipient-card-clear img { display:block; width:24px; height:24px; }
+.guest-inline-source .recipient-card-clear[hidden],
+.guest-inline-source .recipient-card-field .scan-card[hidden] { display:none; }
+.guest-inline-source .card-details-row input:focus { border-color:#414141; }
+.guest-inline-source .card-details-row input[aria-invalid=true] { border-color:#ff1524; }
+.card-details-row .cvc-input-wrap { display:block; position:relative; }
+.card-details-row .cvc-input-wrap input { padding-right:64px; }
+.card-details-row .cvc-input-wrap button { position:absolute; top:50%; transform:translateY(-50%); width:16px; height:16px; padding:0; background:transparent; }
+.card-details-row .cvc-input-wrap .cvc-eye { right:40px; }
+.card-details-row .cvc-input-wrap .cvc-clear { right:16px; }
+.card-details-row .cvc-input-wrap button img { display:block; width:16px; height:16px; }
+.card-details-row .cvc-input-wrap button[hidden] { display:none; }
+.card-details-row .cvc-input-wrap:not(:focus-within):has(input[aria-invalid=false]) button { visibility:hidden; }
+.card-details-row input[data-cvc][aria-invalid=true] { border-color:#ff1524; }
+.card-details-row label:has([data-cvc]) { align-self:start; }
+.guest-inline-source .destination-section:has(input[aria-invalid=true]) .card-availability { color:#ff1524; }
+.guest-inline-source .card-details-row:has(.expiry-picker[open]) input[data-expiry]:not([aria-invalid=true]) { border-color:#414141; }
+@media(hover:hover) {
+  .guest-inline-source .card-details-row input:not([aria-invalid=true]):hover { border-color:#414141; }
+}

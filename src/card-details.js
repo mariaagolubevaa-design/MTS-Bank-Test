@@ -24,12 +24,31 @@ export function createDemoCardDetails(onChange = () => {}) {
     expiry.value=expectedExpiry;
     validateExpiry();onChange();
   });
-  cvc.addEventListener('focus',()=>{
-    if(cvc.value)return;
-    cvc.value='123';onChange();
-  });
-
-  cvc.oninput=()=>{cvc.value=cvc.value.replace(/\D/g,'').slice(0,3);onChange();};
+  const cvcWrap=document.createElement('span');
+  cvcWrap.className='cvc-input-wrap';
+  cvc.before(cvcWrap);cvcWrap.append(cvc);
+  cvcWrap.insertAdjacentHTML('beforeend','<button type="button" class="cvc-eye" aria-label="Показать CVC/CVV" aria-pressed="false" hidden><img src="./assets/images/cvc-eye.svg" alt=""></button><button type="button" class="cvc-clear" aria-label="Очистить CVC/CVV" hidden><img src="./assets/images/cvc-clear.svg" alt=""></button>');
+  const cvcError=document.createElement('span');cvcError.className='expiry-field-error';cvcError.hidden=true;
+  cvcError.id='cvc-error-'+crypto.randomUUID();cvcError.setAttribute('role','status');cvcWrap.after(cvcError);
+  cvc.setAttribute('aria-describedby',cvcError.id);
+  let cvcTouched=false;
+  const syncCvc=()=>{
+    const invalid=cvcTouched&&cvc.value!=='123';
+    cvc.setAttribute('aria-invalid',String(invalid));
+    cvcError.hidden=!invalid;cvcError.textContent=invalid?(cvc.value?'Неверный CVC/CVV':'Введите CVC/CVV'):'';
+    cvcWrap.classList.toggle('is-filled',!!cvc.value);
+    cvcWrap.querySelectorAll('button').forEach(button=>button.hidden=!cvc.value);
+    onChange();
+  };
+  cvc.addEventListener('focus',()=>{if(!cvc.value)cvc.value='123';syncCvc();});
+  cvc.oninput=()=>{cvc.value=cvc.value.replace(/\D/g,'').slice(0,3);syncCvc();};
+  cvc.onblur=()=>{cvcTouched=true;cvc.type='password';cvcWrap.querySelector('.cvc-eye').setAttribute('aria-pressed','false');syncCvc();};
+  cvcWrap.querySelectorAll('button').forEach(button=>button.onpointerdown=event=>event.preventDefault());
+  cvcWrap.querySelector('.cvc-clear').onclick=()=>{cvc.focus();cvc.value='';cvcTouched=false;syncCvc();};
+  cvcWrap.querySelector('.cvc-eye').onclick=()=>{
+    const visible=cvc.type==='password';cvc.type=visible?'text':'password';
+    const button=cvcWrap.querySelector('.cvc-eye');button.setAttribute('aria-pressed',String(visible));button.setAttribute('aria-label',visible?'Скрыть CVC/CVV':'Показать CVC/CVV');
+  };
   const picker=document.createElement('dialog');
   picker.className='expiry-picker';
   picker.setAttribute('aria-label','Срок действия карты');
@@ -83,8 +102,8 @@ export function createDemoCardDetails(onChange = () => {}) {
     validateExpiry();picker.close();onChange();expiry.focus();
   };
   picker.querySelector('.expiry-cancel').onclick=()=>{picker.close();expiry.focus();};
-  row.demoComplete = () => expiry.value===expectedExpiry && /^\d{3}$/.test(cvc.value);
-  row.copyDemoFrom = other => {expiry.value=other.querySelector('[data-expiry]').value;cvc.value=other.querySelector('[data-cvc]').value;validateExpiry();};
-  row.clearDemo = () => {expiry.value='';cvc.value='';validateExpiry();};
+  row.demoComplete = () => expiry.value===expectedExpiry && cvc.value==='123';
+  row.copyDemoFrom = other => {expiry.value=other.querySelector('[data-expiry]').value;cvc.value=other.querySelector('[data-cvc]').value;validateExpiry();syncCvc();};
+  row.clearDemo = () => {expiry.value='';cvc.value='';cvcTouched=false;validateExpiry();syncCvc();};
   return row;
 }
