@@ -19,7 +19,7 @@ export function createTransfersMenu({ recipientList, onChoose, onRecipient, onAc
   const add = recipientList.querySelector('[data-action="Добавить получателя"]');
   if (add) recipientList.prepend(add);
   const selfAvatar = recipientList.querySelector('[data-recipient="self"] .avatar');
-  if (selfAvatar) selfAvatar.textContent = 'М';
+  if (selfAvatar) selfAvatar.innerHTML = '<img src="./assets/images/menu-self-bank.svg" alt="">';
   const pavelName = recipientList.querySelector('[data-recipient="pavel"] .recipient-name');
   if (pavelName?.textContent === 'Павел') pavelName.textContent = 'Павел Г.';
   const pavelSubtitle = recipientList.querySelector('[data-recipient="pavel"] .recipient-subtitle');

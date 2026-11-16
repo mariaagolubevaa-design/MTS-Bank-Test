@@ -1068,3 +1068,4 @@ body:has(.is-processing) .home-indicator {
 }
 /* Figma exports the white rail as a zero-height SVG rect; browsers omit it. */
 .transfer-processing .processing-track { background:#fff; border-radius:4px; }
+.transfers-menu [data-recipient=self] .avatar img { width:24px; height:24px; }
