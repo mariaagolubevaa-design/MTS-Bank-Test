@@ -1157,3 +1157,12 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .phone-country { position:relative; flex:0 1 44%; min-width:0; }
 .phone-country select { appearance:none; -webkit-appearance:none; width:100%; padding:12px 32px 12px 10px; }
 .phone-country>img { position:absolute; right:12px; top:50%; width:16px; height:16px; transform:translateY(-50%) rotate(180deg); pointer-events:none; }
+
+/* Support uses the same full-width navigation as Home and Transfers. */
+.tabbar:has([data-tab="Поддержка"][aria-current=page]) { bottom:calc(32px + env(safe-area-inset-bottom)); max-width:402px; width:100%; height:52px; padding:0; border:0; gap:0; border-radius:0; box-shadow:none; }
+.tabbar:has([data-tab="Поддержка"][aria-current=page]) button { border-radius:0; font:500 11px/16px 'Inter Tight',sans-serif; color:#141414; }
+.tabbar:has([data-tab="Поддержка"][aria-current=page]) [aria-current=page] { background:none; color:#6641fb; }
+.tabbar [data-tab="Поддержка"][aria-current=page] .tab-icon img { content:url('../assets/images/support-active.svg'); }
+.tabbar:has([data-tab="Поддержка"][aria-current=page]) [data-tab="Главная"] .tab-icon img { content:url('../assets/images/menu-home-inactive.svg'); }
+body:has(.tabbar [data-tab="Поддержка"][aria-current=page]) .home-indicator { background:white; height:calc(32px + env(safe-area-inset-bottom)); padding-top:20px; }
+body:has(.tabbar [data-tab="Поддержка"][aria-current=page]) #app { width:100%; transform:none; }
