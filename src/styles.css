@@ -1385,3 +1385,8 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
   .home-analytics .analytics-tile span { font-size:14px; }
 }
 .home-screen .home-analytics .history-heading>button { transform:none; }
+
+/* Guest quote spacing — Figma 171:5848; authorized layout stays separate. */
+.guest-inline-source .quote-summary { row-gap:8px; }
+.guest-inline-source.has-quote .recipient-next { margin-top:24px; }
+.guest-inline-source.has-quote .inline-amount h2 { height:24px; line-height:24px; margin-bottom:12px; }
