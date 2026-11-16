@@ -1339,7 +1339,7 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .guest-direction-trigger { display:inline-flex; align-items:center; vertical-align:middle; gap:8px; padding:0; margin:0; background:transparent; font:inherit; line-height:inherit; }
 .guest-direction-trigger:focus-visible { outline:2px solid #6641fb; outline-offset:4px; border-radius:4px; }
 .guest-direction-sheet { position:fixed; inset:auto 0 0; width:402px; max-width:100%; height:calc(253px + env(safe-area-inset-bottom)); max-height:85dvh; margin:0 auto; padding:85px 16px calc(48px + env(safe-area-inset-bottom)); border:0; border-radius:28px 28px 0 0; background:white; color:#141414; }
-.guest-direction-sheet::backdrop { background:#14141455; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+.guest-direction-sheet::backdrop { background:rgba(20,20,20,.2); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
 .direction-sheet-handle { position:absolute; top:9px; left:calc(50% - 16px); width:32px; height:3px; }
 .direction-choice { position:relative; display:flex; align-items:center; justify-content:space-between; width:100%; height:56px; padding:10px 8px; border-radius:16px; background:white; text-align:left; font:500 15px/18px 'Inter Tight',sans-serif; }
 .direction-choice+.direction-choice { margin-top:8px; }

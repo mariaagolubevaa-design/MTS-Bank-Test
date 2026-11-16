@@ -6,7 +6,8 @@ try{
  const trigger=page.locator('.guest-direction-trigger'),sheet=page.locator('.guest-direction-sheet');
  const y=(await page.locator('.guest-sender-field').boundingBox()).y;assert.equal(y,205);
  await trigger.click();assert.ok(await sheet.isVisible());assert.equal(await trigger.getAttribute('aria-expanded'),'true');assert.equal(await sheet.locator('.direction-choice:enabled').count(),2);
- assert.equal(await sheet.evaluate(el=>getComputedStyle(el,'::backdrop').backdropFilter),'blur(6px)');
+ assert.equal(await sheet.evaluate(el=>getComputedStyle(el,'::backdrop').backdropFilter),'blur(10px)');
+ assert.equal(await sheet.evaluate(el=>getComputedStyle(el,'::backdrop').backgroundColor),'rgba(20, 20, 20, 0.2)');
  assert.equal(await sheet.locator('.direction-sheet-title').textContent(),'Направление перевода');
  const r=await sheet.boundingBox(),choice=await sheet.locator('.is-selected').boundingBox();assert.equal(r.height,253);assert.equal(choice.y-r.y,85);assert.equal(choice.height,56);assert.equal(choice.width,370);
  assert.equal(await sheet.locator('.is-selected').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(240, 236, 255)');
