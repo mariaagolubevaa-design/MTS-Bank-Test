@@ -1221,3 +1221,18 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 
 /* Guest entry uses the same Figma card-transfer fields and spacing. */
 .guest-transfer.card-transfer .scan-card { top:50%; }
+
+/* Guest transfer from the welcome secondary action — Figma 138:5534. */
+.guest-inline-source .source-section { padding-top:8px; }
+.guest-inline-source .source-section>h2,
+.guest-inline-source .destination-section>h2 { font:500 15px/18px 'Inter Tight',sans-serif; margin:0 0 16px; }
+.guest-inline-source .card-details-row { margin-top:16px; }
+.guest-inline-source .card-details-row label { font:500 13px/15px 'Inter Tight',sans-serif; }
+.guest-inline-source .card-details-row input { margin-top:4px; border:1.8px solid #d5d5da; }
+.guest-inline-source .destination-section { margin-top:24px; }
+.guest-inline-source .inline-amount { margin-top:48px; }
+.guest-inline-source .inline-amount h2 { margin-bottom:12.5px; }
+.guest-inline-source>form { min-height:calc(var(--transfer-viewport-height,100dvh) - 227px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+.guest-inline-source #guest-source-error:empty { display:none; }
+
+.guest-inline-source .destination-field { border-width:1.5px; }

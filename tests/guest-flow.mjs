@@ -5,14 +5,11 @@ try {
  const page=await browser.newPage({viewport:{width:402,height:874}});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/api/bank/*',r=>r.fulfill({status:404,body:''}));
- await page.goto('http://localhost:5173/?screen=guest');
- assert.equal(await page.locator('.source-value').textContent(),'Выберите карту');
+ await page.goto('http://localhost:5173/');
+ await page.locator('.welcome-guest').click();
  assert.equal(await page.locator('.recipient-next button').isDisabled(),true);
- await page.locator('.source-trigger').click();
- await page.locator('[data-add-card]').click();
- await page.locator('#new-card-number').fill('4111111111111111');
- await page.locator('.add-card-dialog .card-details-row').hover();
- await page.locator('.add-card-dialog[open] .authorized-continue').click();
+ await page.locator('#guest-source').fill('4111111111111111');
+ await page.locator('.source-section .card-details-row').hover();
  await page.locator('#destination-number').fill('4111111111111111');
  await page.locator('#transfer-amount').fill('100');
  await page.waitForTimeout(500);

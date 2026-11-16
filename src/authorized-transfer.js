@@ -34,6 +34,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   screen.className = 'authorized-transfer card-transfer';
   const lockedGuestSource = guest && !!sourceNumber;
   const guestSourceNumbers = new Map();
+  const inlineGuestSource = guest && !lockedGuestSource;
+  const guestInlineId = inlineGuestSource ? 'guest-'+crypto.randomUUID() : null;
   let source = guest ? cards[0] : repeatAmount != null ? cards.find(c => c.id === card?.id) || null : null;
   let amountCurrency=defaultAmountCurrency(source);
   let savedRecipient = recipient || null;
@@ -95,7 +97,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     addInput.value='';addDetails.clearDemo();addError.textContent='';addDialog.close();update();
   };
   const form = screen.querySelector('form');
-  const input = screen.querySelector('input');
+  const input = screen.querySelector('#destination-number');
   const trigger = screen.querySelector('.source-trigger');
   const options = screen.querySelector('.source-options');
   const next = screen.querySelector('.authorized-continue');
@@ -103,6 +105,27 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   const sourceDetails=createDemoCardDetails(()=>update());
   sourceDetails.hidden=true;
   screen.querySelector('.source-section').append(sourceDetails);
+  if(inlineGuestSource) {
+    screen.classList.add('guest-inline-source');
+    screen.querySelector('.source-dropdown').hidden=true;
+    const sourceSection=screen.querySelector('.source-section');
+    sourceSection.insertAdjacentHTML('afterbegin', '<h2>Откуда списать</h2><div class="destination-field recipient-card-field guest-sender-field"><label for="guest-source">Номер карты отправителя</label><input id="guest-source" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" aria-describedby="guest-source-error"><button type="button" class="scan-card guest-source-scan" aria-label="Сканировать карту отправителя"><img src="./assets/images/recipient-scan.svg" alt=""></button></div><p id="guest-source-error" class="field-error" role="alert"></p>');
+    const sender=sourceSection.querySelector('#guest-source');
+    const senderError=sourceSection.querySelector('#guest-source-error');
+    sourceDetails.querySelectorAll('input').forEach(el=>el.placeholder='');
+    sender.oninput=()=>{
+      sender.value=sender.value.replace(/\D/g,'').slice(0,19).replace(/(.{4})/g,'$1 ').trim();
+      sourceNumber=sender.value;
+      const available=validCard(sender.value)&&demoCardAvailability(sender.value).available;
+      source=available?{id:guestInlineId,name:'Карта отправителя',last4:sender.value.replace(/\D/g,'').slice(-4),balance:null,currency:'RUB',external:true}:null;
+      senderError.textContent=validCard(sender.value)&&!available?demoCardAvailability(sender.value).message:'';
+      sender.setAttribute('aria-invalid',String(!!senderError.textContent));
+      detectBank();update();
+    };
+    sender.onblur=()=>{if(sender.value&&!validCard(sender.value)){senderError.textContent='Неверный номер карты';sender.setAttribute('aria-invalid','true');}};
+    screen.querySelector('.destination-section').insertAdjacentHTML('afterbegin','<h2>Куда перевести</h2>');
+  }
+
   const bankStatus=screen.querySelector('.recipient-bank');
   const availabilityStatus=screen.querySelector('.card-availability');
   function detectBank() {
@@ -209,7 +232,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     demoData.recipients.push(r);savedRecipient=r;saveDemoTransfers();recipientSheet.close();update();
   };
   const dialog=screen.querySelector('.scan-info');
-  screen.querySelector('.scan-card').onclick=()=>dialog.showModal();
+  screen.querySelectorAll('.scan-card').forEach(button=>button.onclick=()=>dialog.showModal());
   dialog.querySelector('button').onclick=()=>dialog.close();
   screen.querySelector('.authorized-back').onclick=onBack;
   const amountInput=screen.querySelector('#transfer-amount');
@@ -244,7 +267,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     pendingTopup=null;topup.close();updateQuote();
   };
   function updateQuote() {
-    sourceDetails.hidden=!source?.external || guest;
+    sourceDetails.hidden=inlineGuestSource ? false : !source?.external || guest;
     trigger.classList.toggle('has-source',!!source);
     if(!lockedGuestSource)screen.querySelector('.source-value').textContent=source?'•• '+source.last4+'   '+sourceName(source):'Выберите карту';
     options.querySelectorAll('[data-source]').forEach(button=>{
@@ -298,7 +321,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     next.setAttribute('aria-label',calculating?'Рассчитываем перевод':'Продолжить');
     next.querySelector('.continue-label').hidden=calculating;
     next.querySelector('.continue-spinner').hidden=!calculating;
-    next.disabled=!ready()||!currentQuote||currentQuote.insufficient||(!guest&&source?.external&&!sourceDetails.demoComplete());
+    next.disabled=(inlineGuestSource&&!sourceDetails.demoComplete())||!ready()||!currentQuote||currentQuote.insufficient||(!guest&&source?.external&&!sourceDetails.demoComplete());
   }
   amountInput.oninput=updateQuote;
   amountInput.onblur=()=>{
