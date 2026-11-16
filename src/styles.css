@@ -1177,3 +1177,28 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 @media(hover:hover) and (pointer:fine) {
   .card-transfer--russia .recipient-card-field:hover .scan-card { background:#e5e2f6; }
 }
+
+/* Amount variants — Figma 137:4097. Currency is a 32 px action on the right. */
+.amount-unit { display:none; }
+.card-transfer--russia .amount-field,
+.card-transfer--russia .amount-field:focus-within { border-color:var(--c2c-border-default); padding:11px 15px; }
+.card-transfer--russia .amount-input-row { padding-right:80px; width:100%; }
+.card-transfer--russia .amount-unit { display:block; flex-shrink:0; font:500 15px/28px 'Inter Tight',sans-serif; }
+.card-transfer--russia .amount-field .currency-picker { position:absolute; right:15px; top:50%; transform:translateY(-50%); width:32px; height:32px; }
+.card-transfer--russia .currency-select { width:32px; height:32px; margin:0; padding:0; border-radius:8px; color:#6641fb; background:#e5e2f6; font:500 15px/32px 'Inter Tight',sans-serif; text-align:center; text-align-last:center; }
+.card-transfer--russia .currency-picker>img { display:none; }
+.card-transfer--russia .clear-amount { visibility:hidden; right:53.5px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:8px; line-height:32px; }
+.card-transfer--russia .amount-field:focus-within .clear-amount { visibility:visible; }
+.card-transfer--russia .amount-field:has(input[aria-invalid=true]) { border-color:#b83d45; }
+.card-transfer--russia .amount-field:has(input[aria-invalid=true]) input,
+.card-transfer--russia .amount-field:has(input[aria-invalid=true]) .amount-unit { color:#b83d45; }
+.card-transfer--russia .amount-field:has(input[aria-invalid=true]) label { color:#141414; }
+.card-transfer--russia .inline-amount>#amount-error { margin:4px 18px 0; font:500 11px/16px 'Inter Tight',sans-serif; }
+
+/* Continue button — default, inactive and loading variants from 137:4184. */
+.card-transfer .recipient-next .authorized-continue { display:flex; align-items:center; justify-content:center; height:56px; padding:0; border-radius:20px; background:#141414; color:white; font:500 15px/18px 'Inter Tight',sans-serif; }
+.card-transfer .recipient-next .authorized-continue:disabled { background:#ebebee; color:#d5d5da; transform:none; filter:none; }
+.card-transfer .recipient-next .authorized-continue[aria-busy=true] { background:#141414; color:white; }
+.continue-spinner { width:24px; height:24px; animation:continue-turn .9s linear infinite; }
+@keyframes continue-turn { to { transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) { .continue-spinner { animation:none; } }

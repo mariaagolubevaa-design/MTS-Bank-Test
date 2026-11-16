@@ -38,6 +38,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   let bank = savedRecipient?.bankInfo || null;
   let lookupVersion = 0;
   let lookupTimer;
+  let bankLookupPending=false;
   let availability = savedRecipient ? demoCardAvailability('', { saved: true }) : null;
   const international = transferKind === 'abroad';
   if(!international)screen.classList.add('card-transfer--russia');
@@ -55,8 +56,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
         </div>
       </section>
       <section class="destination-section"><div class="destination-field recipient-card-field"><label for="destination-number">Номер карты получателя</label><input id="destination-number" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" aria-describedby="destination-error"><button type="button" class="scan-card" aria-label="Сканировать карту"><img src="./assets/images/${international ? 'card-scan.svg' : 'recipient-scan.svg'}" alt=""></button></div><p id="destination-error" class="field-error" role="alert"></p><p id="recipient-bank-status" class="recipient-bank" role="status"></p><p id="recipient-card-status" class="card-availability quote-note" role="status" aria-live="polite"></p></section>
-      <section class="inline-amount"><h2>Сумма</h2><div class="destination-field amount-field"><label for="transfer-amount">Сумма перевода</label><div class="amount-input-row"><input id="transfer-amount" class="transfer-amount-inline" inputmode="decimal" placeholder="0" aria-describedby="amount-error"><span class="currency-picker"><select class="amount-currency currency-select" aria-label="Валюта перевода"><option value="RUB" aria-label="Российский рубль">₽</option><option value="USD" aria-label="Доллар США">$</option><option value="EUR" aria-label="Евро">€</option></select><img src="./assets/images/card-source-chevron.svg" alt="" aria-hidden="true"></span></div><button type="button" class="clear-amount" aria-label="Очистить сумму" hidden>×</button></div><p id="amount-error" class="field-error" role="alert"></p><button type="button" class="add-shortfall" hidden></button></section><div class="transfer-footer"><div class="inline-quote" hidden>${international ? '<dl class="quote-summary international-summary"><dt>Курс перевода</dt><dd data-rate>—</dd><dt>Получатель получит</dt><dd data-receive>—</dd></dl>' : ''}<dl class="amount-conversion" hidden><dt>Демо-курс</dt><dd data-amount-rate></dd><dt>Сумма в рублях</dt><dd data-amount-rubles></dd></dl><dl class="quote-summary"><dt>Комиссия</dt><dd data-fee>—</dd><dt>Всего к списанию</dt><dd data-total>—</dd></dl></div>
-      <div class="recipient-next"><button class="authorized-continue" disabled>Продолжить</button></div>
+      <section class="inline-amount"><h2>Сумма</h2><div class="destination-field amount-field"><label for="transfer-amount">Сумма перевода</label><div class="amount-input-row"><input id="transfer-amount" class="transfer-amount-inline" inputmode="decimal" placeholder="0" aria-describedby="amount-error"><span class="currency-picker"><select class="amount-currency currency-select" aria-label="Валюта перевода"><option value="RUB" aria-label="Российский рубль">₽</option><option value="USD" aria-label="Доллар США">$</option><option value="EUR" aria-label="Евро">€</option></select><img src="./assets/images/card-source-chevron.svg" alt="" aria-hidden="true"></span><span class="amount-unit" aria-hidden="true">₽</span></div><button type="button" class="clear-amount" aria-label="Очистить сумму" hidden>×</button></div><p id="amount-error" class="field-error" role="alert"></p><button type="button" class="add-shortfall" hidden></button></section><div class="transfer-footer"><div class="inline-quote" hidden>${international ? '<dl class="quote-summary international-summary"><dt>Курс перевода</dt><dd data-rate>—</dd><dt>Получатель получит</dt><dd data-receive>—</dd></dl>' : ''}<dl class="amount-conversion" hidden><dt>Демо-курс</dt><dd data-amount-rate></dd><dt>Сумма в рублях</dt><dd data-amount-rubles></dd></dl><dl class="quote-summary"><dt>Комиссия</dt><dd data-fee>—</dd><dt>Всего к списанию</dt><dd data-total>—</dd></dl></div>
+      <div class="recipient-next"><button class="authorized-continue" disabled aria-label="Продолжить" aria-busy="false"><span class="continue-label">Продолжить</span><img class="continue-spinner" src="./assets/images/continue-spinner.svg" alt="" hidden></button></div>
       </div>
     <details class="quote-disclosure" hidden><summary>Тариф и условия · демо</summary><p class="quote-note"></p></details>
     </form>
@@ -104,10 +105,11 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   function detectBank() {
     const version=++lookupVersion;clearTimeout(lookupTimer);
     bank=null;bankStatus.textContent='';
-    availability=null;availabilityStatus.textContent='';
+    availability=null;availabilityStatus.textContent='';bankLookupPending=false;
     input.setAttribute('aria-invalid','false');
     const digits=input.value.replace(/\D/g,'');
     if(!validCard(digits)){update();return;}
+    bankLookupPending=true;
     availabilityStatus.textContent='Проверяем возможность перевода · демо';
     update();
     bankStatus.textContent='';
@@ -130,7 +132,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
         if(version!==lookupVersion)return;
         bankStatus.textContent='';
       }
-      if(version===lookupVersion)update();
+      if(version===lookupVersion){bankLookupPending=false;update();}
     },350);
   }
   function ready() { return !!source && availability?.available === true && (!!savedRecipient || validCard(input.value)); }
@@ -243,6 +245,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     amountInput.closest('.destination-field').classList.toggle('is-filled',!!amountInput.value);
     screen.querySelector('.transfer-review')?.remove();
     currencySelect.value=amountCurrency;
+    screen.querySelector('.amount-unit').textContent=amountSymbols[amountCurrency];
     currencySelect.title='Валюта перевода: '+amountCurrency;
     amountInput.setAttribute('aria-label','Сумма перевода в '+amountCurrencyNames[amountCurrency]);
     clearAmount.hidden=amountInput.value.length===0;
@@ -256,7 +259,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     const bankSupported=international ? effectiveBank.country==='UZ' : effectiveBank.country==='RU';
     const supported=source&&(!source.currency||source.currency==='RUB')&&bankSupported;
     const rubles=valid?amountInRubles(value,amountCurrency):null;
-    currentQuote=valid&&rubles>0&&supported&&availability?.available?{
+    currentQuote=valid&&rubles>0&&supported&&availability?.available&&!bankLookupPending?{
       ...(international?internationalDemoQuote(rubles,source.balance):domesticQuote(rubles,source.balance,effectiveBank.sameBank)),
       rubles,enteredAmount:value,enteredCurrency:amountCurrency,amountRate:demoAmountRates[amountCurrency],
     }:null;
@@ -265,7 +268,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     conversion.querySelector('[data-amount-rate]').textContent='1 '+amountSymbols[amountCurrency]+' = '+money(demoAmountRates[amountCurrency]);
     conversion.querySelector('[data-amount-rubles]').textContent=currentQuote?money(currentQuote.rubles):!raw?'0 ₽':'—';
     if(international){quoteBox.querySelector('[data-rate]').textContent=currentQuote?'1 ₽ = 150 UZS':'—';quoteBox.querySelector('[data-receive]').textContent=currentQuote?new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(currentQuote.receive)+' UZS':'—';}
-    const showQuote=ready() && !!supported;
+    const showQuote=ready() && !!supported && !bankLookupPending;
     quoteBox.hidden=!showQuote;
     screen.classList.toggle('has-quote',showQuote);
     screen.querySelector('.quote-disclosure').hidden=!showQuote;
@@ -279,6 +282,11 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       const shortfall=(Math.round(currentQuote.total*100)-Math.round(source.balance*100))/100;
       addShortfall.textContent='Добавить '+money(shortfall);
     }
+    const calculating=!!source&&valid&&bankLookupPending&&availability?.available!==false;
+    next.setAttribute('aria-busy',String(calculating));
+    next.setAttribute('aria-label',calculating?'Рассчитываем перевод':'Продолжить');
+    next.querySelector('.continue-label').hidden=calculating;
+    next.querySelector('.continue-spinner').hidden=!calculating;
     next.disabled=!ready()||!currentQuote||currentQuote.insufficient||(!guest&&source?.external&&!sourceDetails.demoComplete());
   }
   amountInput.oninput=updateQuote;

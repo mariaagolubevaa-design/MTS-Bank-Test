@@ -35,7 +35,7 @@ try {
  await page.setViewportSize({width,height:874});
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth===innerWidth));
  const bounds=await select.boundingBox(),amount=await page.locator('#transfer-amount').boundingBox(),field=await page.locator('.amount-field').boundingBox();
- assert.ok(bounds.x>=amount.x+amount.width&&bounds.x+bounds.width<=field.x+field.width-32);
+ assert.ok(bounds.x>=amount.x+amount.width&&bounds.x+bounds.width<=field.x+field.width-14);
  if(width===320)await page.screenshot({path:'screenshots/transfer-currency-usd-320x874.png'});
  }
  await page.setViewportSize({width:402,height:874});
