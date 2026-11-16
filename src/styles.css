@@ -1069,3 +1069,29 @@ body:has(.is-processing) .home-indicator {
 /* Figma exports the white rail as a zero-height SVG rect; browsers omit it. */
 .transfer-processing .processing-track { background:#fff; border-radius:4px; }
 .transfers-menu [data-recipient=self] .avatar img { width:24px; height:24px; }
+
+/* Continuous motion signals that the transfer is still being processed. */
+.transfer-processing .loading-globe {
+  animation:loading-globe-turn 36s linear infinite;
+  transform-origin:50% 50%;
+}
+.transfer-processing .processing-track { overflow:hidden; }
+.transfer-processing .processing-track img {
+  animation:loading-progress-travel 2.5s linear infinite alternate;
+}
+@keyframes loading-globe-turn {
+  from { transform:translateX(-50%) rotate(0deg); }
+  to { transform:translateX(-50%) rotate(360deg); }
+}
+@keyframes loading-progress-travel {
+  from { transform:translateX(0); }
+  to { transform:translateX(64.64%); }
+}
+@keyframes loading-soft-pulse {
+  from { opacity:.65; }
+  to { opacity:1; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .transfer-processing .loading-globe { animation:none; }
+  .transfer-processing .processing-track img { animation:loading-soft-pulse 1.8s linear infinite alternate; }
+}

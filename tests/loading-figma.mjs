@@ -15,6 +15,21 @@ try {
  });
  await page.evaluate(()=>document.fonts.ready);
  await page.waitForFunction(()=>[...document.querySelectorAll('.transfer-processing img')].every(e=>e.complete&&e.naturalWidth));
+ // Step real CSS animations deterministically, then freeze the design's initial frame.
+ const motion=await page.evaluate(()=>{
+  const globe=document.querySelector('.loading-globe');
+  const progress=document.querySelector('.processing-track img');
+  const animations=[...globe.getAnimations(),...progress.getAnimations()];
+  animations.forEach(a=>{a.pause();a.currentTime=0;});
+  const start=[getComputedStyle(globe).transform,getComputedStyle(progress).transform];
+  animations.forEach(a=>a.currentTime=1250);
+  const middle=[getComputedStyle(globe).transform,getComputedStyle(progress).transform];
+  animations.forEach(a=>a.currentTime=0);
+  return {count:animations.length,start,middle};
+ });
+ assert.equal(motion.count,2);
+ assert.notEqual(motion.start[0],motion.middle[0]);
+ assert.notEqual(motion.start[1],motion.middle[1]);
  for(const [selector,x,y,width,height] of [
  ['.loading-globe',4,218,394,394],['.processing-track',19,620,362,8],['.transfer-processing p',16,640,370,18]
  ]) {
@@ -35,6 +50,10 @@ try {
  assert.ok(text.y+text.height<height-32,`text fits ${height}`);
  if(width===320)await page.screenshot({path:'screenshots/loading-figma-320x640.png'});
  }
+ await page.emulateMedia({reducedMotion:'reduce'});
+ assert.equal(await page.locator('.loading-globe').evaluate(e=>getComputedStyle(e).animationName),'none');
+ assert.equal(await page.locator('.processing-track img').evaluate(e=>getComputedStyle(e).animationName),'loading-soft-pulse');
+ await page.emulateMedia({reducedMotion:'no-preference'});
  await page.setViewportSize({width:402,height:874});
  await page.evaluate(()=>{
   sessionStorage.setItem('c2c-auth','true');
