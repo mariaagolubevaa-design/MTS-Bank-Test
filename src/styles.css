@@ -1324,3 +1324,8 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 
 .guest-inline-source .recipient-card-field:has(input[aria-invalid=true]) input,
 .guest-inline-source .amount-field:has(input[aria-invalid=true]) input { color:#ff1524; }
+
+.guest-inline-source .demo-card-suggestion { padding:0; gap:0; overflow:hidden; }
+.demo-card-suggestion>button { display:flex; flex-direction:column; gap:4px; width:100%; padding:12px 16px; text-align:left; background:white; }
+.demo-card-suggestion>button+button { border-top:1px solid #ebebee; }
+.demo-card-suggestion>button:hover,.demo-card-suggestion>button:focus-visible { background:#e5e2f6; outline:none; }

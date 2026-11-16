@@ -30,7 +30,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     const country = recipient.bankInfo?.country || recipient.subtitle?.match(/^(RU|UZ)\b/)?.[1];
     if (country) transferKind = country === 'RU' ? 'russia' : 'abroad';
   }
-  const figmaDemoCards={sender:'9112381015213812',recipient:'2200789332541984'};
+  const foreignDemoNumber='4242424242424242';
+  const figmaDemoCards={foreign:foreignDemoNumber,sender:'9112381015213812',recipient:'2200789332541984'};
   const isFigmaDemoCard=number=>guest&&Object.values(figmaDemoCards).includes(number.replace(/\D/g,''));
   const validTransferCard=number=>validCard(number)||isFigmaDemoCard(number);
   const transferCardAvailability=(number,options={})=>demoCardAvailability(number,{...options,saved:options.saved||isFigmaDemoCard(number)});
@@ -131,7 +132,10 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       sender.value=sender.value.replace(/\D/g,'').slice(0,19).replace(/(.{4})/g,'$1 ').trim();
       sourceNumber=sender.value;
       const available=validTransferCard(sender.value)&&transferCardAvailability(sender.value).available;
-      source=available?{id:guestInlineId,name:'Карта отправителя',last4:sender.value.replace(/\D/g,'').slice(-4),balance:null,currency:'RUB',external:true}:null;
+      const foreign=sender.value.replace(/\D/g,'')===foreignDemoNumber;
+      source=available?{id:guestInlineId,name:foreign?'Иностранная демо-карта':'Карта отправителя',last4:sender.value.replace(/\D/g,'').slice(-4),balance:null,currency:foreign?'USD':'RUB',country:foreign?'US':'RU',external:true}:null;
+      if(source&&source.currency!==amountCurrency){amountCurrency=source.currency;amountInput.value='';}
+      senderField.querySelector('label').textContent='Номер карты отправителя'+(foreign?' · USD':'');
       senderError.textContent=validTransferCard(sender.value)&&!available?transferCardAvailability(sender.value).message:'';
       sender.setAttribute('aria-invalid',String(!!senderError.textContent));
       syncSenderState();detectBank();update();
@@ -141,20 +145,31 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     input.closest('.destination-field').insertAdjacentHTML('beforeend','<button type="button" class="recipient-card-clear" aria-label="Очистить номер карты получателя" hidden><img src="./assets/images/sender-card-clear.svg" alt=""></button>');
     screen.querySelector('.recipient-card-clear').onclick=()=>{input.value='';input.oninput();input.focus();};
     for(const [field,kind] of [[sender,'sender'],[input,'recipient']]) {
-      const suggestion=document.createElement('button');suggestion.type='button';suggestion.className='demo-card-suggestion';suggestion.hidden=true;
-      const formatted=figmaDemoCards[kind].replace(/(.{4})(?=.)/g,'$1 ');
-      suggestion.setAttribute('aria-label','Заполнить демо-карту '+(kind==='sender'?'отправителя':'получателя'));
-      suggestion.innerHTML='<span>Пример для демо</span><strong>'+formatted+'</strong>';
+      const suggestion=document.createElement('div');suggestion.className='demo-card-suggestion';suggestion.hidden=true;
+      const choices=kind==='sender'?[{number:figmaDemoCards.sender,label:'Пример для демо · Россия, RUB',name:'Заполнить демо-карту отправителя'},{number:foreignDemoNumber,label:'Пример для демо · Иностранная карта, USD',name:'Заполнить иностранную демо-карту отправителя'}]:[{number:figmaDemoCards.recipient,label:'Пример для демо',name:'Заполнить демо-карту получателя'}];
       field.closest('.destination-field').after(suggestion);
-      const syncSuggestion=()=>{suggestion.hidden=!!field.value||!(document.activeElement===field||document.activeElement===suggestion);};
+      const syncSuggestion=()=>{suggestion.hidden=!!field.value||!(document.activeElement===field||suggestion.contains(document.activeElement));};
+      for(const choice of choices){
+        const button=document.createElement('button');button.type='button';button.setAttribute('aria-label',choice.name);
+        button.innerHTML='<span>'+choice.label+'</span><strong>'+choice.number.replace(/(.{4})(?=.)/g,'$1 ')+'</strong>';
+        suggestion.append(button);
+        button.onpointerdown=event=>event.preventDefault();
+        button.onclick=()=>{field.value=choice.number;field.oninput();field.focus();syncSuggestion();};
+      }
       field.addEventListener('focus',syncSuggestion);field.addEventListener('input',syncSuggestion);
       field.addEventListener('blur',()=>setTimeout(syncSuggestion,0));
-      suggestion.addEventListener('focus',syncSuggestion);suggestion.addEventListener('blur',()=>setTimeout(syncSuggestion,0));
-      suggestion.onpointerdown=event=>event.preventDefault();
-      suggestion.onclick=()=>{field.value=figmaDemoCards[kind];field.oninput();field.focus();syncSuggestion();};
+      suggestion.addEventListener('focusin',syncSuggestion);suggestion.addEventListener('focusout',()=>setTimeout(syncSuggestion,0));
+      suggestion.addEventListener('keydown',event=>{
+        if(event.key==='Escape'){event.preventDefault();event.stopPropagation();field.focus();suggestion.hidden=true;return;}
+        if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
+        event.preventDefault();
+        const buttons=[...suggestion.querySelectorAll('button')],index=buttons.indexOf(document.activeElement);
+        buttons[event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length].focus();
+      });
+
       field.addEventListener('keydown',event=>{
         if(event.key==='Escape'){suggestion.hidden=true;event.stopPropagation();}
-        if(event.key==='ArrowDown'&&!suggestion.hidden){event.preventDefault();suggestion.focus();}
+        if(event.key==='ArrowDown'&&!suggestion.hidden){event.preventDefault();suggestion.querySelector('button').focus();}
       });
     }
 
@@ -302,6 +317,16 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     saveDemoWallet();
     pendingTopup=null;topup.close();updateQuote();
   };
+  const debitMoney=value=>money(value,guest&&source?.currency==='USD'?'USD':'RUB');
+  function quoteForSource(rubles,sameBank=false){
+    const quote=international?internationalDemoQuote(rubles,source.balance):domesticQuote(rubles,source.balance,sameBank);
+    if(guest&&source.currency==='USD'){
+      const debitAmount=Math.round(rubles/demoAmountRates.USD*100)/100;
+      const fee=Math.round(quote.fee/demoAmountRates.USD*100)/100;
+      return {...quote,fee,total:Math.round((debitAmount+fee)*100)/100,debitAmount,debitCurrency:'USD'};
+    }
+    return {...quote,debitAmount:rubles,debitCurrency:'RUB'};
+  }
   function updateQuote() {
     sourceDetails.hidden=inlineGuestSource ? false : !source?.external || guest;
     trigger.classList.toggle('has-source',!!source);
@@ -332,14 +357,14 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     const valid=/^\d+(\.\d{1,2})?$/.test(raw)&&Number.isFinite(value)&&value>0;
     const effectiveBank=bank || {country:international?'UZ':'RU',sameBank:false};
     const bankSupported=international ? effectiveBank.country==='UZ' : effectiveBank.country==='RU';
-    const supported=source&&(!source.currency||source.currency==='RUB')&&bankSupported;
+    const supported=source&&(!source.currency||source.currency==='RUB'||guest&&source.currency==='USD')&&bankSupported;
     const rubles=valid?amountInRubles(value,amountCurrency):null;
     currentQuote=valid&&rubles>0&&supported&&availability?.available&&!bankLookupPending?{
-      ...(international?internationalDemoQuote(rubles,source.balance):domesticQuote(rubles,source.balance,effectiveBank.sameBank)),
+      ...quoteForSource(rubles,effectiveBank.sameBank),
       rubles,enteredAmount:value,enteredCurrency:amountCurrency,amountRate:demoAmountRates[amountCurrency],
     }:null;
     const conversion=quoteBox.querySelector('.amount-conversion');
-    conversion.hidden=amountCurrency==='RUB';
+    conversion.hidden=amountCurrency==='RUB'||guest&&source?.currency===amountCurrency;
     conversion.querySelector('[data-amount-rate]').textContent='1 '+amountSymbols[amountCurrency]+' = '+money(demoAmountRates[amountCurrency]);
     conversion.querySelector('[data-amount-rubles]').textContent=currentQuote?money(currentQuote.rubles):!raw?'0 ₽':'—';
     if(international){quoteBox.querySelector('[data-rate]').textContent=currentQuote?'1 ₽ = 150 UZS':'—';quoteBox.querySelector('[data-receive]').textContent=currentQuote?new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(currentQuote.receive)+' UZS':'—';}
@@ -347,8 +372,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     quoteBox.hidden=!showQuote;
     screen.classList.toggle('has-quote',showQuote);
     screen.querySelector('.quote-disclosure').hidden=!showQuote;
-    quoteBox.querySelector('[data-fee]').textContent=currentQuote?money(currentQuote.fee):!raw?'0 ₽':'—';
-    quoteBox.querySelector('[data-total]').textContent=currentQuote?money(currentQuote.total):!raw?'0 ₽':'—';
+    quoteBox.querySelector('[data-fee]').textContent=currentQuote?debitMoney(currentQuote.fee):!raw?debitMoney(0):'—';
+    quoteBox.querySelector('[data-total]').textContent=currentQuote?debitMoney(currentQuote.total):!raw?debitMoney(0):'—';
     screen.querySelector('.quote-disclosure .quote-note').textContent=!source?'Выберите карту списания':source.external?'Демонстрационный расчёт · баланс и комиссия банка добавленной карты не проверяются':!bank?'Демонстрационный расчёт: 1,5%, минимум 50 ₽ · банк не определён':!bankSupported?'Страна банка не соответствует выбранному направлению':!supported?(international?'Выберите направление и получите расчёт курса и комиссии — перевод пока недоступен':'Для этого направления нужен отдельный тариф и курс конвертации'):international?'Пример: курс 1 ₽ = 150 UZS, комиссия 0 ₽ · не является текущим предложением МТС':bank.sameBank?'На карту МТС Банка · без комиссии':'В другой российский банк · 1,5%, минимум 50 ₽';
     amountError.textContent=raw&&!valid?'Введите сумму больше нуля, не более двух знаков после запятой':ready()&&!bankSupported?'Страна банка не соответствует выбранному направлению':ready()&&!supported?'Для карты в этой валюте перевод по выбранному направлению недоступен':currentQuote?.insufficient?'Недостаточно средств с учётом комиссии · не хватает '+money(currentQuote.total-source.balance):'';
     amountInput.setAttribute('aria-invalid',String(!!amountError.textContent));
@@ -376,8 +401,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     e.preventDefault();if(next.disabled||!currentQuote)return;
     screen.querySelector('.transfer-review')?.remove();
     const review=document.createElement('section');review.className='transfer-review';
-    review.innerHTML='<h2>Проверьте перевод</h2><div class="review-recipient"><span>Получатель</span><strong>Карта •• '+(savedRecipient?savedRecipient.subtitle.slice(-4):input.value.replace(/\D/g,'').slice(-4))+'</strong></div><dl class="review-breakdown"><dt>Сумма перевода</dt><dd>'+enteredMoney(currentQuote.enteredAmount,currentQuote.enteredCurrency)+'</dd><dt>Комиссия</dt><dd>'+money(currentQuote.fee)+'</dd></dl><div class="review-total"><span>Всего к списанию</span><strong>'+money(currentQuote.total)+'</strong></div><p class="review-demo-note">В прототипе списания не выполняются</p>';
-    if(amountCurrency!=='RUB'){const converted=document.createElement('p');converted.className='review-receive';converted.textContent='Сумма в рублях: '+money(currentQuote.rubles)+' · демо-курс 1 '+amountSymbols[amountCurrency]+' = '+money(currentQuote.amountRate);review.append(converted);}
+    review.innerHTML='<h2>Проверьте перевод</h2><div class="review-recipient"><span>Получатель</span><strong>Карта •• '+(savedRecipient?savedRecipient.subtitle.slice(-4):input.value.replace(/\D/g,'').slice(-4))+'</strong></div><dl class="review-breakdown"><dt>Сумма перевода</dt><dd>'+enteredMoney(currentQuote.enteredAmount,currentQuote.enteredCurrency)+'</dd><dt>Комиссия</dt><dd>'+debitMoney(currentQuote.fee)+'</dd></dl><div class="review-total"><span>Всего к списанию</span><strong>'+debitMoney(currentQuote.total)+'</strong></div><p class="review-demo-note">В прототипе списания не выполняются</p>';
+    if(amountCurrency!=='RUB'&&!(guest&&source?.currency===amountCurrency)){const converted=document.createElement('p');converted.className='review-receive';converted.textContent='Сумма в рублях: '+money(currentQuote.rubles)+' · демо-курс 1 '+amountSymbols[amountCurrency]+' = '+money(currentQuote.amountRate);review.append(converted);}
     if(international){const received=document.createElement('p');received.className='review-receive';received.textContent='Получатель получит '+new Intl.NumberFormat('ru-RU').format(currentQuote.receive)+' UZS · демонстрационный курс 1 ₽ = 150 UZS';review.append(received);}
     const send=document.createElement('button');send.type='button';send.className='authorized-continue';send.textContent='Перевести в прототипе';review.append(send);
     let sent=false;
@@ -385,12 +410,12 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       if(sent)return;
       const rubles=amountInRubles(Number(normalizedAmount()),amountCurrency);
       if(!ready()||rubles===null||rubles<=0)return;
-      const quote=international?internationalDemoQuote(rubles,source.balance):domesticQuote(rubles,source.balance,bank?.sameBank || false);
+      const quote=quoteForSource(rubles,bank?.sameBank || false);
       if(quote.insufficient){updateQuote();return;}
       sent=true;send.disabled=true;
       const last4=savedRecipient?.last4 || (savedRecipient?.subtitle.match(/(\d{4})$/)?.[1]) || input.value.replace(/\D/g,'').slice(-4);
       const recipientName=savedRecipient?.name || 'Получатель •• '+last4;
-      const operation={id:'sent-'+crypto.randomUUID(),cardId:source.id,name:recipientName,initials:savedRecipient?.initials||'П',color:'#d4b6ff',date:'Только что',amount:-rubles,enteredAmount:Number(normalizedAmount()),enteredCurrency:amountCurrency,amountRate:demoAmountRates[amountCurrency],fee:quote.fee,status:'Выполнен',last4,recipientId:savedRecipient?.id,transferKind:transferKind||'russia',receive:quote.receive,receiveCurrency:international?'UZS':undefined,bankInfo:bank};
+      const operation={id:'sent-'+crypto.randomUUID(),cardId:source.id,name:recipientName,initials:savedRecipient?.initials||'П',color:'#d4b6ff',date:'Только что',amount:-quote.debitAmount,currency:quote.debitCurrency,rubleAmount:rubles,enteredAmount:Number(normalizedAmount()),enteredCurrency:amountCurrency,amountRate:demoAmountRates[amountCurrency],fee:quote.fee,status:'Выполнен',last4,recipientId:savedRecipient?.id,transferKind:transferKind||'russia',receive:quote.receive,receiveCurrency:international?'UZS':undefined,bankInfo:bank};
       sessionStorage.setItem('c2c-pending-transfer',JSON.stringify({operation,total:quote.total,readyAt:Date.now()+5000}));
       form.hidden=true;
       screen.classList.add('is-processing');
@@ -410,7 +435,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       const success=document.createElement('section');success.className='transfer-success';
       screen.classList.add('is-success');
       success.setAttribute('role','status');
-      success.innerHTML='<div class="success-summary"><div class="success-check" aria-hidden="true">✓</div><h2>Перевод выполнен</h2><p class="success-amount">'+money(-operation.amount)+'</p><p class="success-destination">На карту •• '+last4+'</p>'+(international?'<p class="success-receive">Получателю '+new Intl.NumberFormat('ru-RU').format(quote.receive)+' UZS</p>':'')+'<p class="success-demo">В прототипе списания не выполняются</p></div><div class="success-actions"><button type="button" class="success-transfers authorized-continue">К переводам</button><button type="button" class="success-home">На главную</button></div>';
+      success.innerHTML='<div class="success-summary"><div class="success-check" aria-hidden="true">✓</div><h2>Перевод выполнен</h2><p class="success-amount">'+money(-operation.amount,operation.currency)+'</p><p class="success-destination">На карту •• '+last4+'</p>'+(international?'<p class="success-receive">Получателю '+new Intl.NumberFormat('ru-RU').format(quote.receive)+' UZS</p>':'')+'<p class="success-demo">В прототипе списания не выполняются</p></div><div class="success-actions"><button type="button" class="success-transfers authorized-continue">К переводам</button><button type="button" class="success-home">На главную</button></div>';
       screen.append(success);
       celebrate(screen);
       success.querySelector('.success-transfers').onclick=onTransfers || onBack;
