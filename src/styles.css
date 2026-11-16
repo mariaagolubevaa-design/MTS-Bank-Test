@@ -1375,7 +1375,7 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .home-screen .home-analytics .history-heading { padding:0; }
 .home-screen .home-analytics .all-history { transform:none; background:#f0ecff; }
 .home-analytics .analytics-tile { padding:8px 24px 8px 16px; }
-.home-analytics .analytics-tile p { width:94px; max-width:100%; margin:0; }
+.home-analytics .analytics-tile p { width:auto; max-width:none; margin:0; white-space:nowrap; }
 .home-analytics .analytics-tile span { white-space:nowrap; }
 .home-analytics .analytics-bars { width:49px; flex-shrink:0; }
 .home-analytics[data-state=filled] .analytics-bars i { background:linear-gradient(180deg,#8ebbef 0%,#bfc5f7 52.732%,#aab5f3 100%); }
