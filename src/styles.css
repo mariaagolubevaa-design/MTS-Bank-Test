@@ -1321,3 +1321,6 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 @media(hover:hover) {
   .guest-inline-source .amount-field:hover:not(:has(input[aria-invalid=true])) { border-color:#414141; }
 }
+
+.guest-inline-source .recipient-card-field:has(input[aria-invalid=true]) input,
+.guest-inline-source .amount-field:has(input[aria-invalid=true]) input { color:#ff1524; }
