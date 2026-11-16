@@ -1161,3 +1161,19 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .currency-select:focus-visible { outline:2px solid #735a91; outline-offset:1px; }
 .card-transfer .amount-conversion { display:grid; grid-template-columns:1fr auto; gap:24px 12px; margin:0 0 24px; padding-bottom:16px; border-bottom:1px solid #ebebee; }
 .amount-conversion dd { margin:0; text-align:right; }
+
+/* Recipient card — Figma 137:4095 and Default/Filled/Hover/Error variants. */
+.card-transfer--russia .recipient-card-field { border-color:var(--c2c-border-default); }
+.card-transfer--russia .recipient-card-field:focus-within { border-color:var(--c2c-border-default); }
+.card-transfer--russia .recipient-card-field input { color:#141414; width:calc(100% - 40px); }
+.card-transfer--russia .recipient-card-field .scan-card { right:16.5px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+.card-transfer--russia .recipient-card-field .scan-card img { width:24px; height:24px; }
+.card-transfer--russia .recipient-card-field.is-filled .scan-card,
+.card-transfer--russia .recipient-card-field:has(input[aria-invalid=true]) .scan-card { background:#e5e2f6; }
+.card-transfer--russia .recipient-card-field:has(input[aria-invalid=true]) { border-color:#b83d45; }
+.card-transfer--russia .recipient-card-field:has(input[aria-invalid=true]) input { color:#b83d45; }
+.card-transfer--russia .recipient-card-field:has(input[aria-invalid=true]) label { color:#141414; }
+.card-transfer--russia .destination-section>#destination-error { margin:4px 18px 0; font:500 11px/16px 'Inter Tight',sans-serif; }
+@media(hover:hover) and (pointer:fine) {
+  .card-transfer--russia .recipient-card-field:hover .scan-card { background:#e5e2f6; }
+}
