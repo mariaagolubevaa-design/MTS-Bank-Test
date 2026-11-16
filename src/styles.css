@@ -1347,3 +1347,11 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .direction-choice:disabled { color:#141414; opacity:1; }
 body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .guest-transfer-title>span { display:flex; align-items:center; gap:4px; }
+
+.guest-international-transfer .source-section { padding-top:7px; }
+.guest-international-transfer .guest-direction-icon { background:#f0ecff; }
+.direction-selected-mark[hidden] { display:none; }
+.guest-direction-sheet .direction-choice:focus-visible { outline:2px solid #6641fb; outline-offset:2px; }
+@media(max-width:375px) {
+  .guest-international-transfer .guest-transfer-title { font-size:clamp(20px,6vw,24px); }
+}
