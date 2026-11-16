@@ -19,6 +19,15 @@ export function createDemoCardDetails(onChange = () => {}) {
     expiryError.hidden=!invalid;
     expiryError.textContent=invalid?'Неверный срок действия':'';
   };
+  expiry.addEventListener('focus',()=>{
+    if(expiry.value)return;
+    expiry.value=expectedExpiry;
+    validateExpiry();onChange();
+  });
+  cvc.addEventListener('focus',()=>{
+    if(cvc.value)return;
+    cvc.value='123';onChange();
+  });
 
   cvc.oninput=()=>{cvc.value=cvc.value.replace(/\D/g,'').slice(0,3);onChange();};
   const picker=document.createElement('dialog');
