@@ -1152,3 +1152,8 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .card-transfer:has(.source-trigger[aria-expanded=true]) .destination-section,
 .card-transfer:has(.source-trigger[aria-expanded=true]) .inline-amount,
 .card-transfer:has(.source-trigger[aria-expanded=true]) .source-section>.card-details-row { visibility:hidden; }
+
+/* Reserve a stable slot for the country chevron instead of the native arrow. */
+.phone-country { position:relative; flex:0 1 44%; min-width:0; }
+.phone-country select { appearance:none; -webkit-appearance:none; width:100%; padding:12px 32px 12px 10px; }
+.phone-country>img { position:absolute; right:12px; top:50%; width:16px; height:16px; transform:translateY(-50%) rotate(180deg); pointer-events:none; }
