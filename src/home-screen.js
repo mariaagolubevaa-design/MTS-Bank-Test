@@ -1,6 +1,6 @@
 import { money, operationsFor } from './data.js';
 
-export const image = (name, className = '') => `<img class="${className}" src="./assets/images/${name}.${['profile', 'mastercard', 'home-profile'].includes(name) ? 'png' : 'svg'}" alt="" draggable="false">`;
+export const image = (name, className = '') => `<img class="${className}" src="./assets/images/${name}.${['profile', 'mastercard', 'home-profile', 'mir'].includes(name) ? 'png' : 'svg'}" alt="" draggable="false">`;
 export const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 /** Standalone authorized home. Navigation is injected for future auth routing. */
@@ -19,7 +19,7 @@ export function createHomeScreen({ data, onNavigate }) {
       <div class="card-track" tabindex="0" aria-label="Карты. Используйте стрелки для переключения">
         ${data.cards.map(card => `<article class="bank-card ${card.appearance === 'spectrum' ? 'bank-card--spectrum' : ''}" aria-label="${escapeHTML(card.name)} ${escapeHTML(card.last4)}">
           <div class="card-top"><span>${escapeHTML(card.id === 'debit' ? 'МТС Банк' : card.name)}</span><span>•• ${escapeHTML(card.last4)}</span></div>
-          <div class="card-bottom"><span class="balance ${card.balance === null ? 'balance-unknown' : ''}">${card.balance === null ? 'Баланс недоступен' : money(card.balance, card.currency)}</span>${image('mastercard')}</div>
+          <div class="card-bottom"><span class="balance ${card.balance === null ? 'balance-unknown' : ''}">${card.balance === null ? 'Баланс недоступен' : money(card.balance, card.currency)}</span>${card.id === 'debit' ? image('mir', 'card-payment-mir') : image('mastercard')}</div>
         </article>`).join('')}
       </div>
       <div class="pagination" ${data.cards.length <= 1 ? 'hidden' : ''}>
@@ -132,7 +132,7 @@ export function createHomeScreen({ data, onNavigate }) {
       b.innerHTML='<span class="avatar" style="--avatar:'+r.color+'">'+escapeHTML(r.initials)+'</span><span class="recipient-name">'+escapeHTML(r.name)+'</span><span class="recipient-subtitle">'+escapeHTML(r.subtitle)+'</span>';
       recipients.insertBefore(b,addButton);
     });
-    track.innerHTML = data.cards.map(card => `<article class="bank-card ${card.appearance === 'spectrum' ? 'bank-card--spectrum' : ''}" aria-label="${escapeHTML(card.name)} ${escapeHTML(card.last4)}"><div class="card-top"><span>${escapeHTML(card.id === 'debit' ? 'МТС Банк' : card.name)}</span><span>•• ${escapeHTML(card.last4)}</span></div><div class="card-bottom"><span class="balance ${card.balance === null ? 'balance-unknown' : ''}">${card.balance === null ? 'Баланс недоступен' : money(card.balance, card.currency)}</span>${image('mastercard')}</div></article>`).join('');
+    track.innerHTML = data.cards.map(card => `<article class="bank-card ${card.appearance === 'spectrum' ? 'bank-card--spectrum' : ''}" aria-label="${escapeHTML(card.name)} ${escapeHTML(card.last4)}"><div class="card-top"><span>${escapeHTML(card.id === 'debit' ? 'МТС Банк' : card.name)}</span><span>•• ${escapeHTML(card.last4)}</span></div><div class="card-bottom"><span class="balance ${card.balance === null ? 'balance-unknown' : ''}">${card.balance === null ? 'Баланс недоступен' : money(card.balance, card.currency)}</span>${card.id === 'debit' ? image('mir', 'card-payment-mir') : image('mastercard')}</div></article>`).join('');
     screen.querySelector('.next-card').innerHTML = data.cards.map((card, i) => `<span data-dot="${i}"></span>`).join('');
     screen.querySelector('.pagination').hidden = data.cards.length <= 1;
     active = Math.max(0, data.cards.findIndex(c => c.id === activeId));
