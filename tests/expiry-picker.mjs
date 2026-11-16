@@ -1,0 +1,32 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch();
+try {
+ const page=await browser.newPage({viewport:{width:402,height:874}});
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://localhost:5173');await page.locator('.welcome-guest').click();
+ const expiry=page.locator('.source-section [data-expiry]');
+ await expiry.click();
+ const dialog=page.locator('.source-section .expiry-picker');
+ await dialog.waitFor({state:'visible'});
+ const month=dialog.getByRole('listbox',{name:'Месяц',exact:true});
+ const year=dialog.getByRole('listbox',{name:'Год',exact:true});
+ await month.focus();await page.keyboard.press('Home');await page.keyboard.press('ArrowDown');
+ await year.focus();await page.keyboard.press('Home');await page.keyboard.press('ArrowDown');
+ const expectedYear=String(new Date().getFullYear()+1).slice(-2);
+ await dialog.locator('.expiry-confirm').click();
+ assert.equal(await expiry.inputValue(),'02/'+expectedYear);
+ await page.locator('#guest-source').fill('4111111111111111');
+ await page.locator('.source-section .card-details-row').hover();
+ assert.equal(await expiry.inputValue(),'02/'+expectedYear);
+ await expiry.click();await month.evaluate(el=>{el.scrollTop=6*44;el.dispatchEvent(new Event('scroll'));});
+ await page.waitForTimeout(150);
+ assert.equal(await month.locator('[aria-selected=true]').textContent(),'07');
+ await page.screenshot({path:'screenshots/expiry-picker.png'});
+ await dialog.locator('.expiry-cancel').click();assert.equal(await expiry.inputValue(),'02/'+expectedYear);
+ await expiry.focus();await page.keyboard.press('Enter');await month.focus();await page.keyboard.press('Home');await year.focus();await page.keyboard.press('Home');
+ if(new Date().getMonth()>0) assert.ok(await dialog.locator('.expiry-confirm').isDisabled());
+ await page.keyboard.press('Escape');assert.equal(await dialog.isVisible(),false);
+ assert.equal(await expiry.inputValue(),'02/'+expectedYear);
+ assert.deepEqual(errors,[]);console.log('PASS: expiry wheel keyboard, scrolling, apply, cancel, expired date and persistence on hover');
+} finally {await browser.close();}
