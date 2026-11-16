@@ -78,7 +78,7 @@ function openScreen({ title, recipient, operation, card, transferKind, fromTrans
   detail.classList.toggle('transfer-details', !!operation || title === 'Детали перевода');
   let content = '<p>Этот экран появится позже.</p>';
   if (recipient) content = `<div class="avatar detail-avatar" style="--avatar:${recipient.color}">${recipient.logo ? image(recipient.logo) : escapeHTML(recipient.initials)}</div><h2>${escapeHTML(recipient.name)}</h2><p>${escapeHTML(recipient.destination)}</p><p>С карты *${escapeHTML(card.last4)}</p><p class="demo-note">Демонстрационный перевод. Списаний не будет.</p>`;
-  if (operation) content = `<h2>${escapeHTML(operation.name)}</h2><p class="detail-amount">${operation.amount < 0 ? '−' : '+'}${money(operation.amount)}</p><dl><dt>Дата</dt><dd>${escapeHTML(operation.date)}</dd><dt>Статус</dt><dd>${escapeHTML(operation.status)}</dd><dt>Карта</dt><dd>*${escapeHTML(card.last4)}</dd></dl><p class="demo-note">Демонстрационная операция</p>`;
+  if (operation) content = `<h2>${escapeHTML(operation.name)}</h2><p class="detail-amount">${operation.amount < 0 ? '−' : '+'}${money(operation.amount, operation.currency)}</p><dl><dt>Дата</dt><dd>${escapeHTML(operation.date)}</dd><dt>Статус</dt><dd>${escapeHTML(operation.status)}</dd><dt>Карта</dt><dd>*${escapeHTML(card.last4)}</dd></dl><p class="demo-note">Демонстрационная операция</p>`;
   detail.innerHTML = `<button class="back detail-back" aria-label="Назад"><img src="./assets/images/back-chevron.svg" alt=""></button><h1 tabindex="-1">${escapeHTML(title)}</h1><section class="detail-content">${content}</section>`;
   if(operation) {
     const repeat=document.createElement('button');repeat.className='authorized-continue';repeat.textContent='Повторить перевод';

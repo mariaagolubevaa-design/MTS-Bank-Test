@@ -55,11 +55,11 @@ export function createHomeScreen({ data, onNavigate }) {
   const track = screen.querySelector('.card-track');
   const list = screen.querySelector('.operations');
   function renderOperations() {
-    list.innerHTML = operationsFor(data, data.cards[active].id).map(item => `
+    list.innerHTML = operationsFor(data, data.cards[active].id).slice(0, 2).map(item => `
       <button class="operation" data-operation="${escapeHTML(item.id)}">
         <span class="avatar" style="--avatar:${item.color}">${escapeHTML(item.initials)}</span>
         <span class="operation-copy"><span class="operation-name">${escapeHTML(item.name)}</span><span class="operation-date">${escapeHTML(item.date)}</span></span>
-        <span class="operation-amount">${item.amount < 0 ? '−' : '+'}${money(item.amount)}</span>
+        <span class="operation-amount ${item.amount > 0 ? 'operation-amount--incoming' : ''}">${item.amount < 0 ? '−' : '+ '}${money(item.amount, item.currency)}</span>
         <span class="divider" aria-hidden="true"></span>
       </button>`).join('') || '<p class="empty-history">Пока нет операций</p>';
   }

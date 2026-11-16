@@ -11,8 +11,8 @@ export const demoData = {
     { id: 'marina', name: 'Марина Б.', subtitle: 'RU •• 6382', initials: 'М', color: '#e3e3e8', destination: 'RU •• 6382' },
   ],
   transactions: [
-    { id: 't1', cardId: 'debit', name: 'Татьяна Ш.', initials: 'ТШ', color: '#d4b6ff', date: 'Сегодня, 14:32', amount: -5000, status: 'Выполнен' },
-    { id: 't2', cardId: 'debit', name: 'Павел Г.', initials: 'ПГ', color: '#fb9338', date: 'Вчера, 19:08', amount: -12500, status: 'Выполнен' },
+    { id: 't1', cardId: 'debit', name: 'Марина Б.', initials: 'ТШ', color: '#e3e3e8', date: 'Сегодня, 14:32', amount: -150, currency: 'USD', status: 'Выполнен' },
+    { id: 't2', cardId: 'debit', name: 'Павел Г.', initials: 'ПГ', color: '#e3e3e8', date: 'Вчера, 19:08', amount: 500, currency: 'USD', status: 'Выполнен' },
     { id: 't3', cardId: 'debit', name: 'Татьяна Ш.', initials: 'ТШ', color: '#c095fd', date: '30 октября', amount: -3000, status: 'Выполнен' },
     { id: 't4', cardId: 'second', name: 'Мама', initials: 'М', color: '#d4b6ff', date: 'Сегодня, 10:15', amount: -1500, status: 'Выполнен' },
   ],
