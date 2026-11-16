@@ -1252,3 +1252,18 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .expiry-picker .expiry-confirm { width:100%; height:48px; border-radius:16px; color:white; background:#141414; font:500 15px/18px 'Inter Tight',sans-serif; }
 .expiry-picker .expiry-confirm:disabled { background:#ebebee; color:#72727c; }
 .expiry-picker .expiry-cancel { display:block; margin:12px auto 0; padding:8px 16px; background:transparent; color:#6641fb; }
+
+/* Sender-card Default / Hover / Filled / Error — Figma 169:5795, 101:337. */
+.guest-inline-source .guest-sender-field .scan-card { background:transparent; }
+@media(hover:hover) {
+  .guest-inline-source .guest-sender-field:hover .scan-card { background:#e5e2f6; }
+}
+.guest-inline-source .guest-sender-field .sender-card-clear { position:absolute; width:24px; height:24px; right:16px; top:50%; transform:translateY(-50%); padding:0; background:transparent; }
+.guest-inline-source .sender-card-clear img { display:block; width:24px; height:24px; }
+.guest-inline-source .guest-sender-field .scan-card[hidden],
+.guest-inline-source .sender-card-clear[hidden] { display:none; }
+.guest-inline-source .guest-sender-field:has(input[aria-invalid=true]) { border-color:#ff1524; }
+.guest-inline-source .guest-sender-field:has(input[aria-invalid=true]) input { color:#ff1524; }
+.guest-inline-source .guest-sender-field:has(input[aria-invalid=true]) label { color:#141414; }
+.guest-inline-source .guest-sender-field:has(input[aria-invalid=true]) .scan-card { background:#e5e2f6; }
+.guest-inline-source #guest-source-error { margin:4px 18px 0; color:#b83d45; font:500 11px/16px 'Inter Tight',sans-serif; }

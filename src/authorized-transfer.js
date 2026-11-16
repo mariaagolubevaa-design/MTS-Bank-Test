@@ -112,6 +112,17 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     sourceSection.insertAdjacentHTML('afterbegin', '<h2>Откуда списать</h2><div class="destination-field recipient-card-field guest-sender-field"><label for="guest-source">Номер карты отправителя</label><input id="guest-source" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" aria-describedby="guest-source-error"><button type="button" class="scan-card guest-source-scan" aria-label="Сканировать карту отправителя"><img src="./assets/images/recipient-scan.svg" alt=""></button></div><p id="guest-source-error" class="field-error" role="alert"></p>');
     const sender=sourceSection.querySelector('#guest-source');
     const senderError=sourceSection.querySelector('#guest-source-error');
+    const senderField=sender.closest('.destination-field');
+    senderField.insertAdjacentHTML('beforeend','<button type="button" class="sender-card-clear" aria-label="Очистить номер карты отправителя" hidden><img src="./assets/images/sender-card-clear.svg" alt=""></button>');
+    const senderClear=senderField.querySelector('.sender-card-clear');
+    const syncSenderState=()=>{
+      const invalid=sender.getAttribute('aria-invalid')==='true';
+      senderField.classList.toggle('is-filled',!!sender.value);
+      senderClear.hidden=!sender.value||invalid;
+      senderField.querySelector('.scan-card').hidden=!!sender.value&&!invalid;
+    };
+    senderClear.onclick=()=>{sender.value='';sender.oninput();sender.focus();};
+
     sourceDetails.querySelectorAll('input').forEach(el=>el.placeholder='');
     sender.oninput=()=>{
       sender.value=sender.value.replace(/\D/g,'').slice(0,19).replace(/(.{4})/g,'$1 ').trim();
@@ -120,9 +131,9 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       source=available?{id:guestInlineId,name:'Карта отправителя',last4:sender.value.replace(/\D/g,'').slice(-4),balance:null,currency:'RUB',external:true}:null;
       senderError.textContent=validCard(sender.value)&&!available?demoCardAvailability(sender.value).message:'';
       sender.setAttribute('aria-invalid',String(!!senderError.textContent));
-      detectBank();update();
+      syncSenderState();detectBank();update();
     };
-    sender.onblur=()=>{if(sender.value&&!validCard(sender.value)){senderError.textContent='Неверный номер карты';sender.setAttribute('aria-invalid','true');}};
+    sender.onblur=()=>{if(sender.value&&!validCard(sender.value)){senderError.textContent='Неверный номер карты';sender.setAttribute('aria-invalid','true');}syncSenderState();};
     screen.querySelector('.destination-section').insertAdjacentHTML('afterbegin','<h2>Куда перевести</h2>');
   }
 
