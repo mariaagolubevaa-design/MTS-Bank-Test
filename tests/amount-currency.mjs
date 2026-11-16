@@ -1,0 +1,54 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import {mkdir} from 'node:fs/promises';
+const browser=await chromium.launch();
+try {
+ const page=await browser.newPage({viewport:{width:402,height:874}});
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://localhost:5173');
+ await page.evaluate(()=>{sessionStorage.setItem('c2c-auth','true');sessionStorage.setItem('c2c-current-page',JSON.stringify({title:'Начать перевод',recipientId:'mom'}));});await page.reload();await page.evaluate(()=>document.fonts.ready);
+ const select=page.getByRole('combobox',{name:'Валюта перевода'});
+ assert.equal(await select.inputValue(),'RUB');assert.equal(await select.locator('option').count(),3);
+ await page.locator('.source-trigger').click();await page.locator('[data-source="debit"]').click();
+ assert.equal(await select.inputValue(),'RUB');
+ await select.selectOption('USD');await page.locator('#transfer-amount').fill('100');
+ assert.equal(await page.locator('[data-amount-rate]').innerText(),'1 $ = 82,7 ₽');
+ assert.equal(await page.locator('[data-amount-rubles]').innerText(),'8 270 ₽');
+ assert.equal(await page.locator('[data-fee]').innerText(),'124,05 ₽');
+ assert.equal(await page.locator('[data-total]').innerText(),'8 394,05 ₽');
+ assert.ok(await page.locator('.recipient-next button').isEnabled());
+ await mkdir('screenshots',{recursive:true});
+ await page.locator('.inline-amount h2').click();
+ await page.screenshot({path:'screenshots/transfer-currency-usd-402x874.png'});
+ await select.selectOption('EUR');
+ assert.equal(await page.locator('#transfer-amount').inputValue(),'100');
+ assert.equal(await page.locator('[data-amount-rate]').innerText(),'1 € = 90,98 ₽');
+ assert.equal(await page.locator('[data-amount-rubles]').innerText(),'9 098 ₽');
+ assert.equal(await page.locator('[data-total]').innerText(),'9 234,47 ₽');
+ assert.equal(await page.locator('#transfer-amount').getAttribute('aria-label'),'Сумма перевода в евро');
+ await page.screenshot({path:'screenshots/transfer-currency-eur-402x874.png'});
+ await select.selectOption('RUB');assert.equal(await page.locator('[data-total]').innerText(),'150 ₽');assert.ok(await page.locator('.amount-conversion').isHidden());
+ await select.selectOption('USD');await page.locator('#transfer-amount').fill('150');
+ assert.ok(await page.locator('.recipient-next button').isDisabled());assert.match(await page.locator('#amount-error').innerText(),/Недостаточно средств/);
+ await page.locator('#transfer-amount').fill('100');
+ for(const width of [320,360,375,402,430,1280]) {
+ await page.setViewportSize({width,height:874});
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth===innerWidth));
+ const bounds=await select.boundingBox(),amount=await page.locator('#transfer-amount').boundingBox(),field=await page.locator('.amount-field').boundingBox();
+ assert.ok(bounds.x>=amount.x+amount.width&&bounds.x+bounds.width<=field.x+field.width-32);
+ if(width===320)await page.screenshot({path:'screenshots/transfer-currency-usd-320x874.png'});
+ }
+ await page.setViewportSize({width:402,height:874});
+ await page.locator('.recipient-next button').click();
+ assert.match(await page.locator('.review-breakdown').innerText(),/100 \$/);
+ assert.match(await page.locator('.review-receive').innerText(),/8 270 ₽/);
+ await page.locator('.transfer-review button').click();
+ await page.locator('.transfer-success').waitFor({timeout:8000});
+ const wallet=await page.evaluate(async()=>{const {demoData}=await import('/src/data.js');return {balance:demoData.cards[0].balance,operation:demoData.transactions[0]};});
+ assert.equal(wallet.balance,4105.95);assert.equal(wallet.operation.amount,-8270);assert.equal(wallet.operation.fee,124.05);assert.equal(wallet.operation.enteredAmount,100);assert.equal(wallet.operation.enteredCurrency,'USD');
+ await page.locator('.success-home').click();await page.locator('[data-tab="Переводы"]').click();await page.locator('[data-option="russia"]').click();
+ await select.selectOption('EUR');
+ await page.locator('.source-trigger').click();await page.locator('[data-source="debit"]').click();assert.equal(await select.inputValue(),'RUB');
+ assert.deepEqual(errors,[]);
+ console.log('PASS: RUB default, USD/EUR selection, user demo rates, ruble fees/debit, insufficient funds, six widths, confirmation and successful currency transfer.');
+} finally {await browser.close();}

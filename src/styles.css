@@ -1153,3 +1153,11 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 
 /* Original Mir artwork includes its own transparent padding (Figma 161:4193). */
 .home-screen .card-bottom .card-payment-mir { position:absolute; right:-25px; bottom:-9px; width:107px; height:60px; margin:0; object-fit:cover; }
+
+/* The currency selector shares the amount's baseline and leaves room for clear. */
+.currency-picker { position:relative; flex:0 0 44px; height:28px; }
+.card-transfer .currency-select { appearance:none; -webkit-appearance:none; width:44px; height:44px; margin:-8px 0; padding:8px 20px 8px 0; border:0; border-radius:6px; color:#141414; background:transparent; font:500 15px/28px 'Inter Tight',sans-serif; cursor:pointer; }
+.currency-picker>img { position:absolute; right:4px; top:50%; width:12px; height:12px; transform:translateY(-50%) rotate(180deg); pointer-events:none; }
+.currency-select:focus-visible { outline:2px solid #735a91; outline-offset:1px; }
+.card-transfer .amount-conversion { display:grid; grid-template-columns:1fr auto; gap:24px 12px; margin:0 0 24px; padding-bottom:16px; border-bottom:1px solid #ebebee; }
+.amount-conversion dd { margin:0; text-align:right; }

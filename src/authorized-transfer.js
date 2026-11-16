@@ -1,3 +1,4 @@
+import { demoAmountRates, amountSymbols, amountCurrencyNames, amountInRubles, enteredMoney, defaultAmountCurrency } from './amount-currency.js';
 import { createProcessingScreen } from './processing-screen.js';
 import { createDemoCardDetails } from './card-details.js';
 import { demoCardAvailability } from './card-availability.js';
@@ -32,6 +33,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   const screen = document.createElement('main');
   screen.className = 'authorized-transfer card-transfer';
   let source = guest ? cards[0] : repeatAmount != null ? cards.find(c => c.id === card?.id) || null : null;
+  let amountCurrency=defaultAmountCurrency(source);
   let savedRecipient = recipient || null;
   let bank = savedRecipient?.bankInfo || null;
   let lookupVersion = 0;
@@ -52,7 +54,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
         </div>
       </section>
       <section class="destination-section"><div class="destination-field"><label for="destination-number">Номер карты получателя</label><input id="destination-number" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" aria-describedby="destination-error"><button type="button" class="scan-card" aria-label="Сканировать карту"><img src="./assets/images/card-scan.svg" alt=""></button></div><p id="destination-error" class="field-error" role="alert"></p><p class="recipient-bank" role="status"></p><p class="card-availability quote-note" role="status" aria-live="polite"></p></section>
-      <section class="inline-amount"><h2>Сумма</h2><div class="destination-field amount-field"><label for="transfer-amount">Сумма перевода</label><div class="amount-input-row"><input id="transfer-amount" class="transfer-amount-inline" inputmode="decimal" placeholder="0" aria-describedby="amount-error"><span class="amount-currency">₽</span></div><button type="button" class="clear-amount" aria-label="Очистить сумму" hidden>×</button></div><p id="amount-error" class="field-error" role="alert"></p><button type="button" class="add-shortfall" hidden></button></section><div class="transfer-footer"><div class="inline-quote" hidden>${international ? '<dl class="quote-summary international-summary"><dt>Курс перевода</dt><dd data-rate>—</dd><dt>Получатель получит</dt><dd data-receive>—</dd></dl>' : ''}<dl class="quote-summary"><dt>Комиссия</dt><dd data-fee>—</dd><dt>Всего к списанию</dt><dd data-total>—</dd></dl></div>
+      <section class="inline-amount"><h2>Сумма</h2><div class="destination-field amount-field"><label for="transfer-amount">Сумма перевода</label><div class="amount-input-row"><input id="transfer-amount" class="transfer-amount-inline" inputmode="decimal" placeholder="0" aria-describedby="amount-error"><span class="currency-picker"><select class="amount-currency currency-select" aria-label="Валюта перевода"><option value="RUB" aria-label="Российский рубль">₽</option><option value="USD" aria-label="Доллар США">$</option><option value="EUR" aria-label="Евро">€</option></select><img src="./assets/images/card-source-chevron.svg" alt="" aria-hidden="true"></span></div><button type="button" class="clear-amount" aria-label="Очистить сумму" hidden>×</button></div><p id="amount-error" class="field-error" role="alert"></p><button type="button" class="add-shortfall" hidden></button></section><div class="transfer-footer"><div class="inline-quote" hidden>${international ? '<dl class="quote-summary international-summary"><dt>Курс перевода</dt><dd data-rate>—</dd><dt>Получатель получит</dt><dd data-receive>—</dd></dl>' : ''}<dl class="amount-conversion" hidden><dt>Демо-курс</dt><dd data-amount-rate></dd><dt>Сумма в рублях</dt><dd data-amount-rubles></dd></dl><dl class="quote-summary"><dt>Комиссия</dt><dd data-fee>—</dd><dt>Всего к списанию</dt><dd data-total>—</dd></dl></div>
       <div class="recipient-next"><button class="authorized-continue" disabled>Продолжить</button></div>
       </div>
     <details class="quote-disclosure" hidden><summary>Тариф и условия · демо</summary><p class="quote-note"></p></details>
@@ -81,6 +83,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     button.innerHTML=sourceOption(newCard).replace(/^<button[^>]*>|<\/button>$/g,'');
     options.insertBefore(button,options.querySelector('[data-add-card]'));
     source=newCard;
+    if(amountCurrency!=='RUB')amountInput.value='';
+    amountCurrency='RUB';
     sourceDetails.dispatchEvent(new Event('pointerenter'));
 
     addInput.value='';addDetails.clearDemo();addError.textContent='';addDialog.close();update();
@@ -142,9 +146,13 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       addDialog.showModal();return;
     }
     const b=e.target.closest('[data-source]'); if(!b)return;
-    const previousCurrency=source?.currency || 'RUB';
+    const previousId=source?.id;
     source=cards.find(c=>c.id===b.dataset.source);
-    if(previousCurrency !== (source.currency || 'RUB')) amountInput.value='';
+    if(previousId!==source.id){
+      const preferred=defaultAmountCurrency(source);
+      if(amountCurrency!==preferred)amountInput.value='';
+      amountCurrency=preferred;
+    }
 
     options.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.focus();update();
   };
@@ -191,6 +199,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   dialog.querySelector('button').onclick=()=>dialog.close();
   screen.querySelector('.authorized-back').onclick=onBack;
   const amountInput=screen.querySelector('#transfer-amount');
+  const currencySelect=screen.querySelector('.currency-select');
+  currencySelect.onchange=()=>{amountCurrency=currencySelect.value;updateQuote();};
   const normalizedAmount=()=>amountInput.value.replace(/\s/g,'').replace(',','.');
   const amountError=screen.querySelector('#amount-error');
   const clearAmount=screen.querySelector('.clear-amount');
@@ -231,9 +241,9 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     input.closest('.destination-field').classList.toggle('is-filled',!!input.value);
     amountInput.closest('.destination-field').classList.toggle('is-filled',!!amountInput.value);
     screen.querySelector('.transfer-review')?.remove();
-    const currency=source?.currency || 'RUB';
-    screen.querySelector('.amount-currency').textContent=currency==='USD'?'$':'₽';
-    amountInput.setAttribute('aria-label',currency==='USD'?'Сумма перевода в долларах США':'Сумма перевода в рублях');
+    currencySelect.value=amountCurrency;
+    currencySelect.title='Валюта перевода: '+amountCurrency;
+    amountInput.setAttribute('aria-label','Сумма перевода в '+amountCurrencyNames[amountCurrency]);
     clearAmount.hidden=amountInput.value.length===0;
     const measure=document.createElement('canvas').getContext('2d');
     measure.font=getComputedStyle(amountInput).font;
@@ -244,7 +254,15 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     const effectiveBank=bank || {country:international?'UZ':'RU',sameBank:false};
     const bankSupported=international ? effectiveBank.country==='UZ' : effectiveBank.country==='RU';
     const supported=source&&(!source.currency||source.currency==='RUB')&&bankSupported;
-    currentQuote=valid&&supported&&availability?.available?(international?internationalDemoQuote(value,source.balance):domesticQuote(value,source.balance,effectiveBank.sameBank)):null;
+    const rubles=valid?amountInRubles(value,amountCurrency):null;
+    currentQuote=valid&&rubles>0&&supported&&availability?.available?{
+      ...(international?internationalDemoQuote(rubles,source.balance):domesticQuote(rubles,source.balance,effectiveBank.sameBank)),
+      rubles,enteredAmount:value,enteredCurrency:amountCurrency,amountRate:demoAmountRates[amountCurrency],
+    }:null;
+    const conversion=quoteBox.querySelector('.amount-conversion');
+    conversion.hidden=amountCurrency==='RUB';
+    conversion.querySelector('[data-amount-rate]').textContent='1 '+amountSymbols[amountCurrency]+' = '+money(demoAmountRates[amountCurrency]);
+    conversion.querySelector('[data-amount-rubles]').textContent=currentQuote?money(currentQuote.rubles):!raw?'0 ₽':'—';
     if(international){quoteBox.querySelector('[data-rate]').textContent=currentQuote?'1 ₽ = 150 UZS':'—';quoteBox.querySelector('[data-receive]').textContent=currentQuote?new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(currentQuote.receive)+' UZS':'—';}
     const showQuote=ready() && !!supported;
     quoteBox.hidden=!showQuote;
@@ -274,18 +292,21 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     e.preventDefault();if(next.disabled||!currentQuote)return;
     screen.querySelector('.transfer-review')?.remove();
     const review=document.createElement('section');review.className='transfer-review';
-    review.innerHTML='<h2>Проверьте перевод</h2><div class="review-recipient"><span>Получатель</span><strong>Карта •• '+(savedRecipient?savedRecipient.subtitle.slice(-4):input.value.replace(/\D/g,'').slice(-4))+'</strong></div><dl class="review-breakdown"><dt>Сумма перевода</dt><dd>'+money(Number(normalizedAmount()))+'</dd><dt>Комиссия</dt><dd>'+money(currentQuote.fee)+'</dd></dl><div class="review-total"><span>Всего к списанию</span><strong>'+money(currentQuote.total)+'</strong></div><p class="review-demo-note">В прототипе списания не выполняются</p>';
+    review.innerHTML='<h2>Проверьте перевод</h2><div class="review-recipient"><span>Получатель</span><strong>Карта •• '+(savedRecipient?savedRecipient.subtitle.slice(-4):input.value.replace(/\D/g,'').slice(-4))+'</strong></div><dl class="review-breakdown"><dt>Сумма перевода</dt><dd>'+enteredMoney(currentQuote.enteredAmount,currentQuote.enteredCurrency)+'</dd><dt>Комиссия</dt><dd>'+money(currentQuote.fee)+'</dd></dl><div class="review-total"><span>Всего к списанию</span><strong>'+money(currentQuote.total)+'</strong></div><p class="review-demo-note">В прототипе списания не выполняются</p>';
+    if(amountCurrency!=='RUB'){const converted=document.createElement('p');converted.className='review-receive';converted.textContent='Сумма в рублях: '+money(currentQuote.rubles)+' · демо-курс 1 '+amountSymbols[amountCurrency]+' = '+money(currentQuote.amountRate);review.append(converted);}
     if(international){const received=document.createElement('p');received.className='review-receive';received.textContent='Получатель получит '+new Intl.NumberFormat('ru-RU').format(currentQuote.receive)+' UZS · демонстрационный курс 1 ₽ = 150 UZS';review.append(received);}
     const send=document.createElement('button');send.type='button';send.className='authorized-continue';send.textContent='Перевести в прототипе';review.append(send);
     let sent=false;
     send.onclick=async()=>{
       if(sent)return;
-      const quote=international?internationalDemoQuote(Number(normalizedAmount()),source.balance):domesticQuote(Number(normalizedAmount()),source.balance,bank?.sameBank || false);
+      const rubles=amountInRubles(Number(normalizedAmount()),amountCurrency);
+      if(!ready()||rubles===null||rubles<=0)return;
+      const quote=international?internationalDemoQuote(rubles,source.balance):domesticQuote(rubles,source.balance,bank?.sameBank || false);
       if(quote.insufficient){updateQuote();return;}
       sent=true;send.disabled=true;
       const last4=savedRecipient?.last4 || (savedRecipient?.subtitle.match(/(\d{4})$/)?.[1]) || input.value.replace(/\D/g,'').slice(-4);
       const recipientName=savedRecipient?.name || 'Получатель •• '+last4;
-      const operation={id:'sent-'+crypto.randomUUID(),cardId:source.id,name:recipientName,initials:savedRecipient?.initials||'П',color:'#d4b6ff',date:'Только что',amount:-Number(normalizedAmount()),fee:quote.fee,status:'Выполнен',last4,recipientId:savedRecipient?.id,transferKind:transferKind||'russia',receive:quote.receive,receiveCurrency:international?'UZS':undefined,bankInfo:bank};
+      const operation={id:'sent-'+crypto.randomUUID(),cardId:source.id,name:recipientName,initials:savedRecipient?.initials||'П',color:'#d4b6ff',date:'Только что',amount:-rubles,enteredAmount:Number(normalizedAmount()),enteredCurrency:amountCurrency,amountRate:demoAmountRates[amountCurrency],fee:quote.fee,status:'Выполнен',last4,recipientId:savedRecipient?.id,transferKind:transferKind||'russia',receive:quote.receive,receiveCurrency:international?'UZS':undefined,bankInfo:bank};
       sessionStorage.setItem('c2c-pending-transfer',JSON.stringify({operation,total:quote.total,readyAt:Date.now()+5000}));
       form.hidden=true;
       screen.classList.add('is-processing');
