@@ -1095,3 +1095,60 @@ body:has(.is-processing) .home-indicator {
   .transfer-processing .loading-globe { animation:none; }
   .transfer-processing .processing-track img { animation:loading-soft-pulse 1.8s linear infinite alternate; }
 }
+
+/* Card transfer states — Figma 137:4089, 137:3999, 140:2165, 140:2385. */
+body:has(.card-transfer:not(.is-processing)) #app { width:100%; transform:none; background:white; }
+body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inset-bottom)); padding-top:20px; }
+.card-transfer { padding:16px 16px 67px; }
+.card-transfer>h1 { margin:4px 0 16px; font:500 24px/25px 'Inter Tight',sans-serif; }
+.card-transfer>form { position:relative; display:flex; flex-direction:column; }
+.card-transfer.has-quote>form { min-height:calc(100dvh - 230px - env(safe-area-inset-top)); }
+.card-transfer .source-trigger { gap:4px; border-color:var(--c2c-border-default); }
+.card-transfer .field-caption,.card-transfer .destination-field label { font:500 11px/16px 'Inter Tight',sans-serif; color:#141414; }
+.card-transfer .source-value { color:#d5d5da; }
+.card-transfer .has-source .field-caption,.card-transfer .is-filled label { color:#d5d5da; }
+.card-transfer .has-source .source-value { color:#141414; }
+.card-transfer .source-chevron { width:24px; height:24px; top:23px; right:16px; transform:rotate(180deg); }
+.card-transfer .source-trigger[aria-expanded=true] { height:84px; padding:16px; gap:9px; }
+.card-transfer .source-trigger[aria-expanded=true] .source-chevron { top:42px; transform:none; }
+.card-transfer .source-options { top:92px; padding:7px; border:1px solid var(--c2c-border-default); box-shadow:none; }
+.card-transfer .source-options button { height:72px; padding:12px; display:flex; gap:12px; align-items:center; border-radius:14px; }
+.card-transfer .source-options button+button { margin-top:4px; }
+.card-transfer .source-options [aria-pressed=true] { background:#e5e2f6; }
+.source-bank-icon { width:32px; height:32px; display:grid; place-items:center; flex-shrink:0; }
+.source-bank-icon>img { width:32px; height:32px; border-radius:50%; }
+.source-bank-icon.is-international { background:#ffecbd; border-radius:50%; }
+.source-bank-icon.is-international>img { width:24px; height:24px; }
+.source-option-copy { display:flex; flex:1; min-width:0; flex-direction:column; gap:4px; color:#141414; font-size:15px; line-height:18px; }
+.source-option-copy>span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.card-transfer .source-options small { margin:0; color:#414141; font-size:11px; line-height:16px; }
+.source-radio { width:24px; height:24px; }
+.source-add-icon { width:40px; height:30px; margin-right:0; }
+.card-transfer .destination-section { margin-top:24px; position:relative; }
+.card-transfer .destination-field { height:72px; padding:12px 16px; display:flex; flex-direction:column; gap:4px; }
+.card-transfer .destination-field input { padding:0; margin:0; }
+.card-transfer .destination-field input::placeholder { color:#d5d5da; opacity:1; }
+.card-transfer .recipient-bank,.card-transfer .card-availability { position:absolute; top:76px; left:0; right:0; margin:0; font-size:11px; line-height:16px; }
+.card-transfer .recipient-bank:not(:empty)+.card-availability { top:94px; }
+.card-transfer .card-availability:empty { display:none; }
+.card-transfer .destination-section>.field-error { margin:8px 0 0; }
+.card-transfer .destination-section:has(input[aria-invalid=true]) .card-availability { position:static; margin-top:8px; color:#b83d45; }
+.card-transfer .inline-amount { margin-top:48px; }
+.card-transfer .inline-amount h2 { height:25px; line-height:25px; margin:0 0 16px; }
+.card-transfer .amount-field { gap:4px; }
+.card-transfer .amount-input-row { flex-shrink:0; }
+.card-transfer .transfer-footer { margin-top:52px; }
+.card-transfer.has-quote .transfer-footer { margin-top:auto; padding-top:32px; }
+.card-transfer .inline-quote { margin:0; padding:0; font-size:15px; line-height:18px; }
+.card-transfer .quote-summary { margin:0; gap:24px 12px; }
+.card-transfer .recipient-next { margin:0; }
+.card-transfer.has-quote .recipient-next { margin-top:32px; }
+.card-transfer .authorized-continue:disabled { color:#414141; }
+.card-transfer .quote-disclosure { position:absolute; top:100%; left:0; right:0; margin-top:12px; font-size:11px; line-height:16px; color:#72727c; }
+.card-transfer .quote-disclosure summary { cursor:pointer; }
+.card-transfer .quote-disclosure p { padding:8px 0 16px; }
+.card-transfer .international-summary { margin-bottom:24px; padding-bottom:16px; }
+.card-transfer .clear-amount { font-size:20px; }
+.card-transfer:has(.source-trigger[aria-expanded=true]) .destination-section,
+.card-transfer:has(.source-trigger[aria-expanded=true]) .inline-amount,
+.card-transfer:has(.source-trigger[aria-expanded=true]) .source-section>.card-details-row { visibility:hidden; }
