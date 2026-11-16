@@ -1,0 +1,16 @@
+import {chromium} from 'playwright';import assert from 'node:assert/strict';
+const browser=await chromium.launch();
+try{
+ const page=await browser.newPage({viewport:{width:402,height:874}});await page.goto('http://localhost:5173');await page.locator('.welcome-guest').click();
+ await page.locator('#guest-source').fill('9112381015213812');
+ const trigger=page.locator('.guest-direction-trigger'),sheet=page.locator('.guest-direction-sheet');
+ const y=(await page.locator('.guest-sender-field').boundingBox()).y;assert.equal(y,205);
+ await trigger.click();assert.ok(await sheet.isVisible());assert.equal(await trigger.getAttribute('aria-expanded'),'true');assert.ok(await sheet.locator('[disabled]').isDisabled());
+ assert.equal(await sheet.evaluate(el=>getComputedStyle(el,'::backdrop').backdropFilter),'blur(6px)');
+ await page.screenshot({path:'screenshots/guest-direction-sheet.png'});
+ await page.keyboard.press('Escape');assert.ok(await sheet.isHidden());assert.equal(await page.locator('#guest-source').inputValue(),'9112 3810 1521 3812');assert.ok(await trigger.evaluate(el=>el===document.activeElement));
+ await trigger.click();await sheet.locator('.is-selected').click();assert.ok(await sheet.isHidden());
+ await trigger.click();await page.mouse.click(10,100);assert.ok(await sheet.isHidden());
+ for(const width of [320,375,430]){await page.setViewportSize({width,height:874});await trigger.click();const r=await sheet.boundingBox();assert.ok(r.x>=0&&r.x+r.width<=width);await sheet.locator('.close-direction-sheet').click();}
+ await browser.close();console.log('PASS: direction sheet blur, escape/backdrop/current choice, focus return, preserved input and four widths');
+}finally{await browser.close();}
