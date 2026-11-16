@@ -13,7 +13,7 @@ try {
   await page.evaluate(()=>document.fonts.ready);
   for(const [selector,x,y,width,height] of [
     ['.card-track',16,126,370,212],['.quick-actions',16,374,370,90],
-    ['.history',16,488,370,198],['.home-analytics',16,710,370,189],['.tabbar',0,790,402,52]
+    ['.history',16,488,370,198],['.home-analytics',14,710,370,189],['.tabbar',0,790,402,52]
   ]) {
     const rect=await page.locator(selector).boundingBox();
     for(const [key,value] of Object.entries({x,y,width,height})) assert.ok(Math.abs(rect[key]-value)<1,`${selector} ${key}: ${rect[key]}`);

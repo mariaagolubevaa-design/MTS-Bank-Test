@@ -1,3 +1,4 @@
+import { analyticsFor } from './analytics.js';
 import { money, operationsFor } from './data.js';
 
 export const image = (name, className = '') => `<img class="${className}" src="./assets/images/${name}.${['profile', 'mastercard', 'home-profile', 'mir'].includes(name) ? 'png' : 'svg'}" alt="" draggable="false">`;
@@ -49,12 +50,23 @@ export function createHomeScreen({ data, onNavigate }) {
     </section>
     <section class="home-analytics" aria-labelledby="analytics-title">
       <div class="history-heading"><button class="analytics-collapse" aria-expanded="true"><h2 id="analytics-title">Аналитика</h2>${image('home-chevron')}</button><button class="all-history" data-action="Аналитика">Все${image('home-all-chevron')}</button></div>
-      <div class="analytics-grid"><div class="analytics-tile">${image('home-ring')}<div><p>Расходы в ноябре</p><span>0 Р</span></div></div><div class="analytics-tile"><div class="analytics-bars" aria-hidden="true"><i></i><i></i><i></i></div><div><p>Доходы в ноябре</p><span>0 Р</span></div></div></div>
+      <div class="analytics-grid"><div class="analytics-tile"><img class="analytics-ring" src="./assets/images/analytics-ring-filled.svg" alt=""><div><p data-analytics-expense-label>Расходы в ноябре</p><span data-analytics-expenses></span></div></div><div class="analytics-tile"><div class="analytics-bars" aria-hidden="true"><i></i><i></i><i></i></div><div><p data-analytics-income-label>Доходы в ноябре</p><span data-analytics-income></span></div></div></div>
     </section>`;
 
   const track = screen.querySelector('.card-track');
   const list = screen.querySelector('.operations');
+  function renderAnalytics() {
+    const totals=analyticsFor(data,data.cards[active].id);
+    const island=screen.querySelector('.home-analytics');
+    island.dataset.state=totals.empty?'empty':'filled';
+    island.querySelector('.analytics-ring').src='./assets/images/analytics-ring-'+(totals.empty?'empty':'filled')+'.svg';
+    island.querySelector('[data-analytics-expense-label]').textContent='Расходы в '+totals.month;
+    island.querySelector('[data-analytics-income-label]').textContent='Доходы в '+totals.month;
+    island.querySelector('[data-analytics-expenses]').textContent=money(totals.expenses,totals.currency);
+    island.querySelector('[data-analytics-income]').textContent=money(totals.income,totals.currency);
+  }
   function renderOperations() {
+    renderAnalytics();
     list.innerHTML = operationsFor(data, data.cards[active].id).slice(0, 2).map(item => `
       <button class="operation" data-operation="${escapeHTML(item.id)}">
         <span class="avatar" style="--avatar:${item.color}">${escapeHTML(item.initials)}</span>

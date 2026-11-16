@@ -317,7 +317,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     const item=options.querySelector('[data-source="'+pendingTopup.source.id+'"] small');
     if(item)item.closest('button').title='Доступно '+money(pendingTopup.source.balance,pendingTopup.source.currency);
 
-    saveDemoWallet();
+    demoData.transactions.unshift({id:'topup-'+crypto.randomUUID(),cardId:pendingTopup.source.id,name:'Пополнение карты',initials:'+',color:'#e3e3e8',date:'Только что',createdAt:new Date().toISOString(),amount:pendingTopup.kopecks/100,currency:pendingTopup.source.currency||'RUB',status:'Выполнен',kind:'topup'});
+    saveDemoTransfers();
     pendingTopup=null;topup.close();updateQuote();
   };
   const debitMoney=value=>money(value,guest&&source?.currency==='USD'?'USD':'RUB');
@@ -423,7 +424,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       sent=true;send.disabled=true;
       const last4=savedRecipient?.last4 || (savedRecipient?.subtitle.match(/(\d{4})$/)?.[1]) || input.value.replace(/\D/g,'').slice(-4);
       const recipientName=savedRecipient?.name || 'Получатель •• '+last4;
-      const operation={id:'sent-'+crypto.randomUUID(),cardId:source.id,name:recipientName,initials:savedRecipient?.initials||'П',color:'#d4b6ff',date:'Только что',amount:-quote.debitAmount,currency:quote.debitCurrency,rubleAmount:rubles,enteredAmount:Number(normalizedAmount()),enteredCurrency:amountCurrency,amountRate:demoAmountRates[amountCurrency],fee:quote.fee,status:'Выполнен',last4,recipientId:savedRecipient?.id,transferKind:transferKind||'russia',receive:quote.receive,receiveCurrency:international?'UZS':undefined,bankInfo:bank};
+      const operation={id:'sent-'+crypto.randomUUID(),cardId:source.id,name:recipientName,initials:savedRecipient?.initials||'П',color:'#d4b6ff',date:'Только что',createdAt:new Date().toISOString(),amount:-quote.debitAmount,currency:quote.debitCurrency,rubleAmount:rubles,enteredAmount:Number(normalizedAmount()),enteredCurrency:amountCurrency,amountRate:demoAmountRates[amountCurrency],fee:quote.fee,status:'Выполнен',last4,recipientId:savedRecipient?.id,transferKind:transferKind||'russia',receive:quote.receive,receiveCurrency:international?'UZS':undefined,bankInfo:bank};
       sessionStorage.setItem('c2c-pending-transfer',JSON.stringify({operation,total:quote.total,readyAt:Date.now()+5000}));
       form.hidden=true;
       screen.classList.add('is-processing');

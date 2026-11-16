@@ -68,7 +68,7 @@ export function saveDemoTransfers() {
   try {
     localStorage.setItem('c2c-demo-transfers-v1', JSON.stringify({
       recipients: demoData.recipients.filter(r => r.id.startsWith('saved-')),
-      transactions: demoData.transactions.filter(t => t.id.startsWith('sent-')),
+      transactions: demoData.transactions.filter(t => t.id.startsWith('sent-') || t.id.startsWith('topup-')),
     }));
   } catch {}
   saveDemoWallet();
