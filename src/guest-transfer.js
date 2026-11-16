@@ -10,8 +10,8 @@ export function createGuestTransfer({ onBack, onHome = onBack, onTransfers = onB
   screen.querySelector('h1').innerHTML='<span>По карте <button type="button" class="guest-direction-trigger" aria-haspopup="dialog" aria-expanded="false"><span class="guest-direction-label">в Россию</span><span class="guest-direction-icon" aria-hidden="true"><img src="./assets/images/guest-direction-chevron.svg" alt=""></span></button></span>';
   const sheet=document.createElement('dialog');
   sheet.className='guest-direction-sheet';
-  sheet.setAttribute('aria-label','Направление перевода');
-  sheet.innerHTML='<img class="direction-sheet-handle" src="./assets/images/direction-sheet-handle.svg" alt=""><button type="button" data-direction="russia" class="direction-choice is-selected" aria-pressed="true"><span>В Россию</span><img class="direction-selected-mark" src="./assets/images/direction-sheet-check.svg" alt=""></button><button type="button" data-direction="abroad" class="direction-choice" aria-pressed="false"><span>За границу</span><img class="direction-selected-mark" src="./assets/images/direction-sheet-check.svg" alt="" hidden></button>';
+  sheet.setAttribute('aria-labelledby','guest-direction-sheet-title');
+  sheet.innerHTML='<img class="direction-sheet-handle" src="./assets/images/direction-sheet-handle.svg" alt=""><h2 id="guest-direction-sheet-title" class="direction-sheet-title">Направление перевода</h2><button type="button" data-direction="russia" class="direction-choice is-selected" aria-pressed="true"><span>В Россию</span><img class="direction-selected-mark" src="./assets/images/direction-sheet-check.svg" alt=""></button><button type="button" data-direction="abroad" class="direction-choice" aria-pressed="false"><span>За границу</span><img class="direction-selected-mark" src="./assets/images/direction-sheet-check.svg" alt="" hidden></button>';
   screen.append(sheet);
   const trigger=screen.querySelector('.guest-direction-trigger');
   const close=()=>sheet.close();

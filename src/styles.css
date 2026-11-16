@@ -1355,3 +1355,4 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 @media(max-width:375px) {
   .guest-international-transfer .guest-transfer-title { font-size:clamp(20px,6vw,24px); }
 }
+.guest-direction-sheet .direction-sheet-title { position:absolute; left:23px; top:37px; margin:0; color:#141414; font:500 24px/29px 'Inter Tight',sans-serif; }
