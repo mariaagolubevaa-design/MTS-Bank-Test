@@ -455,9 +455,9 @@ button,article {
 .tabbar [aria-current=page] .tab-icon-active { display:block; }
 .tabbar [aria-current=page] .tab-icon-inactive { display:none; }
 .tab-icon--home .tab-icon-active { left:2.75px; top:2.75px; }
-.tab-icon--home .tab-icon-inactive { left:2.25px; top:2.1166px; }
-.tab-icon--transfers img { left:2.5644px; top:1.0526px; }
-.tab-icon--support img { left:1.5174px; top:1.9696px; }
+.tab-icon--home .tab-icon-inactive { left:2.15px; top:1.9899px; }
+.tab-icon--transfers img { left:2.819px; top:1.2326px; }
+.tab-icon--support img { left:1.8013px; top:2.15px; }
 body:has(.tabbar:not([hidden])) #app { width:100%; transform:none; }
 .home-indicator {
   position:fixed;

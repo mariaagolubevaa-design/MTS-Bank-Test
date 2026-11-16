@@ -12,7 +12,7 @@ try {
  await page.reload();await page.evaluate(()=>document.fonts.ready);
  await mkdir('screenshots',{recursive:true});
  const states=[['Главная','home'],['Переводы','transfers'],['Поддержка','support']];
- const glyphs={home:{active:[16.5,16.5,2.75,2.75],inactive:[17.5,17.6334,2.25,2.1166]},transfers:{active:[16.8712,19.8948,2.5644,1.0526],inactive:[16.8712,19.8948,2.5644,1.0526]},support:{active:[18.5133,18.5133,1.5174,1.9696],inactive:[18.5133,18.5133,1.5174,1.9696]}};
+ const glyphs={home:{active:[16.5,16.5,2.75,2.75],inactive:[17.7,17.8601,2.15,1.9899]},transfers:{active:[16.3621,19.5348,2.819,1.2326],inactive:[16.3621,19.5348,2.819,1.2326]},support:{active:[18.0487,18.0487,1.8013,2.15],inactive:[18.0487,18.0487,1.8013,2.15]}};
  const close=(actual,expected,message)=>assert.ok(Math.abs(actual-expected)<.05,`${message}: ${actual} != ${expected}`);
  for(const [selected,selectedIcon]of states) {
  await page.locator(`[data-tab="${selected}"]`).click();await page.evaluate(()=>document.fonts.ready);
