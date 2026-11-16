@@ -30,6 +30,10 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     const country = recipient.bankInfo?.country || recipient.subtitle?.match(/^(RU|UZ)\b/)?.[1];
     if (country) transferKind = country === 'RU' ? 'russia' : 'abroad';
   }
+  const figmaDemoCards={sender:'9112381015213812',recipient:'2200789332541984'};
+  const isFigmaDemoCard=number=>guest&&Object.values(figmaDemoCards).includes(number.replace(/\D/g,''));
+  const validTransferCard=number=>validCard(number)||isFigmaDemoCard(number);
+  const transferCardAvailability=(number,options={})=>demoCardAvailability(number,{...options,saved:options.saved||isFigmaDemoCard(number)});
   const screen = document.createElement('main');
   screen.className = 'authorized-transfer card-transfer';
   const lockedGuestSource = guest && !!sourceNumber;
@@ -43,7 +47,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   let lookupVersion = 0;
   let lookupTimer;
   let bankLookupPending=false;
-  let availability = savedRecipient ? demoCardAvailability('', { saved: true }) : null;
+  let availability = savedRecipient ? transferCardAvailability('', { saved: true }) : null;
   const international = transferKind === 'abroad';
   if(!international)screen.classList.add('card-transfer--russia');
   const sourceName = c => c.id === 'debit' ? 'МТС Банк' : c.currency === 'USD' ? 'International' : c.name;
@@ -78,8 +82,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   addInput.oninput=()=>{addInput.value=addInput.value.replace(/\D/g,'').slice(0,19).replace(/(.{4})/g,'$1 ').trim();addError.textContent='';addInput.setAttribute('aria-invalid','false');};
   addDialog.querySelector('form').onsubmit=e=>{
     e.preventDefault();
-    if(validCard(addInput.value)&&!demoCardAvailability(addInput.value).available){addError.textContent=demoCardAvailability(addInput.value).message;addInput.setAttribute('aria-invalid','true');return;}
-    if(!validCard(addInput.value)){addError.textContent='Проверьте номер карты';addInput.setAttribute('aria-invalid','true');addInput.focus();return;}
+    if(validTransferCard(addInput.value)&&!transferCardAvailability(addInput.value).available){addError.textContent=transferCardAvailability(addInput.value).message;addInput.setAttribute('aria-invalid','true');return;}
+    if(!validTransferCard(addInput.value)){addError.textContent='Проверьте номер карты';addInput.setAttribute('aria-invalid','true');addInput.focus();return;}
     if(!addDetails.demoComplete()){addError.textContent='Укажите срок действия и CVC/CVV';addDetails.querySelector('input').focus();return;}
     const last4=addInput.value.replace(/\D/g,'').slice(-4);
     const newCard={id:'added-'+Date.now(),name:'Добавленная карта',last4,balance:null,currency:'RUB',external:true};
@@ -126,16 +130,34 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     sender.oninput=()=>{
       sender.value=sender.value.replace(/\D/g,'').slice(0,19).replace(/(.{4})/g,'$1 ').trim();
       sourceNumber=sender.value;
-      const available=validCard(sender.value)&&demoCardAvailability(sender.value).available;
+      const available=validTransferCard(sender.value)&&transferCardAvailability(sender.value).available;
       source=available?{id:guestInlineId,name:'Карта отправителя',last4:sender.value.replace(/\D/g,'').slice(-4),balance:null,currency:'RUB',external:true}:null;
-      senderError.textContent=validCard(sender.value)&&!available?demoCardAvailability(sender.value).message:'';
+      senderError.textContent=validTransferCard(sender.value)&&!available?transferCardAvailability(sender.value).message:'';
       sender.setAttribute('aria-invalid',String(!!senderError.textContent));
       syncSenderState();detectBank();update();
     };
-    sender.onblur=()=>{if(sender.value&&!validCard(sender.value)){senderError.textContent='Неверный номер карты';sender.setAttribute('aria-invalid','true');}syncSenderState();};
+    sender.onblur=()=>{if(sender.value&&!validTransferCard(sender.value)){senderError.textContent='Неверный номер карты';sender.setAttribute('aria-invalid','true');}syncSenderState();};
     screen.querySelector('.destination-section').insertAdjacentHTML('afterbegin','<h2>Куда перевести</h2>');
     input.closest('.destination-field').insertAdjacentHTML('beforeend','<button type="button" class="recipient-card-clear" aria-label="Очистить номер карты получателя" hidden><img src="./assets/images/sender-card-clear.svg" alt=""></button>');
     screen.querySelector('.recipient-card-clear').onclick=()=>{input.value='';input.oninput();input.focus();};
+    for(const [field,kind] of [[sender,'sender'],[input,'recipient']]) {
+      const suggestion=document.createElement('button');suggestion.type='button';suggestion.className='demo-card-suggestion';suggestion.hidden=true;
+      const formatted=figmaDemoCards[kind].replace(/(.{4})(?=.)/g,'$1 ');
+      suggestion.setAttribute('aria-label','Заполнить демо-карту '+(kind==='sender'?'отправителя':'получателя'));
+      suggestion.innerHTML='<span>Заполнить из макета</span><strong>'+formatted+'</strong>';
+      field.closest('.destination-field').after(suggestion);
+      const syncSuggestion=()=>{suggestion.hidden=!!field.value||!(document.activeElement===field||document.activeElement===suggestion);};
+      field.addEventListener('focus',syncSuggestion);field.addEventListener('input',syncSuggestion);
+      field.addEventListener('blur',()=>setTimeout(syncSuggestion,0));
+      suggestion.addEventListener('focus',syncSuggestion);suggestion.addEventListener('blur',()=>setTimeout(syncSuggestion,0));
+      suggestion.onpointerdown=event=>event.preventDefault();
+      suggestion.onclick=()=>{field.value=figmaDemoCards[kind];field.oninput();field.focus();syncSuggestion();};
+      field.addEventListener('keydown',event=>{
+        if(event.key==='Escape'){suggestion.hidden=true;event.stopPropagation();}
+        if(event.key==='ArrowDown'&&!suggestion.hidden){event.preventDefault();suggestion.focus();}
+      });
+    }
+
 
   }
 
@@ -147,16 +169,17 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     availability=null;availabilityStatus.textContent='';bankLookupPending=false;
     input.setAttribute('aria-invalid','false');
     const digits=input.value.replace(/\D/g,'');
-    if(!validCard(digits)){update();return;}
+    if(!validTransferCard(digits)){update();return;}
     bankLookupPending=true;
     availabilityStatus.textContent='Проверяем возможность перевода · демо';
     update();
     bankStatus.textContent='';
     lookupTimer=setTimeout(async()=>{
-      availability=guest&&digits===sourceNumber?.replace(/\D/g,'')?{available:false,message:'Карты отправителя и получателя должны отличаться'}:demoCardAvailability(digits);
+      availability=guest&&digits===sourceNumber?.replace(/\D/g,'')?{available:false,message:'Карты отправителя и получателя должны отличаться'}:transferCardAvailability(digits);
       availabilityStatus.textContent=availability.available?'Карта доступна · демо':availability.message;
       input.setAttribute('aria-invalid',String(!availability.available));
       update();
+      if(isFigmaDemoCard(digits)){bank={name:'Демо-карта',country:'RU',sameBank:false};bankLookupPending=false;update();return;}
       try {
         const response=await fetch('/api/bank/'+digits.slice(0,8));
         if(!response.ok)throw new Error('Lookup unavailable');
@@ -174,7 +197,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       if(version===lookupVersion){bankLookupPending=false;update();}
     },350);
   }
-  function ready() { return !!source && availability?.available === true && (!!savedRecipient || validCard(input.value)) && (!guest || input.value.replace(/\D/g, '') !== (guestSourceNumbers.get(source.id) || sourceNumber?.replace(/\D/g, ''))); }
+  function ready() { return !!source && availability?.available === true && (!!savedRecipient || validTransferCard(input.value)) && (!guest || input.value.replace(/\D/g, '') !== (guestSourceNumbers.get(source.id) || sourceNumber?.replace(/\D/g, ''))); }
   function update() { updateQuote(); }
   trigger.onclick = () => { options.hidden = !options.hidden; trigger.setAttribute('aria-expanded', String(!options.hidden)); };
   trigger.onkeydown = e => { if(e.key === 'ArrowDown'){ e.preventDefault(); options.hidden=false;trigger.setAttribute('aria-expanded','true');options.querySelector('button').focus(); } };
@@ -209,7 +232,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   if(savedRecipient) { input.value=savedRecipient.subtitle; input.readOnly=true; }
   input.onfocus=()=>{if(savedRecipient && input.readOnly){ savedRecipient=null;input.readOnly=false;input.value='';detectBank();update();}};
   input.oninput=()=>{input.value=input.value.replace(/\D/g,'').slice(0,19).replace(/(.{4})/g,'$1 ').trim();error.textContent='';input.setAttribute('aria-invalid','false');detectBank();update();scheduleRecipientOffer();};
-  input.onblur=()=>{if(input.value&&!savedRecipient&&!validCard(input.value)){error.textContent=international?'Проверьте номер карты':'Неверный номер карты';input.setAttribute('aria-invalid','true');}};
+  input.onblur=()=>{if(input.value&&!savedRecipient&&!validTransferCard(input.value)){error.textContent=international?'Проверьте номер карты':'Неверный номер карты';input.setAttribute('aria-invalid','true');}};
   const recipientSheet=document.createElement('dialog');
   recipientSheet.className='save-recipient-sheet';
   recipientSheet.innerHTML='<form novalidate><div class="sheet-handle"></div><div class="sheet-heading"><h2>Добавить получателя?</h2><button type="button" class="close-recipient-sheet" aria-label="Закрыть">×</button></div><p class="save-card-caption"></p><label for="recipient-display-name">Имя получателя</label><input id="recipient-display-name" maxlength="40" value="Новый получатель"><p class="field-error" role="alert"></p><button class="authorized-continue">Добавить</button><button type="button" class="skip-recipient">Не сейчас</button></form>';
@@ -220,7 +243,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   function scheduleRecipientOffer() {
     clearTimeout(offerTimer);
     const number=input.value.replace(/\D/g,'');
-    if(guest||!validCard(number)||savedRecipient||offeredCards.has(number))return;
+    if(guest||!validTransferCard(number)||savedRecipient||offeredCards.has(number))return;
     offerTimer=setTimeout(()=>{
       if(!availability?.available||!screen.isConnected||input.value.replace(/\D/g,'')!==number||screen.querySelector('dialog[open]')||form.hidden||!options.hidden)return;
       const last4=number.slice(-4);

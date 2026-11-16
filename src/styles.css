@@ -1299,3 +1299,11 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 @media(hover:hover) {
   .guest-inline-source .card-details-row input:not([aria-invalid=true]):hover { border-color:#414141; }
 }
+
+.guest-inline-source .source-section { position:relative; }
+.guest-inline-source .demo-card-suggestion { position:absolute; z-index:20; top:114px; left:0; width:100%; padding:12px 16px; display:flex; flex-direction:column; gap:4px; text-align:left; border:1px solid #d5d5da; border-radius:16px; background:white; box-shadow:0 6px 16px #14141414; }
+.guest-inline-source .demo-card-suggestion[hidden] { display:none; }
+.demo-card-suggestion span { color:#72727c; font:500 11px/16px 'Inter Tight',sans-serif; }
+.demo-card-suggestion strong { color:#141414; font:500 15px/18px 'Inter Tight',sans-serif; }
+.demo-card-suggestion:hover,.demo-card-suggestion:focus-visible { background:#e5e2f6; outline:none; }
+.guest-inline-source .source-section>.demo-card-suggestion { top:122px; }
