@@ -419,53 +419,56 @@ button,article {
 .tabbar {
   position:fixed;
   z-index:10;
-  bottom:var(--bottom-inset);
+  bottom:calc(32px + env(safe-area-inset-bottom));
   left:50%;
   transform:translateX(-50%);
-  width:calc(100% - 32px);
-  max-width:370px;
-  height:64px;
-  padding:6px;
+  width:100%;
+  max-width:402px;
+  height:52px;
   display:flex;
-  gap:4px;
+  padding:0;
+  gap:0;
+  border:0;
+  border-radius:0;
   background:#fff;
-  border:1px solid rgba(20,20,20,.07);
-  box-shadow:0 4px 20px rgba(20,20,20,.08);
-  border-radius:32px;
 }
 .tabbar button {
   flex:1;
-  min-width:0;
+  min-width:1px;
   height:52px;
   display:flex;
   flex-direction:column;
   gap:3px;
   align-items:center;
   justify-content:center;
+  overflow:hidden;
   border-radius:26px;
-  color:rgba(20,20,20,.7);
-  font:500 11px/13px Inter,sans-serif;
+  color:#141414;
+  font:500 11px/16px 'Inter Tight',sans-serif;
 }
-.tabbar [aria-current=page] {
-  background:var(--c2c-active);
-  color:#735991;
-}
-.tab-icon {
-  width:22px;
-  height:22px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
+.tabbar button:active { transform:none; filter:none; }
+.tabbar [aria-current=page] { color:#6641fb; }
+.tab-label { line-height:16px; white-space:nowrap; }
+.tab-icon { position:relative; flex-shrink:0; overflow:hidden; width:22px; height:22px; }
+.tab-icon img { position:absolute; }
+.tab-icon-active { display:none; }
+.tabbar [aria-current=page] .tab-icon-active { display:block; }
+.tabbar [aria-current=page] .tab-icon-inactive { display:none; }
+.tab-icon--home .tab-icon-active { left:2.75px; top:2.75px; }
+.tab-icon--home .tab-icon-inactive { left:2.25px; top:2.1166px; }
+.tab-icon--transfers img { left:2.5644px; top:1.0526px; }
+.tab-icon--support img { left:1.5174px; top:1.9696px; }
+body:has(.tabbar:not([hidden])) #app { width:100%; transform:none; }
 .home-indicator {
   position:fixed;
   bottom:0;
   left:50%;
   transform:translateX(-50%);
-  height:26px;
+  height:calc(32px + env(safe-area-inset-bottom));
   width:100%;
   max-width:402px;
-  padding-top:16px;
+  padding-top:20px;
+  background:#fff;
   display:flex;
   justify-content:center;
   pointer-events:none;
@@ -612,7 +615,7 @@ button,article {
 body { background:#e9e9ec; }
 #app { background:var(--c2c-bg-canvas); }
 .is-welcome #app { background:#fafafa; }
-.is-welcome .home-indicator { position:absolute; top:848px; bottom:auto; }
+.is-welcome .home-indicator { position:absolute; top:848px; bottom:auto; height:26px; padding-top:16px; }
 @media(max-width:401px) {
   #app { width:402px; transform:scale(calc(100vw / 402px)); transform-origin:top left; }
   body { overflow-x:hidden; }
@@ -665,7 +668,6 @@ body { background:#e9e9ec; }
 .home-screen .quick-actions button { min-height:68px; padding:16px; font-size:15px; line-height:18px; }
 .home-screen .favorites { margin-top:28px; }
 .home-screen .history { margin-top:32px; }
-.tabbar { bottom:48px; }
 
 /* Lighter recipient section and a tighter rhythm below quick actions. */
 .home-screen .favorites { margin-top:24px; }
@@ -957,10 +959,6 @@ body:has(.home-screen:not([hidden])) { background:#f3f4f5; }
 .analytics-bars i { background:#d5d5da; width:11px; height:34px; }
 .analytics-bars i:nth-child(2) { height:48px; }
 .analytics-bars i:nth-child(3) { height:40px; }
-body:has(.home-screen:not([hidden])) .tabbar { bottom:calc(32px + env(safe-area-inset-bottom)); max-width:402px; width:100%; height:52px; padding:0; border:0; gap:0; border-radius:0; box-shadow:0 -4px 2px #e5e2f633; }
-body:has(.home-screen:not([hidden])) .tabbar button { border-radius:0; font:500 11px/16px 'Inter Tight',sans-serif; color:#141414; }
-body:has(.home-screen:not([hidden])) .tabbar [aria-current=page] { background:none; color:#6641fb; }
-body:has(.home-screen:not([hidden])) .tabbar [data-tab="Главная"] .tab-icon img { content:url('../assets/images/home-active.svg'); }
 body:has(.home-screen:not([hidden])) .home-indicator { background:#fff; height:calc(32px + env(safe-area-inset-bottom)); padding-top:20px; }
 @media(max-width:360px) {
   .home-screen .quick-actions { gap:10px; }
@@ -1017,10 +1015,6 @@ body:has(.transfers-menu) #app { background:#f3f4f5; width:100%; transform:none;
 .currency-row>span:not(:first-child) { text-align:center; }
 .currency-row img { width:16px; height:16px; }
 .currency-rows { display:flex; flex-direction:column; gap:8px; }
-body:has(.transfers-menu) .tabbar { bottom:calc(32px + env(safe-area-inset-bottom)); max-width:402px; width:100%; height:52px; padding:0; border:0; gap:0; border-radius:0; box-shadow:none; }
-body:has(.transfers-menu) .tabbar button { border-radius:0; font:500 11px/16px 'Inter Tight',sans-serif; color:#141414; }
-body:has(.transfers-menu) .tabbar [aria-current=page] { background:none; color:#6641fb; }
-body:has(.transfers-menu) .tabbar [data-tab=Переводы] .tab-icon img { content:url('../assets/images/menu-transfer-active.svg'); }
 body:has(.transfers-menu) .home-indicator { background:white; height:calc(32px + env(safe-area-inset-bottom)); padding-top:20px; }
 @media(max-width:360px) {
   .transfers-menu .payment-options button { padding:12px 8px; }
@@ -1030,7 +1024,6 @@ body:has(.transfers-menu) .home-indicator { background:white; height:calc(32px +
   .transfers-menu .option-russia img { left:10px; }
 }
 .transfers-menu .menu-currency { margin-right:2px; padding-left:19px; padding-right:5px; }
-body:has(.transfers-menu) .tabbar [data-tab=Главная] .tab-icon img { content:url('../assets/images/menu-home-inactive.svg'); }
 .transfers-menu .recipient .avatar.add { position:relative; font-size:0; }
 .transfers-menu .recipient .avatar.add::before,.transfers-menu .recipient .avatar.add::after { content:''; position:absolute; width:12px; height:2px; background:#6641fb; }
 .transfers-menu .recipient .avatar.add::after { transform:rotate(90deg); }
@@ -1157,12 +1150,3 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .phone-country { position:relative; flex:0 1 44%; min-width:0; }
 .phone-country select { appearance:none; -webkit-appearance:none; width:100%; padding:12px 32px 12px 10px; }
 .phone-country>img { position:absolute; right:12px; top:50%; width:16px; height:16px; transform:translateY(-50%) rotate(180deg); pointer-events:none; }
-
-/* Support uses the same full-width navigation as Home and Transfers. */
-.tabbar:has([data-tab="Поддержка"][aria-current=page]) { bottom:calc(32px + env(safe-area-inset-bottom)); max-width:402px; width:100%; height:52px; padding:0; border:0; gap:0; border-radius:0; box-shadow:none; }
-.tabbar:has([data-tab="Поддержка"][aria-current=page]) button { border-radius:0; font:500 11px/16px 'Inter Tight',sans-serif; color:#141414; }
-.tabbar:has([data-tab="Поддержка"][aria-current=page]) [aria-current=page] { background:none; color:#6641fb; }
-.tabbar [data-tab="Поддержка"][aria-current=page] .tab-icon img { content:url('../assets/images/support-active.svg'); }
-.tabbar:has([data-tab="Поддержка"][aria-current=page]) [data-tab="Главная"] .tab-icon img { content:url('../assets/images/menu-home-inactive.svg'); }
-body:has(.tabbar [data-tab="Поддержка"][aria-current=page]) .home-indicator { background:white; height:calc(32px + env(safe-area-inset-bottom)); padding-top:20px; }
-body:has(.tabbar [data-tab="Поддержка"][aria-current=page]) #app { width:100%; transform:none; }

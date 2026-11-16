@@ -12,7 +12,7 @@ root.innerHTML = `
   <div class="status-bar" aria-hidden="true"><span class="time">9:41</span><span class="levels">${image('cellular')}${image('wifi')}${image('battery')}</span></div>
   <div id="screen-outlet"></div>
   <nav class="tabbar" aria-label="Основная навигация">
-    ${[['home', 'Главная'], ['transfers', 'Переводы'], ['support', 'Поддержка']].map(([icon, label], index) => `<button ${index === 0 ? 'aria-current="page"' : ''} data-tab="${label}"><span class="tab-icon">${image(icon)}</span><span>${label}</span></button>`).join('')}
+    ${[['home', 'Главная'], ['transfers', 'Переводы'], ['support', 'Поддержка']].map(([icon, label], index) => `<button ${index === 0 ? 'aria-current="page"' : ''} data-tab="${label}"><span class="tab-icon tab-icon--${icon}"><img class="tab-icon-inactive" src="./assets/images/nav-${icon}-inactive.svg" alt=""><img class="tab-icon-active" src="./assets/images/nav-${icon}-active.svg" alt=""></span><span class="tab-label">${label}</span></button>`).join('')}
   </nav><div class="home-indicator" aria-hidden="true"><span></span></div>`;
 const outlet = root.querySelector('#screen-outlet');
 let savedScroll = 0;
