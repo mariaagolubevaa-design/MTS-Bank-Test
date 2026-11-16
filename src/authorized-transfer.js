@@ -146,7 +146,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     screen.querySelector('.recipient-card-clear').onclick=()=>{input.value='';input.oninput();input.focus();};
     for(const [field,kind] of [[sender,'sender'],[input,'recipient']]) {
       const suggestion=document.createElement('div');suggestion.className='demo-card-suggestion';suggestion.hidden=true;
-      const choices=kind==='sender'?[{number:figmaDemoCards.sender,label:'Пример для демо · Россия, RUB',name:'Заполнить демо-карту отправителя'},{number:foreignDemoNumber,label:'Пример для демо · Иностранная карта, USD',name:'Заполнить иностранную демо-карту отправителя'}]:[{number:figmaDemoCards.recipient,label:'Пример для демо',name:'Заполнить демо-карту получателя'}];
+      const choices=kind==='sender'?[{number:figmaDemoCards.sender,label:'Пример для демо / Россия, RUB',name:'Заполнить демо-карту отправителя'},{number:foreignDemoNumber,label:'Пример для демо / Иностранная карта, USD',name:'Заполнить иностранную демо-карту отправителя'}]:[{number:figmaDemoCards.recipient,label:'Пример для демо',name:'Заполнить демо-карту получателя'}];
       field.closest('.destination-field').after(suggestion);
       const syncSuggestion=()=>{suggestion.hidden=!!field.value||!(document.activeElement===field||suggestion.contains(document.activeElement));};
       for(const choice of choices){
