@@ -116,10 +116,9 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     senderField.insertAdjacentHTML('beforeend','<button type="button" class="sender-card-clear" aria-label="Очистить номер карты отправителя" hidden><img src="./assets/images/sender-card-clear.svg" alt=""></button>');
     const senderClear=senderField.querySelector('.sender-card-clear');
     const syncSenderState=()=>{
-      const invalid=sender.getAttribute('aria-invalid')==='true';
       senderField.classList.toggle('is-filled',!!sender.value);
-      senderClear.hidden=!sender.value||invalid;
-      senderField.querySelector('.scan-card').hidden=!!sender.value&&!invalid;
+      senderClear.hidden=!sender.value;
+      senderField.querySelector('.scan-card').hidden=!!sender.value;
     };
     senderClear.onclick=()=>{sender.value='';sender.oninput();sender.focus();};
 
