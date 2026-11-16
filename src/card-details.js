@@ -5,8 +5,23 @@ export function createDemoCardDetails(onChange = () => {}) {
   row.innerHTML = '<label>Срок действия<input data-expiry aria-label="Срок действия" placeholder="ММ/ГГ" readonly autocomplete="off" aria-haspopup="dialog"></label><label>CVC/CVV<input data-cvc aria-label="CVC/CVV" type="password" placeholder="3 цифры" readonly autocomplete="off"></label>';
   const expiry=row.querySelector('[data-expiry]');
   const cvc=row.querySelector('[data-cvc]');
+  const expectedExpiry='12/30';
+  const expiryError=document.createElement('span');
+  expiryError.className='expiry-field-error';
+  expiryError.id='expiry-error-'+crypto.randomUUID();
+  expiryError.setAttribute('role','status');
+  expiryError.hidden=true;
+  expiry.after(expiryError);
+  expiry.setAttribute('aria-describedby',expiryError.id);
+  const validateExpiry=()=>{
+    const invalid=!!expiry.value&&expiry.value!==expectedExpiry;
+    expiry.setAttribute('aria-invalid',String(invalid));
+    expiryError.hidden=!invalid;
+    expiryError.textContent=invalid?'Неверный срок действия':'';
+  };
+
   const fill = () => {
-    if(!expiry.value) expiry.value = '12/30';
+    if(!expiry.value) expiry.value = expectedExpiry;
     if(!cvc.value) cvc.value = '123';
     onChange();
   };
@@ -63,10 +78,10 @@ export function createDemoCardDetails(onChange = () => {}) {
   confirm.onclick=()=>{
     sync();if(confirm.disabled)return;
     expiry.value=values[0][selected[0]]+'/'+values[1][selected[1]].slice(-2);
-    picker.close();onChange();expiry.focus();
+    validateExpiry();picker.close();onChange();expiry.focus();
   };
   picker.querySelector('.expiry-cancel').onclick=()=>{picker.close();expiry.focus();};
-  row.demoComplete = () => !!expiry.value && !!cvc.value;
-  row.clearDemo = () => {expiry.value='';cvc.value='';};
+  row.demoComplete = () => expiry.value===expectedExpiry && !!cvc.value;
+  row.clearDemo = () => {expiry.value='';cvc.value='';validateExpiry();};
   return row;
 }

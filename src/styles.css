@@ -1267,3 +1267,7 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .guest-inline-source .guest-sender-field:has(input[aria-invalid=true]) label { color:#141414; }
 .guest-inline-source .guest-sender-field:has(input[aria-invalid=true]) .scan-card { background:#e5e2f6; }
 .guest-inline-source #guest-source-error { margin:4px 18px 0; color:#b83d45; font:500 11px/16px 'Inter Tight',sans-serif; }
+
+.card-details-row input[data-expiry][aria-invalid=true] { border-color:#ff1524; color:#ff1524; }
+.card-details-row .expiry-field-error { display:block; margin:4px 2px 0; color:#b83d45; font:500 11px/16px 'Inter Tight',sans-serif; }
+.card-details-row .expiry-field-error[hidden] { display:none; }

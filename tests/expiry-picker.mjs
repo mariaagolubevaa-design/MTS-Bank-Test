@@ -19,6 +19,7 @@ try {
  const expectedYear=String(new Date().getFullYear()+1).slice(-2);
  await dialog.locator('.expiry-confirm').click();
  assert.equal(await expiry.inputValue(),'02/'+expectedYear);
+ assert.equal(await expiry.getAttribute('aria-invalid'),'true');
  await page.locator('#guest-source').fill('4111111111111111');
  await page.locator('.source-section .card-details-row').hover();
  assert.equal(await expiry.inputValue(),'02/'+expectedYear);
@@ -31,5 +32,18 @@ try {
  if(new Date().getMonth()>0) assert.ok(await dialog.locator('.expiry-confirm').isDisabled());
  await page.keyboard.press('Escape');assert.equal(await dialog.isVisible(),false);
  assert.equal(await expiry.inputValue(),'02/'+expectedYear);
+ await page.locator('#destination-number').fill('5555555555554444');
+ await page.locator('#transfer-amount').fill('100');
+ await page.waitForTimeout(800);
+ assert.ok(await page.locator('.recipient-next button').isDisabled());
+ assert.equal(await page.locator('.source-section .expiry-field-error').textContent(),'Неверный срок действия');
+ await page.locator('.source-section').screenshot({path:'screenshots/expiry-field-error.png'});
+ await expiry.click();await month.focus();await page.keyboard.press('End');await year.focus();await page.keyboard.press('Home');
+ for(let i=0;i<2030-new Date().getFullYear();i++)await page.keyboard.press('ArrowDown');
+ await dialog.locator('.expiry-confirm').click();
+ assert.equal(await expiry.inputValue(),'12/30');
+ assert.equal(await expiry.getAttribute('aria-invalid'),'false');
+ assert.ok(await page.locator('.source-section .expiry-field-error').isHidden());
+ await page.waitForFunction(()=>!document.querySelector('.recipient-next button').disabled);
  assert.deepEqual(errors,[]);console.log('PASS: expiry wheel keyboard, scrolling, apply, cancel, expired date and persistence on hover');
 } finally {await browser.close();}
