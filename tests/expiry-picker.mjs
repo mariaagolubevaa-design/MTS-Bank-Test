@@ -21,6 +21,7 @@ try {
  assert.equal(await expiry.inputValue(),'02/'+expectedYear);
  assert.equal(await expiry.getAttribute('aria-invalid'),'true');
  await page.locator('#guest-source').fill('4111111111111111');
+ await page.locator('.source-section [data-cvc]').fill('123');
  await page.locator('.source-section .card-details-row').hover();
  assert.equal(await expiry.inputValue(),'02/'+expectedYear);
  await expiry.click();await month.evaluate(el=>{el.scrollTop=6*44;el.dispatchEvent(new Event('scroll'));});

@@ -1,3 +1,4 @@
+import {fillCardDetails} from './fill-card-details.mjs';
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {mkdir} from 'node:fs/promises';
@@ -30,7 +31,7 @@ try {
  await trigger.click();await page.locator('[data-source="debit"]').click();assert.equal(await page.locator('.currency-select').inputValue(),'USD');
  await page.locator('.currency-select').selectOption('RUB');await trigger.click();await page.locator('[data-source="second"]').click();assert.equal(await page.locator('.currency-select').inputValue(),'USD');assert.equal(await page.locator('#transfer-amount').inputValue(),'');
  await trigger.click();await page.locator('[data-add-card]').click();assert.ok(await page.locator('.add-card-dialog[open]').isVisible());
- await page.locator('#new-card-number').fill('4111111111111111');await page.locator('.add-card-dialog .card-details-row').hover();await page.locator('.add-card-dialog[open] .authorized-continue').click();
+ await page.locator('#new-card-number').fill('4111111111111111');await fillCardDetails(page,'.add-card-dialog .card-details-row');await page.locator('.add-card-dialog[open] .authorized-continue').click();
  assert.ok(await page.locator('.source-section .card-details-row').isVisible());assert.equal(await page.locator('.currency-select').inputValue(),'RUB');
  await trigger.click();const added=options.locator('[data-source^="added-"]');assert.equal(await added.getAttribute('aria-pressed'),'true');assert.match(await added.innerText(),/Баланс недоступен/);
  await page.keyboard.press('Escape');assert.ok(await options.isHidden());assert.ok(await page.locator('.card-transfer').isVisible());

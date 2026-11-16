@@ -1,3 +1,4 @@
+import {fillCardDetails} from './fill-card-details.mjs';
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 const browser=await chromium.launch();
@@ -5,7 +6,12 @@ try {
  const page=await browser.newPage({viewport:{width:402,height:874}});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://localhost:5173/?screen=guest');
+ assert.equal(await page.locator('.source-section [data-expiry]').inputValue(),'');
+ assert.equal(await page.locator('.source-section [data-cvc]').inputValue(),'');
  await page.locator('.source-section .card-details-row').hover();
+ assert.equal(await page.locator('.source-section [data-expiry]').inputValue(),'');
+ await page.screenshot({path:'screenshots/card-details-empty.png'});
+ await fillCardDetails(page,'.source-section .card-details-row');
  assert.equal(await page.locator('.source-section [data-expiry]').inputValue(),'12/30');
  assert.equal(await page.locator('.source-section [data-cvc]').inputValue(),'123');
  await page.screenshot({path:'screenshots/guest-card-details.png'});
@@ -17,7 +23,7 @@ try {
  await page.locator('.source-trigger').click();
  await page.locator('[data-add-card]').click();
  await page.locator('#new-card-number').fill('4111111111111111');
- await page.locator('.add-card-dialog .card-details-row').hover();
+ await fillCardDetails(page,'.add-card-dialog .card-details-row');
  assert.equal(await page.locator('.add-card-dialog [data-cvc]').getAttribute('type'),'password');
  await page.screenshot({path:'screenshots/authorized-card-details.png'});
  await page.locator('.add-card-dialog[open] .authorized-continue').click();
@@ -26,5 +32,5 @@ try {
  const stored=await page.evaluate(()=>JSON.stringify({...localStorage}));
  assert.ok(!stored.includes('12/30')&&!stored.includes('4111111111111111')&&!stored.includes('cvc'));
  assert.deepEqual(errors,[]);
- console.log('PASS: guest and authorized card details, hover fill, masking, no credential persistence');
+ console.log('PASS: guest and authorized card details, empty states, explicit entry, masking, no credential persistence');
 } finally {await browser.close();}

@@ -1,3 +1,4 @@
+import {fillCardDetails} from './fill-card-details.mjs';
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 const browser=await chromium.launch();
@@ -9,7 +10,7 @@ try {
  await page.locator('.welcome-guest').click();
  assert.equal(await page.locator('.recipient-next button').isDisabled(),true);
  await page.locator('#guest-source').fill('4111111111111111');
- await page.locator('.source-section .card-details-row').hover();
+ await fillCardDetails(page,'.source-section .card-details-row');
  await page.locator('#destination-number').fill('4111111111111111');
  await page.locator('#transfer-amount').fill('100');
  await page.waitForTimeout(500);

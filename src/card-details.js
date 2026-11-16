@@ -2,7 +2,7 @@
 export function createDemoCardDetails(onChange = () => {}) {
   const row = document.createElement('div');
   row.className = 'card-details-row';
-  row.innerHTML = '<label>Срок действия<input data-expiry aria-label="Срок действия" placeholder="ММ/ГГ" readonly autocomplete="off" aria-haspopup="dialog"></label><label>CVC/CVV<input data-cvc aria-label="CVC/CVV" type="password" placeholder="3 цифры" readonly autocomplete="off"></label>';
+  row.innerHTML = '<label>Срок действия<input data-expiry aria-label="Срок действия" placeholder="ММ/ГГ" readonly autocomplete="off" aria-haspopup="dialog"></label><label>CVC/CVV<input data-cvc aria-label="CVC/CVV" type="password" inputmode="numeric" maxlength="3" placeholder="3 цифры" autocomplete="off"></label>';
   const expiry=row.querySelector('[data-expiry]');
   const cvc=row.querySelector('[data-cvc]');
   const expectedExpiry='12/30';
@@ -20,14 +20,7 @@ export function createDemoCardDetails(onChange = () => {}) {
     expiryError.textContent=invalid?'Неверный срок действия':'';
   };
 
-  const fill = () => {
-    if(!expiry.value) expiry.value = expectedExpiry;
-    if(!cvc.value) cvc.value = '123';
-    onChange();
-  };
-  row.addEventListener('pointerenter', fill);
-  row.addEventListener('pointerdown', fill);
-  row.addEventListener('focusin', fill);
+  cvc.oninput=()=>{cvc.value=cvc.value.replace(/\D/g,'').slice(0,3);onChange();};
   const picker=document.createElement('dialog');
   picker.className='expiry-picker';
   picker.setAttribute('aria-label','Срок действия карты');
@@ -67,7 +60,7 @@ export function createDemoCardDetails(onChange = () => {}) {
   });
   const open=()=>{
     if(picker.open)return;
-    const [month,year]=expiry.value.split('/');
+    const [month,year]=(expiry.value || String(now.getMonth()+1).padStart(2,'0')+'/'+String(currentYear).slice(-2)).split('/');
     picker.showModal();
     choose(0,Math.max(0,values[0].indexOf(month)));
     choose(1,Math.max(0,values[1].findIndex(value=>value.slice(-2)===year)));
@@ -81,7 +74,8 @@ export function createDemoCardDetails(onChange = () => {}) {
     validateExpiry();picker.close();onChange();expiry.focus();
   };
   picker.querySelector('.expiry-cancel').onclick=()=>{picker.close();expiry.focus();};
-  row.demoComplete = () => expiry.value===expectedExpiry && !!cvc.value;
+  row.demoComplete = () => expiry.value===expectedExpiry && /^\d{3}$/.test(cvc.value);
+  row.copyDemoFrom = other => {expiry.value=other.querySelector('[data-expiry]').value;cvc.value=other.querySelector('[data-cvc]').value;validateExpiry();};
   row.clearDemo = () => {expiry.value='';cvc.value='';validateExpiry();};
   return row;
 }

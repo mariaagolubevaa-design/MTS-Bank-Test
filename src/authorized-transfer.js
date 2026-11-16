@@ -80,7 +80,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     e.preventDefault();
     if(validCard(addInput.value)&&!demoCardAvailability(addInput.value).available){addError.textContent=demoCardAvailability(addInput.value).message;addInput.setAttribute('aria-invalid','true');return;}
     if(!validCard(addInput.value)){addError.textContent='Проверьте номер карты';addInput.setAttribute('aria-invalid','true');addInput.focus();return;}
-    if(!addDetails.demoComplete()){addError.textContent='Наведите на поля срока действия и CVC/CVV для демозаполнения';addDetails.querySelector('input').focus();return;}
+    if(!addDetails.demoComplete()){addError.textContent='Укажите срок действия и CVC/CVV';addDetails.querySelector('input').focus();return;}
     const last4=addInput.value.replace(/\D/g,'').slice(-4);
     const newCard={id:'added-'+Date.now(),name:'Добавленная карта',last4,balance:null,currency:'RUB',external:true};
     cards.push(newCard);
@@ -92,7 +92,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     source=newCard;
     if(amountCurrency!=='RUB')amountInput.value='';
     amountCurrency='RUB';
-    sourceDetails.dispatchEvent(new Event('pointerenter'));
+    sourceDetails.copyDemoFrom(addDetails);
 
     addInput.value='';addDetails.clearDemo();addError.textContent='';addDialog.close();update();
   };
