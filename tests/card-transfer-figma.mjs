@@ -38,7 +38,7 @@ try {
  await page.screenshot({path:'screenshots/card-transfer-fee-402x874.png'});
  await page.locator('.source-trigger').click();
  assert.equal(await page.locator('.source-options').evaluate(e=>getComputedStyle(e).borderColor),'rgb(213, 213, 218)');
- await geometry('.source-trigger',{height:84});await geometry('.source-options',{y:255});
+ await geometry('.source-trigger',{height:72});await geometry('.source-options',{y:243});
  assert.equal(await page.locator('[data-source="debit"]').getAttribute('aria-pressed'),'true');
  assert.ok(await page.locator('.source-options img').evaluateAll(es=>es.every(e=>e.complete&&e.naturalWidth)));
  await page.screenshot({path:'screenshots/card-transfer-dropdown-402x874.png'});

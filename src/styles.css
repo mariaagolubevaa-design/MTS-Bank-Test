@@ -1178,16 +1178,16 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
   .card-transfer--russia .recipient-card-field:hover .scan-card { background:#e5e2f6; }
 }
 
-/* Amount variants — Figma 137:4097. Currency is a 32 px action on the right. */
+/* Amount variants — Figma 163:5473. Inline currency with a 16 px chevron. */
 .amount-unit { display:none; }
 .card-transfer--russia .amount-field,
 .card-transfer--russia .amount-field:focus-within { border-color:var(--c2c-border-default); padding:11px 15px; }
-.card-transfer--russia .amount-input-row { padding-right:80px; width:100%; }
-.card-transfer--russia .amount-unit { display:block; flex-shrink:0; font:500 15px/28px 'Inter Tight',sans-serif; }
-.card-transfer--russia .amount-field .currency-picker { position:absolute; right:15px; top:50%; transform:translateY(-50%); width:32px; height:32px; }
-.card-transfer--russia .currency-select { width:32px; height:32px; margin:0; padding:0; border-radius:8px; color:#6641fb; background:#e5e2f6; font:500 15px/32px 'Inter Tight',sans-serif; text-align:center; text-align-last:center; }
-.card-transfer--russia .currency-picker>img { display:none; }
-.card-transfer--russia .clear-amount { visibility:hidden; right:53.5px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:8px; line-height:32px; }
+.card-transfer--russia .amount-input-row { padding-right:36px; width:100%; gap:4px; }
+.card-transfer--russia .amount-unit { display:none; }
+.card-transfer--russia .amount-field .currency-picker { position:relative; flex:0 0 36px; width:36px; height:28px; }
+.card-transfer--russia .currency-select { width:36px; height:44px; margin:-8px 0; padding:8px 20px 8px 0; border-radius:6px; color:#141414; background:transparent; font:500 15px/28px 'Inter Tight',sans-serif; text-align:left; text-align-last:left; }
+.card-transfer--russia .currency-picker>img { display:block; width:16px; height:16px; right:2px; }
+.card-transfer--russia .clear-amount { visibility:visible; right:15px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:8px; line-height:32px; }
 .card-transfer--russia .amount-field:focus-within .clear-amount { visibility:visible; }
 .card-transfer--russia .amount-field:has(input[aria-invalid=true]) { border-color:#b83d45; }
 .card-transfer--russia .amount-field:has(input[aria-invalid=true]) input,
@@ -1202,3 +1202,11 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .continue-spinner { width:24px; height:24px; animation:continue-turn .9s linear infinite; }
 @keyframes continue-turn { to { transform:rotate(360deg); } }
 @media(prefers-reduced-motion:reduce) { .continue-spinner { animation:none; } }
+
+/* Source-card Default / Active / Expanded — Figma 140:2298, 101:591. */
+.card-transfer--russia .source-trigger,
+.card-transfer--russia .source-trigger[aria-expanded=true] { height:72px; padding:11px 15px; gap:4px; justify-content:flex-start; }
+.card-transfer--russia .source-value { width:calc(100% - 40px); white-space:pre; overflow:hidden; text-overflow:ellipsis; }
+.card-transfer--russia .source-trigger .source-chevron { right:16.5px; top:33px; }
+.card-transfer--russia .source-trigger[aria-expanded=true] .source-chevron { top:31.5px; }
+.card-transfer--russia .source-options { top:80px; border-width:1.5px; max-height:min(360px,calc(100dvh - 300px)); overflow-y:auto; }
