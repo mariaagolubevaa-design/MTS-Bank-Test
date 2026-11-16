@@ -32,6 +32,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   }
   const screen = document.createElement('main');
   screen.className = 'authorized-transfer card-transfer';
+  const lockedGuestSource = guest && !!sourceNumber;
+  const guestSourceNumbers = new Map();
   let source = guest ? cards[0] : repeatAmount != null ? cards.find(c => c.id === card?.id) || null : null;
   let amountCurrency=defaultAmountCurrency(source);
   let savedRecipient = recipient || null;
@@ -80,6 +82,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     const last4=addInput.value.replace(/\D/g,'').slice(-4);
     const newCard={id:'added-'+Date.now(),name:'Добавленная карта',last4,balance:null,currency:'RUB',external:true};
     cards.push(newCard);
+    if (guest) guestSourceNumbers.set(newCard.id, addInput.value.replace(/\D/g, ''));
     saveDemoWallet();
     const button=document.createElement('button');button.type='button';button.dataset.source=newCard.id;
     button.innerHTML=sourceOption(newCard).replace(/^<button[^>]*>|<\/button>$/g,'');
@@ -135,7 +138,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       if(version===lookupVersion){bankLookupPending=false;update();}
     },350);
   }
-  function ready() { return !!source && availability?.available === true && (!!savedRecipient || validCard(input.value)); }
+  function ready() { return !!source && availability?.available === true && (!!savedRecipient || validCard(input.value)) && (!guest || input.value.replace(/\D/g, '') !== (guestSourceNumbers.get(source.id) || sourceNumber?.replace(/\D/g, ''))); }
   function update() { updateQuote(); }
   trigger.onclick = () => { options.hidden = !options.hidden; trigger.setAttribute('aria-expanded', String(!options.hidden)); };
   trigger.onkeydown = e => { if(e.key === 'ArrowDown'){ e.preventDefault(); options.hidden=false;trigger.setAttribute('aria-expanded','true');options.querySelector('button').focus(); } };
@@ -243,7 +246,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   function updateQuote() {
     sourceDetails.hidden=!source?.external || guest;
     trigger.classList.toggle('has-source',!!source);
-    if(!guest)screen.querySelector('.source-value').textContent=source?'•• '+source.last4+'   '+sourceName(source):'Выберите карту';
+    if(!lockedGuestSource)screen.querySelector('.source-value').textContent=source?'•• '+source.last4+'   '+sourceName(source):'Выберите карту';
     options.querySelectorAll('[data-source]').forEach(button=>{
       const selected=button.dataset.source===source?.id;
       button.setAttribute('aria-pressed',String(selected));
@@ -352,8 +355,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     };
     form.append(review);review.scrollIntoView({block:'nearest',behavior:'smooth'});
   };
-  if(guest){
-    screen.classList.add('guest-shared-transfer');
+  if(guest)screen.classList.add('guest-shared-transfer');
+  if(lockedGuestSource){
     screen.querySelector('.source-trigger').disabled=true;
     screen.querySelector('.source-chevron').hidden=true;
     screen.querySelector('.source-value').textContent='Карта •• '+source.last4;

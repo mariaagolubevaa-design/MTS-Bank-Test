@@ -5,11 +5,11 @@ try {
  const page=await browser.newPage({viewport:{width:402,height:874}});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://localhost:5173/?screen=guest');
- assert.equal(await page.locator('.guest-source .card-details-row input').count(),2);
- assert.equal(await page.locator('.guest-destination .card-details-row').count(),0);
- await page.locator('.guest-source .card-details-row').hover();
- assert.equal(await page.locator('[data-expiry]').inputValue(),'12/30');
- assert.equal(await page.locator('[data-cvc]').inputValue(),'123');
+ await page.locator('.source-trigger').click();
+ await page.locator('[data-add-card]').click();
+ await page.locator('.add-card-dialog .card-details-row').hover();
+ assert.equal(await page.locator('.add-card-dialog [data-expiry]').inputValue(),'12/30');
+ assert.equal(await page.locator('.add-card-dialog [data-cvc]').inputValue(),'123');
  await page.screenshot({path:'screenshots/guest-card-details.png'});
  await page.evaluate(async()=>{
   const {createAuthorizedTransfer}=await import('/src/authorized-transfer.js');

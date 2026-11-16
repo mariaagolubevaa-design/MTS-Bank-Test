@@ -1218,3 +1218,6 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 /* Frequent operations scroll horizontally without a visible scrollbar. */
 .transfers-menu .menu-favorites .recipients { scrollbar-width:none; }
 .transfers-menu .menu-favorites .recipients::-webkit-scrollbar { display:none; width:0; height:0; }
+
+/* Guest entry uses the same Figma card-transfer fields and spacing. */
+.guest-transfer.card-transfer .scan-card { top:50%; }
