@@ -1126,7 +1126,7 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .card-transfer .recipient-bank:not(:empty)+.card-availability { top:94px; }
 .card-transfer .card-availability:empty { display:none; }
 .card-transfer .destination-section>.field-error { margin:8px 0 0; }
-.card-transfer .destination-section:has(input[aria-invalid=true]) .card-availability { position:static; margin-top:8px; color:#b83d45; }
+.card-transfer .destination-section:has(input[aria-invalid=true]) .card-availability { position:static; margin-top:8px; color:#ff1524; }
 .card-transfer .inline-amount { margin-top:48px; }
 .card-transfer .inline-amount h2 { height:25px; line-height:25px; margin:0 0 16px; }
 .card-transfer .amount-field { gap:4px; }
@@ -1171,8 +1171,8 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .card-transfer--russia .recipient-card-field .scan-card img { width:24px; height:24px; }
 .card-transfer--russia .recipient-card-field.is-filled .scan-card,
 .card-transfer--russia .recipient-card-field:has(input[aria-invalid=true]) .scan-card { background:#e5e2f6; }
-.card-transfer--russia .recipient-card-field:has(input[aria-invalid=true]) { border-color:#b83d45; }
-.card-transfer--russia .recipient-card-field:has(input[aria-invalid=true]) input { color:#b83d45; }
+.card-transfer--russia .recipient-card-field:has(input[aria-invalid=true]) { border-color:#ff1524; }
+.card-transfer--russia .recipient-card-field:has(input[aria-invalid=true]) input { color:#ff1524; }
 .card-transfer--russia .recipient-card-field:has(input[aria-invalid=true]) label { color:#141414; }
 .card-transfer--russia .destination-section>#destination-error { margin:4px 18px 0; font:500 11px/16px 'Inter Tight',sans-serif; }
 @media(hover:hover) and (pointer:fine) {
@@ -1190,9 +1190,9 @@ body:has(.card-transfer) .home-indicator { height:calc(32px + env(safe-area-inse
 .card-transfer--russia .currency-picker>img { display:block; width:16px; height:16px; right:2px; }
 .card-transfer--russia .clear-amount { visibility:visible; right:15px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:8px; line-height:32px; }
 .card-transfer--russia .amount-field:focus-within .clear-amount { visibility:visible; }
-.card-transfer--russia .amount-field:has(input[aria-invalid=true]) { border-color:#b83d45; }
+.card-transfer--russia .amount-field:has(input[aria-invalid=true]) { border-color:#ff1524; }
 .card-transfer--russia .amount-field:has(input[aria-invalid=true]) input,
-.card-transfer--russia .amount-field:has(input[aria-invalid=true]) .amount-unit { color:#b83d45; }
+.card-transfer--russia .amount-field:has(input[aria-invalid=true]) .amount-unit { color:#ff1524; }
 .card-transfer--russia .amount-field:has(input[aria-invalid=true]) label { color:#141414; }
 .card-transfer--russia .inline-amount>#amount-error { margin:4px 18px 0; font:500 11px/16px 'Inter Tight',sans-serif; }
 
@@ -1356,3 +1356,10 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
   .guest-international-transfer .guest-transfer-title { font-size:clamp(20px,6vw,24px); }
 }
 .guest-direction-sheet .direction-sheet-title { position:absolute; left:23px; top:37px; margin:0; color:#141414; font:500 24px/29px 'Inter Tight',sans-serif; }
+
+/* Transfer errors share one red across borders, values and captions. */
+.card-transfer .field-error { color:#ff1524; }
+.card-transfer .destination-field:has(input[aria-invalid=true]),
+.card-transfer .add-card-dialog input[aria-invalid=true] { border-color:#ff1524; }
+.card-transfer .destination-field input[aria-invalid=true],
+.card-transfer .add-card-dialog input[aria-invalid=true] { color:#ff1524; }
