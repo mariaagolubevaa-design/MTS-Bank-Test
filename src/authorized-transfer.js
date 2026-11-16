@@ -144,7 +144,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       const suggestion=document.createElement('button');suggestion.type='button';suggestion.className='demo-card-suggestion';suggestion.hidden=true;
       const formatted=figmaDemoCards[kind].replace(/(.{4})(?=.)/g,'$1 ');
       suggestion.setAttribute('aria-label','Заполнить демо-карту '+(kind==='sender'?'отправителя':'получателя'));
-      suggestion.innerHTML='<span>Заполнить из макета</span><strong>'+formatted+'</strong>';
+      suggestion.innerHTML='<span>Пример для демо</span><strong>'+formatted+'</strong>';
       field.closest('.destination-field').after(suggestion);
       const syncSuggestion=()=>{suggestion.hidden=!!field.value||!(document.activeElement===field||document.activeElement===suggestion);};
       field.addEventListener('focus',syncSuggestion);field.addEventListener('input',syncSuggestion);
