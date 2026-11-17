@@ -1,3 +1,19 @@
+// An explicit reset link restores the design baseline; ordinary reloads keep demo activity.
+if (typeof window !== 'undefined' && new URL(window.location.href).searchParams.get('resetDemo') === '1') {
+  const keys=['c2c-demo-wallet-v1','c2c-demo-transfers-v1'];
+  try {
+    localStorage.setItem('c2c-demo-before-reset',JSON.stringify({
+      savedAt:new Date().toISOString(),
+      values:Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)])),
+    }));
+    keys.forEach(key=>localStorage.removeItem(key));
+    sessionStorage.removeItem('c2c-pending-transfer');
+    sessionStorage.setItem('c2c-current-page',JSON.stringify({title:'Главная'}));
+    const url=new URL(window.location.href);url.searchParams.delete('resetDemo');
+    window.history.replaceState(null,'',url);
+  } catch { /* Leave stored data intact if a backup cannot be saved. */ }
+}
+
 // Demonstration data; card appearances follow their Figma references.
 export const demoData = {
   cards: [
