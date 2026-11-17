@@ -1499,3 +1499,10 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .home-screen[data-active-card=second] .analytics-tile span { line-height:20px; }
 .home-screen[data-active-card=second] .operation { padding-block:15px; }
 .home-screen[data-active-card=second] .quick-actions button { line-height:20px; gap:14px; }
+
+/* Revised type on Transfers — Figma 161:4907. */
+.transfers-menu-header h1 { font:700 20px/24px 'Actay Wide',sans-serif; }
+.transfers-menu .menu-favorites h2,
+.menu-currency .currency-heading h2 { font:700 20px/normal 'Actay Wide',sans-serif; height:29px; display:flex; align-items:center; }
+.transfers-menu .transfer-options button { font:500 14px/16px 'Inter Tight',sans-serif; }
+.transfers-menu .recipient .avatar:not(.add) { line-height:20px; }

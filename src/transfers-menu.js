@@ -4,7 +4,7 @@ export function createTransfersMenu({ recipientList, onChoose, onRecipient, onAc
   screen.innerHTML = `
     <header class="transfers-menu-header"><h1>Переводы</h1><div class="menu-header-actions"><button class="hit-target" aria-label="Поиск" data-extra="Поиск"><img src="./assets/images/search.svg" alt=""></button><button class="menu-qr hit-target" aria-label="Сканировать код" data-extra="Сканировать код"><img src="./assets/images/home-qr.svg" alt=""></button></div></header>
     <section class="transfer-options" aria-label="Способы перевода">
-      <button class="option-russia" data-option="russia"><span>по карте<br>в Россию</span><img src="./assets/images/menu-russia.png" alt=""></button>
+      <button class="option-russia" data-option="russia"><span>по карте в Россию</span><img src="./assets/images/menu-russia.png" alt=""></button>
       <button class="option-abroad" data-option="abroad"><span>международный<br>по карте</span><img src="./assets/images/menu-abroad.png" alt=""></button>
       <button class="option-own" data-option="own"><span>между своими</span><img src="./assets/images/menu-own.png" alt=""></button>
       <button class="option-details" data-option="details"><span>по реквизитам</span><img src="./assets/images/menu-details.png" alt=""></button>
