@@ -1416,12 +1416,13 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 /* Empty domestic form — current Figma 138:5534 (filled layout stays 171:5848). */
 .guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section { padding-top:7px; }
 .guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section>h2,
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .destination-section>h2 { margin-bottom:8px; }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .destination-section { margin-top:41px; }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .inline-amount h2 { margin-bottom:8px; }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .guest-swap-cards { top:calc(100% + 10px); }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .demo-card-suggestion { top:106px; }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section>.demo-card-suggestion { top:113px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .destination-section>h2 { margin-bottom:16px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .card-details-row { margin-top:12px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .destination-section { margin-top:40px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .inline-amount h2 { margin-bottom:16px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .guest-swap-cards { top:calc(100% + 9px); }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .demo-card-suggestion { top:114px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section>.demo-card-suggestion { top:121px; }
 
 /* Fractional Figma strokes must not be rounded down by CSS border rasterization. */
 .guest-inline-source .destination-field,

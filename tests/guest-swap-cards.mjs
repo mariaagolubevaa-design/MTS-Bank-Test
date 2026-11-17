@@ -3,7 +3,7 @@ const b=await chromium.launch();
 try{
  const p=await b.newPage({viewport:{width:402,height:874}});const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto('http://localhost:5173');await p.locator('.welcome-guest').click();await p.evaluate(()=>document.fonts.ready);
  const swap=p.locator('.guest-swap-cards');
- for(const [s,y] of [['.guest-sender-field',196],['.source-section [data-expiry]',303],['.source-section [data-cvc]',303],['.destination-section>h2',400],['.destination-section .destination-field',426],['.amount-field',579],['.recipient-next button',754],['.guest-swap-cards',369]])assert.equal((await p.locator(s).boundingBox()).y,y,s);
+ for(const [s,y] of [['.guest-sender-field',204],['.source-section [data-expiry]',307],['.source-section [data-cvc]',307],['.destination-section>h2',403],['.destination-section .destination-field',437],['.amount-field',598],['.recipient-next button',754],['.guest-swap-cards',372]])assert.equal((await p.locator(s).boundingBox()).y,y,s);
  for(const selector of ['.guest-sender-field label','.destination-section .destination-field label','.amount-field label'])assert.equal((await p.locator(selector).boundingBox()).x,32,selector);
  for(const selector of ['.guest-source-scan','.destination-section .scan-card'])assert.equal((await p.locator(selector).boundingBox()).x,338,selector);
  assert.equal(await p.locator('.guest-sender-field').evaluate(el=>getComputedStyle(el).boxShadow),'rgb(213, 213, 218) 0px 0px 0px 0.5px inset');
