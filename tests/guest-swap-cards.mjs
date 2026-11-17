@@ -3,7 +3,7 @@ const b=await chromium.launch();
 try{
  const p=await b.newPage({viewport:{width:402,height:874}});const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto('http://localhost:5173');await p.locator('.welcome-guest').click();await p.evaluate(()=>document.fonts.ready);
  const swap=p.locator('.guest-swap-cards');
- for(const [s,y] of [['.guest-sender-field',205],['.destination-section>h2',408],['.destination-section .destination-field',442],['.amount-field',599],['.recipient-next button',754],['.guest-swap-cards',369]])assert.equal((await p.locator(s).boundingBox()).y,y,s);
+ for(const [s,y] of [['.guest-sender-field',196],['.source-section [data-expiry]',303],['.source-section [data-cvc]',303],['.destination-section>h2',400],['.destination-section .destination-field',426],['.amount-field',579],['.recipient-next button',754],['.guest-swap-cards',369]])assert.equal((await p.locator(s).boundingBox()).y,y,s);
  assert.ok(await swap.isDisabled());assert.equal((await swap.boundingBox()).width,48);assert.equal((await swap.boundingBox()).x,338);
  await swap.locator('img').evaluate(el=>el.decode());await p.screenshot({path:'screenshots/guest-swap-empty.png'});
  await p.locator('#guest-source').focus();await p.getByRole('button',{name:'Заполнить демо-карту отправителя',exact:true}).click();await p.locator('#destination-number').focus();await p.getByRole('button',{name:'Заполнить демо-карту получателя',exact:true}).click();await p.locator('.source-section [data-expiry]').focus();await p.locator('.source-section [data-cvc]').focus();await p.locator('#transfer-amount').fill('5000');await p.waitForFunction(()=>!document.querySelector('.recipient-next button').disabled);await p.locator('#transfer-amount').evaluate(el=>el.blur());

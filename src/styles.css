@@ -1412,3 +1412,13 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .guest-swap-icon { display:flex; align-items:center; justify-content:center; width:16px; height:16px; transform:rotate(90deg) scaleY(-1); }
 .guest-swap-icon img { display:block; }
 .guest-international-transfer .guest-swap-cards { display:none; }
+
+/* Empty domestic form — current Figma 138:5534 (filled layout stays 171:5848). */
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section { padding-top:7px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section>h2,
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .destination-section>h2 { margin-bottom:8px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .destination-section { margin-top:41px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .inline-amount h2 { margin-bottom:8px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .guest-swap-cards { top:calc(100% + 10px); }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .demo-card-suggestion { top:106px; }
+.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section>.demo-card-suggestion { top:113px; }
