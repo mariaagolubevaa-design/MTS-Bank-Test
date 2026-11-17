@@ -142,6 +142,17 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       syncSenderState();detectBank();update();
     };
     sender.onblur=()=>{if(sender.value&&!validTransferCard(sender.value)){senderError.textContent='Неверный номер карты';sender.setAttribute('aria-invalid','true');}syncSenderState();};
+    sourceSection.insertAdjacentHTML('beforeend','<button type="button" class="guest-swap-cards" aria-label="Поменять карты отправителя и получателя местами" disabled><span class="guest-swap-icon" aria-hidden="true"><img src="./assets/images/guest-swap-cards.svg" alt=""></span></button>');
+    screen.querySelector('.guest-swap-cards').onclick=()=>{
+      const previousSender=sender.value;
+      sender.value=input.value;
+      input.value=previousSender;
+      savedRecipient=null;input.readOnly=false;
+      sourceDetails.clearDemo();
+      sender.oninput();input.oninput();
+      sender.onblur();input.onblur();
+    };
+
     screen.querySelector('.destination-section').insertAdjacentHTML('afterbegin','<h2>Куда перевести</h2>');
     for(const [field,kind] of [[sender,'sender'],[input,'recipient']]) {
       const suggestion=document.createElement('div');suggestion.className='demo-card-suggestion';suggestion.hidden=true;
@@ -341,6 +352,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       button.querySelector('.source-radio').src='./assets/images/'+(selected?'card-radio-selected.svg':'card-radio-empty.svg');
     });
     input.closest('.destination-field').classList.toggle('is-filled',!!input.value);
+    const swapCards=screen.querySelector('.guest-swap-cards');
+    if(swapCards)swapCards.disabled=!screen.querySelector('#guest-source').value&&!input.value;
     clearRecipient.hidden=!input.value;
     input.closest('.destination-field').querySelector('.scan-card').hidden=!!input.value;
 

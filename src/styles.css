@@ -1397,3 +1397,18 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
   .card-transfer .recipient-card-field:hover:not(:has(input[aria-invalid=true])),
   .card-transfer .amount-field:hover:not(:has(input[aria-invalid=true])) { border-color:#414141; }
 }
+
+/* Updated guest Russian transfer layout and swap action — Figma 171:5848. */
+.guest-inline-source:not(.guest-international-transfer) .destination-section { margin-top:40px; }
+.guest-inline-source:not(.guest-international-transfer) .inline-amount h2 { margin-bottom:12px; }
+.guest-inline-source:not(.guest-international-transfer).has-quote .source-section>h2,
+.guest-inline-source:not(.guest-international-transfer).has-quote .destination-section>h2 { margin-bottom:8px; }
+.guest-inline-source:not(.guest-international-transfer).has-quote .transfer-footer { padding-top:24px; }
+.guest-inline-source:not(.guest-international-transfer).has-quote .recipient-next { margin-top:32px; }
+.guest-swap-cards { position:absolute; z-index:2; right:0; top:calc(100% + 1px); display:flex; align-items:center; justify-content:center; width:48px; height:48px; padding:0; border-radius:12px; background:#f0ecff; }
+.guest-inline-source.has-quote .guest-swap-cards { top:calc(100% + 9px); }
+.guest-swap-cards:disabled { opacity:1; cursor:default; }
+.guest-swap-cards:focus-visible { outline:2px solid #6641fb; outline-offset:2px; }
+.guest-swap-icon { display:flex; align-items:center; justify-content:center; width:16px; height:16px; transform:rotate(90deg) scaleY(-1); }
+.guest-swap-icon img { display:block; }
+.guest-international-transfer .guest-swap-cards { display:none; }
