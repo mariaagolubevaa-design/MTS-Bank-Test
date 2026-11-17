@@ -374,7 +374,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     const bankSupported=international ? effectiveBank.country==='UZ' : effectiveBank.country==='RU';
     if(inlineGuestSource&&availability?.available&&!bankLookupPending){
       input.setAttribute('aria-invalid',String(!bankSupported));
-      availabilityStatus.textContent=bankSupported?'':international?'Для международного перевода укажите карту Узбекистана':'Для перевода в Россию укажите российскую карту';
+      availabilityStatus.textContent=bankSupported?'':international?'Для международного перевода укажите зарубежную карту':'Для перевода в Россию укажите российскую карту';
     }
 
     const supported=source&&(!source.currency||source.currency==='RUB'||guest&&source.currency==='USD')&&bankSupported;
