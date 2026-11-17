@@ -5,7 +5,8 @@ try{
  await p.goto('http://localhost:5173');await p.locator('.welcome-guest').click();
  const choose=async kind=>{await p.locator('.guest-direction-trigger').click();await p.locator(`.guest-direction-sheet [data-direction=${kind}]`).click();};
  await choose('abroad');assert.equal(await p.locator('.guest-direction-label').textContent(),'международный');
- for(const [selector,y] of [['.guest-sender-field',204],['.destination-section .destination-field',425],['.amount-field',582.5],['.recipient-next button',754]])assert.equal((await p.locator(selector).boundingBox()).y,y);
+ for(const [selector,y] of [['.guest-sender-field',204],['.source-section [data-expiry]',307],['.destination-section>h2',403],['.destination-section .destination-field',433],['.amount-field',590],['.guest-swap-cards',372],['.recipient-next button',754]])assert.equal((await p.locator(selector).boundingBox()).y,y);
+ assert.equal(await p.locator('.currency-select').inputValue(),'USD');assert.ok(await p.locator('.guest-swap-cards').isVisible());
  await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:'screenshots/guest-international-empty.png'});
  await p.locator('#guest-source').focus();await p.getByRole('button',{name:'Заполнить демо-карту отправителя',exact:true}).click();
  await p.locator('.source-section [data-expiry]').focus();await p.locator('.source-section [data-cvc]').focus();

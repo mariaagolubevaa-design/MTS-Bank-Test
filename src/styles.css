@@ -1411,7 +1411,11 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .guest-swap-cards:focus-visible { outline:2px solid #6641fb; outline-offset:2px; }
 .guest-swap-icon { display:flex; align-items:center; justify-content:center; width:16px; height:16px; transform:rotate(90deg) scaleY(-1); }
 .guest-swap-icon img { display:block; }
-.guest-international-transfer .guest-swap-cards { display:none; }
+.guest-international-transfer .guest-swap-cards { display:flex; top:calc(100% + 9px); }
+.guest-international-transfer .card-details-row { margin-top:12px; }
+.guest-international-transfer .destination-section { margin-top:40px; }
+.guest-international-transfer .destination-section>h2 { margin-bottom:12px; }
+.guest-international-transfer .inline-amount h2 { margin-bottom:12px; }
 
 /* Domestic empty and filled forms — Figma 138:5534 and 171:5848. */
 .guest-inline-source:not(.guest-international-transfer) .source-section { padding-top:7px; }
@@ -1446,3 +1450,5 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .guest-transfer .guest-transfer-title>span { gap:6.33px; }
 
 .guest-inline-source:not(.guest-international-transfer).has-quote .inline-amount h2 { margin-bottom:16px; }
+.guest-international-transfer .demo-card-suggestion { top:110px; }
+.guest-international-transfer .source-section>.demo-card-suggestion { top:121px; }

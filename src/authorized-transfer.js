@@ -481,6 +481,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     transferKind=kind;international=kind==='abroad';
     screen.classList.toggle('guest-international-transfer',international);
     screen.dataset.direction=kind;
+    if(!screen.querySelector('#guest-source').value&&!amountInput.value)amountCurrency=international?'USD':'RUB';
     refreshDemoSuggestions.forEach(refresh=>refresh());
     detectBank();updateQuote();
   };
