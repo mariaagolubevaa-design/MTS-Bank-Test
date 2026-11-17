@@ -14,7 +14,7 @@ try {
  ['.transfers-menu-header',16,78,370,32],['.transfer-options',16,126,370,262],
  ['.option-russia',16,126,181,164],['.option-own',205,126,181,90],
  ['.option-details',16,298,181,90],['.option-abroad',205,224,181,164],
- ['.payment-options',16,412,373,78],['.menu-favorites',16,514,370,168],['.menu-currency',14,698,370,128],['.tabbar',0,790,402,52]
+ ['.payment-options',16,412,373,78],['.menu-favorites',16,514,370,168],['.menu-currency',14,698,370,198],['.tabbar',0,790,402,52]
  ]) {
  const bounds=await page.locator(selector).boundingBox();
  for(const [key,value]of Object.entries({x,y,width,height}))assert.ok(Math.abs(bounds[key]-value)<1,`${selector} ${key}: ${bounds[key]}`);

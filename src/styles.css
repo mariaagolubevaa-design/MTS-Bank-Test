@@ -1476,3 +1476,11 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
   .home-screen:is([data-active-card=debit],[data-active-card=second]) .quick-actions button { font-size:14px; }
   .home-screen:is([data-active-card=debit],[data-active-card=second]) .analytics-tile span { font-size:14px; }
 }
+
+/* Currency island — Figma 161:4908. */
+.transfers-menu .menu-currency { padding:10px 16px 16px; }
+.menu-currency .currency-heading,.menu-currency .currency-row { grid-template-columns:minmax(0,1fr) 48px 48px; }
+.menu-currency .currency-heading { margin-bottom:0; height:29px; }
+.menu-currency .currency-heading h2 { margin:0; line-height:29px; }
+.currency-subtitle { margin:-5px 0 16px; font:500 11px/16px 'Inter Tight',sans-serif; }
+.currency-continue { display:flex; align-items:center; justify-content:center; width:100%; height:40px; margin-top:12px; border-radius:12px; background:#141414; color:white; font:500 14px/16px 'Inter Tight',sans-serif; }

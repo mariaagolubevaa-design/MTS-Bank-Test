@@ -13,7 +13,9 @@ export function createTransfersMenu({ recipientList, onChoose, onRecipient, onAc
     <section class="menu-favorites" aria-labelledby="frequent-title"><h2 id="frequent-title">Частые операции</h2></section>
     <section class="menu-currency" aria-label="Валюта. Демонстрационные значения из макета, не действующие курсы" title="Демонстрационные значения из макета">
       <div class="currency-heading"><h2>Валюта</h2><span>Продать</span><span>Купить</span></div>
-      <div class="currency-rows">${['RUB','USD','EUR'].map(code => `<div class="currency-row"><span><img src="./assets/images/menu-currency.svg" alt="">${code}</span><span>55</span><span>55</span></div>`).join('')}</div>
+      <p class="currency-subtitle">к грузинскому лари</p>
+      <div class="currency-rows">${[['RUB','2,4 ₽','3,4 ₽'],['USD','2,6 ₽','2,72 ₽'],['EUR','2,81 ₽','2,89 ₽']].map(([code,sell,buy]) => `<div class="currency-row"><span><img src="./assets/images/currency-${code.toLowerCase()}.png" alt="">${code}</span><span>${sell}</span><span>${buy}</span></div>`).join('')}</div>
+      <button type="button" class="currency-continue">Рассчитать</button>
     </section>`;
   // Reuse the existing recipient buttons and their routing metadata.
   const add = recipientList.querySelector('[data-action="Добавить получателя"]');
