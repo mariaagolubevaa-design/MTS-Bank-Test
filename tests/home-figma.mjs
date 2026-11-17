@@ -26,7 +26,10 @@ try {
   await page.screenshot({path:'screenshots/home-figma-402x874.png'});
   await page.locator('.next-card').click();
   await page.waitForFunction(()=>document.querySelector('.card-track').scrollLeft>369);
-  assert.equal(await page.locator('.operation').count(),1);
+  assert.equal(await page.locator('.operation').count(),2);
+  assert.equal((await page.locator('.history').boundingBox()).height,198);
+  assert.match(await page.locator('.operation').first().innerText(),/Марина Б\./);
+  await page.locator('.history').screenshot({path:'screenshots/history-dollar.png'});
   await page.locator('.card-track').focus();
   await page.keyboard.press('ArrowLeft');
   await page.waitForFunction(()=>document.querySelector('.card-track').scrollLeft<1);

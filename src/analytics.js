@@ -3,7 +3,7 @@ import {demoAmountRates} from './amount-currency.js';
 // November demo opening totals already include the seeded history rows.
 export const analyticsDemoPeriod='2026-11';
 const openingTotals={debit:{expenses:46831,income:52500},second:{expenses:732,income:1500}};
-const seedIds=new Set(['t1','t2','t3','t4']);
+const seedIds=new Set(['t1','t2','t3','t4','t5']);
 export function analyticsFor(data,cardId,now=new Date()) {
   const card=data.cards.find(c=>c.id===cardId);
   const currency=card?.currency||'RUB';

@@ -9,7 +9,7 @@ test('Ruble formatting handles fractions and large amounts', () => {
 });
 test('Each card displays its own operations', () => {
   assert.equal(operationsFor(demoData, 'debit').length, 3);
-  assert.equal(operationsFor(demoData, 'second').length, 1);
+  assert.equal(operationsFor(demoData, 'second').length, 2);
   assert.deepEqual(operationsFor(demoData, 'missing'), []);
 });
 
@@ -24,4 +24,11 @@ test('Ruble opening history matches Figma and new operations stay on their card'
   assert.equal(operationsFor(data,'debit')[0].id,'sent-rub');
   assert.ok(operationsFor(data,'debit').every(t=>t.currency==='RUB'));
   assert.equal(operationsFor(data,'second')[0].id,'topup-usd');
+});
+
+test('Dollar opening history matches Figma', () => {
+  assert.deepEqual(operationsFor(demoData,'second').map(t=>[t.name,t.amount,t.currency,t.date]),[
+    ['Марина Б.',-150,'USD','Сегодня, 10:34'],
+    ['Павел Г.',500,'USD','28 октября'],
+  ]);
 });
