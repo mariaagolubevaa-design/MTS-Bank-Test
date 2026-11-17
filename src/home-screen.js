@@ -67,7 +67,7 @@ export function createHomeScreen({ data, onNavigate }) {
   }
   function renderOperations() {
     renderAnalytics();
-    list.innerHTML = operationsFor(data, data.cards[active].id).slice(0, 2).map(item => `
+    list.innerHTML = operationsFor(data, data.cards[active].id).slice(0, 3).map(item => `
       <button class="operation" data-operation="${escapeHTML(item.id)}">
         <span class="avatar" style="--avatar:${item.color}">${escapeHTML(item.initials)}</span>
         <span class="operation-copy"><span class="operation-name">${escapeHTML(item.name)}</span><span class="operation-date">${escapeHTML(item.date)}</span></span>

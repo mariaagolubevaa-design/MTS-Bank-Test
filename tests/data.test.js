@@ -12,3 +12,16 @@ test('Each card displays its own operations', () => {
   assert.equal(operationsFor(demoData, 'second').length, 1);
   assert.deepEqual(operationsFor(demoData, 'missing'), []);
 });
+
+test('Ruble opening history matches Figma and new operations stay on their card', () => {
+  const original=operationsFor(demoData,'debit');
+  assert.deepEqual(original.map(t=>[t.name,t.amount,t.currency,t.date]),[
+    ['Татьяна Ш.',-5000,'RUB','Сегодня, 14:32'],
+    ['Павел Г.',-2500,'RUB','Вчера, 19:08'],
+    ['Татьяна Ш.',-3000,'RUB','30 октября'],
+  ]);
+  const data={transactions:[{id:'sent-rub',cardId:'debit',amount:-100,currency:'RUB'},{id:'topup-usd',cardId:'second',amount:50,currency:'USD'},...demoData.transactions]};
+  assert.equal(operationsFor(data,'debit')[0].id,'sent-rub');
+  assert.ok(operationsFor(data,'debit').every(t=>t.currency==='RUB'));
+  assert.equal(operationsFor(data,'second')[0].id,'topup-usd');
+});
