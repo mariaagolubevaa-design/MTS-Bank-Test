@@ -319,7 +319,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     if(!source||!currentQuote?.insufficient)return;
     pendingTopup={source,kopecks:Math.max(0,Math.round(currentQuote.total*100)-Math.round(source.balance*100))};
     topup.querySelector('.topup-card').textContent='На карту •• '+source.last4;
-    topup.querySelector('.topup-amount').textContent=money(pendingTopup.kopecks/100);
+    topup.querySelector('.topup-amount').textContent=money(pendingTopup.kopecks/100,pendingTopup.source.currency);
     topup.showModal();
   };
   topup.querySelector('.topup-confirm').onclick=()=>{
@@ -332,13 +332,14 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     saveDemoTransfers();
     pendingTopup=null;topup.close();updateQuote();
   };
-  const debitMoney=value=>money(value,guest&&source?.currency==='USD'?'USD':'RUB');
+  const debitMoney=value=>money(value,source?.currency==='USD'?'USD':'RUB');
   function quoteForSource(rubles,sameBank=false){
     const quote=international?internationalDemoQuote(rubles,source.balance):domesticQuote(rubles,source.balance,sameBank);
-    if(guest&&source.currency==='USD'){
+    if(source.currency==='USD'){
       const debitAmount=Math.round(rubles/demoAmountRates.USD*100)/100;
       const fee=Math.round(quote.fee/demoAmountRates.USD*100)/100;
-      return {...quote,fee,total:Math.round((debitAmount+fee)*100)/100,debitAmount,debitCurrency:'USD'};
+      const total=Math.round((debitAmount+fee)*100)/100;
+      return {...quote,fee,total,debitAmount,debitCurrency:'USD',insufficient:Number.isFinite(source.balance)&&Math.round(total*100)>Math.round(source.balance*100)};
     }
     return {...quote,debitAmount:rubles,debitCurrency:'RUB'};
   }
@@ -377,7 +378,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
       availabilityStatus.textContent=bankSupported?'':international?'Для международного перевода укажите зарубежную карту':'Для перевода в Россию укажите российскую карту';
     }
 
-    const supported=source&&(!source.currency||source.currency==='RUB'||guest&&source.currency==='USD')&&bankSupported;
+    const supported=source&&(!source.currency||source.currency==='RUB'||source.currency==='USD')&&bankSupported;
     const rubles=valid?amountInRubles(value,amountCurrency):null;
     currentQuote=valid&&rubles>0&&supported&&availability?.available&&!bankLookupPending?{
       ...quoteForSource(rubles,effectiveBank.sameBank),
@@ -397,12 +398,12 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     quoteBox.querySelector('[data-fee]').textContent=currentQuote?debitMoney(currentQuote.fee):!raw?debitMoney(0):'—';
     quoteBox.querySelector('[data-total]').textContent=currentQuote?debitMoney(currentQuote.total):!raw?debitMoney(0):'—';
     screen.querySelector('.quote-disclosure .quote-note').textContent=!source?'Выберите карту списания':source.external?'Демонстрационный расчёт · баланс и комиссия банка добавленной карты не проверяются':!bank?'Демонстрационный расчёт: 1,5%, минимум 50 ₽ · банк не определён':!bankSupported?'Страна банка не соответствует выбранному направлению':!supported?(international?'Выберите направление и получите расчёт курса и комиссии — перевод пока недоступен':'Для этого направления нужен отдельный тариф и курс конвертации'):international?'Пример: курс 1 ₽ = 150 UZS, комиссия 0 ₽ · не является текущим предложением МТС':bank.sameBank?'На карту МТС Банка · без комиссии':'В другой российский банк · 1,5%, минимум 50 ₽';
-    amountError.textContent=raw&&!valid?'Введите сумму больше нуля, не более двух знаков после запятой':!inlineGuestSource&&ready()&&!bankSupported?'Страна банка не соответствует выбранному направлению':!inlineGuestSource&&ready()&&!supported?'Для карты в этой валюте перевод по выбранному направлению недоступен':currentQuote?.insufficient?'Недостаточно средств с учётом комиссии · не хватает '+money(currentQuote.total-source.balance):'';
+    amountError.textContent=raw&&!valid?'Введите сумму больше нуля, не более двух знаков после запятой':!inlineGuestSource&&ready()&&!bankSupported?'Страна банка не соответствует выбранному направлению':!inlineGuestSource&&ready()&&!supported?'Для карты в этой валюте перевод по выбранному направлению недоступен':currentQuote?.insufficient?'Недостаточно средств с учётом комиссии · не хватает '+debitMoney(currentQuote.total-source.balance):'';
     amountInput.setAttribute('aria-invalid',String(!!amountError.textContent));
     addShortfall.hidden=!currentQuote?.insufficient;
     if(currentQuote?.insufficient) {
       const shortfall=(Math.round(currentQuote.total*100)-Math.round(source.balance*100))/100;
-      addShortfall.textContent='Добавить '+money(shortfall);
+      addShortfall.textContent='Добавить '+debitMoney(shortfall);
     }
     const calculating=!!source&&valid&&bankLookupPending&&availability?.available!==false;
     next.setAttribute('aria-busy',String(calculating));

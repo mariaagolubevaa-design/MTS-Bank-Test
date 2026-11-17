@@ -1,5 +1,5 @@
 import { analyticsFor } from './analytics.js';
-import { money, operationsFor } from './data.js';
+import { money, operationsFor, saveDemoTransfers } from './data.js';
 
 export const image = (name, className = '') => `<img class="${className}" src="./assets/images/${name}.${['profile', 'mastercard', 'home-profile', 'mir'].includes(name) ? 'png' : 'svg'}" alt="" draggable="false">`;
 export const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -116,12 +116,34 @@ export function createHomeScreen({ data, onNavigate }) {
     fitBalances();
   }).observe(track);
   document.fonts.ready.then(fitBalances);
+  const topup=document.createElement('dialog');
+  topup.className='add-card-dialog home-topup-dialog';
+  topup.innerHTML='<form><div class="add-card-heading"><h2>Пополнить карту</h2><button type="button" class="close-topup" aria-label="Закрыть">×</button></div><p class="topup-card"></p><label for="home-topup-amount">Сумма пополнения</label><input id="home-topup-amount" inputmode="decimal" autocomplete="off" required><p class="topup-error" role="alert"></p><p class="quote-note">Демонстрационное пополнение</p><button class="authorized-continue">Пополнить</button></form>';
+  screen.append(topup);
+  let topupCard=null;
+  topup.querySelector('.close-topup').onclick=()=>topup.close();
+  topup.querySelector('form').onsubmit=event=>{
+    event.preventDefault();
+    const raw=topup.querySelector('input').value.replace(/\s/g,'').replace(',','.');
+    const amount=Number(raw),cents=Math.round(amount*100);
+    if(!/^\d+(\.\d{1,2})?$/.test(raw)||!Number.isFinite(amount)||amount<=0||!Number.isSafeInteger(cents)||!Number.isSafeInteger(Math.round(topupCard.balance*100)+cents)){
+      topup.querySelector('.topup-error').textContent='Введите сумму больше нуля, не более двух знаков после запятой';return;
+    }
+    topupCard.balance=(Math.round(topupCard.balance*100)+cents)/100;
+    data.transactions.unshift({id:'topup-'+crypto.randomUUID(),cardId:topupCard.id,name:'Пополнение карты',initials:'+',color:'#e3e3e8',date:'Только что',createdAt:new Date().toISOString(),amount:cents/100,currency:topupCard.currency||'RUB',status:'Выполнен',kind:'topup'});
+    saveDemoTransfers();topup.close();
+  };
   screen.addEventListener('click', event => {
     const target = event.target.closest('button');
     if (!target) return;
     if (target.hasAttribute('data-next-card')) selectCard((active + 1) % data.cards.length);
     if (target.dataset.recipient) onNavigate({ title: 'Начать перевод', recipient: data.recipients.find(item => item.id === target.dataset.recipient), card: data.cards[active] });
     if (target.dataset.operation) onNavigate({ title: 'Детали перевода', operation: data.transactions.find(item => item.id === target.dataset.operation), card: data.cards[active] });
+    if(target.dataset.action==='Пополнить карту'&&Number.isFinite(data.cards[active].balance)){
+      topupCard=data.cards[active];
+      topup.querySelector('.topup-card').textContent='Карта •• '+topupCard.last4+' · '+(topupCard.currency||'RUB');
+      topup.querySelector('input').value='';topup.querySelector('.topup-error').textContent='';topup.showModal();return;
+    }
     if (target.dataset.action) onNavigate({ title: target.dataset.action, card: data.cards[active] });
     if (target.classList.contains('analytics-collapse')) {
       const grid = screen.querySelector('.analytics-grid');

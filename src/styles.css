@@ -1457,3 +1457,7 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .guest-inline-source:not(.guest-international-transfer).has-quote .inline-amount h2 { margin-bottom:16px; }
 .guest-international-transfer .demo-card-suggestion { top:110px; }
 .guest-international-transfer .source-section>.demo-card-suggestion { top:121px; }
+
+.home-topup-dialog input { display:block; width:100%; height:56px; margin-top:8px; border:1.5px solid #d5d5da; border-radius:16px; padding:16px; font:500 15px/20px 'Inter Tight',sans-serif; }
+.home-topup-dialog .topup-error { color:#ff1524; font-size:11px; }
+.home-topup-dialog .topup-error:empty { display:none; }
