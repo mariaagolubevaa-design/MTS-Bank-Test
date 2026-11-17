@@ -1422,3 +1422,24 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .guest-inline-source:not(.guest-international-transfer):not(.has-quote) .guest-swap-cards { top:calc(100% + 10px); }
 .guest-inline-source:not(.guest-international-transfer):not(.has-quote) .demo-card-suggestion { top:106px; }
 .guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section>.demo-card-suggestion { top:113px; }
+
+/* Fractional Figma strokes must not be rounded down by CSS border rasterization. */
+.guest-inline-source .destination-field,
+.guest-inline-source .card-details-row input {
+  --guest-field-stroke:#d5d5da;
+  border:1px solid var(--guest-field-stroke);
+  box-shadow:inset 0 0 0 .5px var(--guest-field-stroke);
+}
+.guest-inline-source .card-details-row input { box-shadow:inset 0 0 0 .8px var(--guest-field-stroke); }
+.guest-inline-source .recipient-card-field { padding-inline:15px; }
+.guest-inline-source .recipient-card-field .scan-card { right:15px; }
+.guest-inline-source .destination-field:focus-within,
+.guest-inline-source .card-details-row input:focus,
+.guest-inline-source .card-details-row:has(.expiry-picker[open]) input[data-expiry] { --guest-field-stroke:#414141; }
+@media(hover:hover) {
+  .guest-inline-source .destination-field:hover,
+  .guest-inline-source .card-details-row input:hover { --guest-field-stroke:#414141; }
+}
+.guest-inline-source .destination-field:has(input[aria-invalid=true]),
+.guest-inline-source .card-details-row input[aria-invalid=true] { --guest-field-stroke:#ff1524; }
+.guest-transfer .guest-transfer-title>span { gap:6.33px; }
