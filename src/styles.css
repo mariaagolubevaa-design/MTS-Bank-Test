@@ -1461,3 +1461,6 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .home-topup-dialog input { display:block; width:100%; height:56px; margin-top:8px; border:1.5px solid #d5d5da; border-radius:16px; padding:16px; font:500 15px/20px 'Inter Tight',sans-serif; }
 .home-topup-dialog .topup-error { color:#ff1524; font-size:11px; }
 .home-topup-dialog .topup-error:empty { display:none; }
+
+.card-transfer:not(.guest-inline-source) .demo-card-suggestion { position:absolute; z-index:20; top:80px; left:0; width:100%; overflow:hidden; border:1px solid #d5d5da; border-radius:16px; background:white; box-shadow:0 6px 16px #14141414; }
+.card-transfer:not(.guest-inline-source) .demo-card-suggestion[hidden] { display:none; }

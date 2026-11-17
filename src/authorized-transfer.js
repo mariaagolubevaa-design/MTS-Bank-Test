@@ -32,7 +32,7 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
   }
   const foreignDemoNumber='4916827350491289';
   const figmaDemoCards={foreign:foreignDemoNumber,sender:'9112381015213812',recipient:'2200789332541984',internationalRecipient:'8600482173596026'};
-  const isFigmaDemoCard=number=>guest&&Object.values(figmaDemoCards).includes(number.replace(/\D/g,''));
+  const isFigmaDemoCard=number=>(guest&&Object.values(figmaDemoCards).includes(number.replace(/\D/g,'')))||(!guest&&number.replace(/\D/g,'')===figmaDemoCards.recipient);
   const validTransferCard=number=>validCard(number)||isFigmaDemoCard(number);
   const transferCardAvailability=(number,options={})=>demoCardAvailability(number,{...options,saved:options.saved||isFigmaDemoCard(number)});
   const screen = document.createElement('main');
@@ -154,7 +154,12 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
     };
 
     screen.querySelector('.destination-section').insertAdjacentHTML('afterbegin','<h2>Куда перевести</h2>');
-    for(const [field,kind] of [[sender,'sender'],[input,'recipient']]) {
+    for(const [field,kind] of [[sender,'sender'],[input,'recipient']]) installDemoSuggestion(field,kind);
+
+
+  }
+
+  function installDemoSuggestion(field,kind) {
       const suggestion=document.createElement('div');suggestion.className='demo-card-suggestion';suggestion.hidden=true;
       const getChoices=()=>kind==='sender'?[{number:figmaDemoCards.sender,label:'Пример для демо / Россия, RUB',name:'Заполнить демо-карту отправителя'},{number:foreignDemoNumber,label:'Пример для демо / Иностранная карта, USD',name:'Заполнить иностранную демо-карту отправителя'}]:[{number:international?figmaDemoCards.internationalRecipient:figmaDemoCards.recipient,label:international?'Пример для демо / Узбекистан, UZS':'Пример для демо',name:'Заполнить демо-карту получателя'}];
       field.closest('.destination-field').after(suggestion);
@@ -181,10 +186,8 @@ export function createAuthorizedTransfer({ cards, card, recipient, transferKind,
         if(event.key==='Escape'){suggestion.hidden=true;event.stopPropagation();}
         if(event.key==='ArrowDown'&&!suggestion.hidden){event.preventDefault();suggestion.querySelector('button').focus();}
       });
-    }
-
-
   }
+  if(!guest&&!international)installDemoSuggestion(input,'recipient');
 
   input.closest('.destination-field').insertAdjacentHTML('beforeend','<button type="button" class="recipient-card-clear" aria-label="Очистить номер карты получателя" hidden><img src="./assets/images/sender-card-clear.svg" alt=""></button>');
   const clearRecipient=screen.querySelector('.recipient-card-clear');
