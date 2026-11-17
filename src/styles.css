@@ -937,7 +937,7 @@ body:has(.home-screen:not([hidden])) { background:#f3f4f5; }
 .home-screen .quick-actions { grid-template-columns:repeat(3,minmax(0,1fr)); }
 .home-screen .quick-actions button { height:90px; min-height:90px; padding:16px; flex-direction:column; align-items:flex-start; justify-content:space-between; gap:16px; font-size:15px; line-height:18px; }
 .home-screen .quick-actions button img { width:24px; height:24px; }
-.home-screen .history { margin-top:24px; min-height:198px; padding-top:0; }
+.home-screen .history { margin-top:24px; min-height:0; padding-top:0; }
 .home-screen h2 { letter-spacing:-.2px; }
 .home-screen .history-heading { height:50px; padding:0 6px 0 10px; }
 .home-screen .history-heading>button { transform:translateY(4px); }
