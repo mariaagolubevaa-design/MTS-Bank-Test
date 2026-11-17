@@ -1464,3 +1464,15 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 
 .card-transfer:not(.guest-inline-source) .demo-card-suggestion { position:absolute; z-index:20; top:80px; left:0; width:100%; overflow:hidden; border:1px solid #d5d5da; border-radius:16px; background:white; box-shadow:0 6px 16px #14141414; }
 .card-transfer:not(.guest-inline-source) .demo-card-suggestion[hidden] { display:none; }
+
+/* Updated typography for the ruble-card home screen — Figma 161:4169. */
+.home-screen[data-active-card=debit] .quick-actions button,
+.home-screen[data-active-card=debit] .operation-name,
+.home-screen[data-active-card=debit] .operation-amount,
+.home-screen[data-active-card=debit] .all-history,
+.home-screen[data-active-card=debit] .analytics-tile span { font-size:16px; }
+.home-screen[data-active-card=debit] .bank-card:not(.bank-card--spectrum) .balance { line-height:40px; }
+@media(max-width:360px) {
+  .home-screen[data-active-card=debit] .quick-actions button { font-size:14px; }
+  .home-screen[data-active-card=debit] .analytics-tile span { font-size:14px; }
+}

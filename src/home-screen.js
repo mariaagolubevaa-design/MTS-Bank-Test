@@ -66,6 +66,7 @@ export function createHomeScreen({ data, onNavigate }) {
     island.querySelector('[data-analytics-income]').textContent=money(totals.income,totals.currency);
   }
   function renderOperations() {
+    screen.dataset.activeCard=data.cards[active].id;
     renderAnalytics();
     list.innerHTML = operationsFor(data, data.cards[active].id).slice(0, 3).map(item => `
       <button class="operation" data-operation="${escapeHTML(item.id)}">
