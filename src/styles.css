@@ -585,14 +585,14 @@ body:has(.tabbar:not([hidden])) #app { width:100%; transform:none; }
 .welcome-screen h1 { position:absolute; top:521px; left:24px; margin:0; font:700 36px/40px 'Actay Wide',sans-serif; color:#252529; }
 .welcome-actions { position:absolute; top:668px; left:16px; right:16px; display:grid; gap:8px; }
 .welcome-actions button { height:56px; min-height:56px; border-radius:20px; font:600 15px/18px Inter,sans-serif; }
-.welcome-actions .welcome-login { font:500 15px/18px 'Inter Tight',sans-serif; }
+.welcome-actions .welcome-login { font:700 16px/20px 'Actay Wide',sans-serif; }
 .welcome-login,.auth-submit { background:#141414; color:white; }
 .welcome-guest { background:#e5e2f6; color:#6641fb; }
-.welcome-actions .welcome-guest { font:500 15px/18px 'Inter Tight',sans-serif; }
+.welcome-actions .welcome-guest { font:700 16px/20px 'Actay Wide',sans-serif; }
 .auth-dialog { width:calc(100% - 32px); max-width:370px; padding:24px; border:0; border-radius:28px; }
 .auth-dialog::backdrop { background:rgba(20,20,20,.35); backdrop-filter:blur(6px); }
-.auth-dialog h2 { font:500 24px/29px 'Inter Tight',sans-serif; padding-right:0; }
-.auth-dialog p { font:500 15px/18px 'Inter Tight',sans-serif; color:#414141; }
+.auth-dialog h2 { font:700 20px/normal 'Actay Wide',sans-serif; padding-right:0; }
+.auth-dialog p { font:500 16px/normal 'Inter Tight',sans-serif; color:#414141; }
 .auth-close { position:absolute; right:16px; top:16px; width:24px; height:24px; padding:4px; border-radius:8px; background:#f3f4f5; }
 .auth-close img { display:block; }
 .phone-field { display:flex; gap:8px; margin-top:8px; }
@@ -611,11 +611,11 @@ body:has(.tabbar:not([hidden])) #app { width:100%; transform:none; }
 .auth-dialog h2 + p { margin:0 0 16px; }
 .auth-dialog .phone-field { margin-top:0; gap:4px; }
 .auth-dialog .phone-country { flex:0 0 82px; }
-.auth-dialog .phone-country select { width:100%; height:28px; border-radius:8px; padding:4px 28px 4px 8px; background:#f3f4f5; font:500 15px/18px 'Inter Tight',sans-serif; }
+.auth-dialog .phone-country select { width:100%; height:28px; border-radius:8px; padding:4px 28px 4px 8px; background:#f3f4f5; font:500 16px/19px 'Inter Tight',sans-serif; }
 .auth-dialog .phone-country>img { right:16px; transform:translateY(-50%); }
-.auth-dialog .phone-field input { flex:0 1 222px; width:222px; height:28px; border-radius:8px; padding:4px 8px; background:#f3f4f5; font:500 15px/18px 'Inter Tight',sans-serif; }
+.auth-dialog .phone-field input { flex:0 1 222px; width:222px; height:28px; border-radius:8px; padding:4px 8px; background:#f3f4f5; font:500 16px/19px 'Inter Tight',sans-serif; }
 .auth-dialog #phone-error:empty { display:none; }
-.auth-dialog .auth-submit { width:100%; margin-top:16px; }
+.auth-dialog .auth-submit { width:100%; margin-top:16px; padding:0 16px; font:700 16px/20px 'Actay Wide',sans-serif; }
 
 
 /* Prototype canvas follows the 402 × 874 Figma frame. */
