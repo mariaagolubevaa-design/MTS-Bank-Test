@@ -992,7 +992,7 @@ body:has(.transfers-menu) #app { background:#f3f4f5; width:100%; transform:none;
 .menu-header-actions { display:flex; align-items:center; gap:24px; }
 .transfers-menu-header .menu-qr { display:flex; align-items:center; justify-content:center; width:32px; height:32px; background:#e5e2f6; border-radius:8px; }
 .transfers-menu .transfer-options { grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:90px 66px 90px; gap:8px; }
-.transfers-menu .transfer-options button { align-items:flex-end; }
+.transfers-menu .transfer-options button { align-items:flex-end; font:500 16px/19px 'Inter Tight',sans-serif; }
 .transfers-menu .option-russia { grid-column:1; grid-row:1 / 3; }
 .transfers-menu .option-own { grid-column:2; grid-row:1; }
 .transfers-menu .option-abroad { grid-column:2; grid-row:2 / 4; }
@@ -1003,12 +1003,12 @@ body:has(.transfers-menu) #app { background:#f3f4f5; width:100%; transform:none;
 .transfers-menu .option-details img { width:48px; height:43px; left:16px; top:9px; object-fit:cover; }
 .transfers-menu .payment-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:24px; margin-right:-3px; }
 .transfers-menu .payment-options button { width:auto; height:78px; padding:14px 16px; flex-direction:column; align-items:flex-start; justify-content:center; gap:8px; white-space:nowrap; }
-.transfers-menu .payment-options button:not(:first-child) { font:500 14px/17px Inter,sans-serif; }
+.transfers-menu .payment-options button { font:500 14px/16px 'Inter Tight',sans-serif; }
 .transfers-menu .menu-favorites { margin-top:24px; background:#fff; border-radius:20px; overflow:hidden; height:168px; padding-top:10px; }
 .transfers-menu .menu-favorites h2 { font-size:24px; line-height:29px; margin:0 16px 17px; }
 .transfers-menu .menu-favorites .recipients { border-radius:0; background:none; padding:0 8px; gap:8px; min-height:102px; justify-content:flex-start; }
 .transfers-menu .recipient { width:78px; min-height:102px; font-size:11px; line-height:16px; }
-.transfers-menu .recipient .avatar { width:52px; height:52px; background:#e3e3e8; color:#666978; font:500 15px/18px 'Inter Tight',sans-serif; }
+.transfers-menu .recipient .avatar { width:52px; height:52px; background:#e3e3e8; color:#666978; font:500 16px/19px 'Inter Tight',sans-serif; }
 .transfers-menu .recipient .avatar.add { background:#e5e2f6; color:#6641fb; font:500 24px/24px 'Inter Tight',sans-serif; }
 .transfers-menu .recipient-name { margin-top:4px; }
 .transfers-menu .recipient-subtitle { font-size:11px; line-height:16px; margin-top:2px; }
