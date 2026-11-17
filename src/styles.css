@@ -1402,9 +1402,9 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .guest-inline-source:not(.guest-international-transfer) .destination-section { margin-top:40px; }
 .guest-inline-source:not(.guest-international-transfer) .inline-amount h2 { margin-bottom:12px; }
 .guest-inline-source:not(.guest-international-transfer).has-quote .source-section>h2,
-.guest-inline-source:not(.guest-international-transfer).has-quote .destination-section>h2 { margin-bottom:8px; }
-.guest-inline-source:not(.guest-international-transfer).has-quote .transfer-footer { padding-top:24px; }
-.guest-inline-source:not(.guest-international-transfer).has-quote .recipient-next { margin-top:32px; }
+.guest-inline-source:not(.guest-international-transfer).has-quote .destination-section>h2 { margin-bottom:16px; }
+.guest-inline-source:not(.guest-international-transfer).has-quote .transfer-footer { padding-top:16px; }
+.guest-inline-source:not(.guest-international-transfer).has-quote .recipient-next { margin-top:25px; }
 .guest-swap-cards { position:absolute; z-index:2; right:0; top:calc(100% + 1px); display:flex; align-items:center; justify-content:center; width:48px; height:48px; padding:0; border-radius:12px; background:#f0ecff; }
 .guest-inline-source.has-quote .guest-swap-cards { top:calc(100% + 9px); }
 .guest-swap-cards:disabled { opacity:1; cursor:default; }
@@ -1413,16 +1413,16 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .guest-swap-icon img { display:block; }
 .guest-international-transfer .guest-swap-cards { display:none; }
 
-/* Empty domestic form — current Figma 138:5534 (filled layout stays 171:5848). */
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section { padding-top:7px; }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section>h2,
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .destination-section>h2 { margin-bottom:16px; }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .card-details-row { margin-top:12px; }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .destination-section { margin-top:40px; }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .inline-amount h2 { margin-bottom:16px; }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .guest-swap-cards { top:calc(100% + 9px); }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .demo-card-suggestion { top:114px; }
-.guest-inline-source:not(.guest-international-transfer):not(.has-quote) .source-section>.demo-card-suggestion { top:121px; }
+/* Domestic empty and filled forms — Figma 138:5534 and 171:5848. */
+.guest-inline-source:not(.guest-international-transfer) .source-section { padding-top:7px; }
+.guest-inline-source:not(.guest-international-transfer) .source-section>h2,
+.guest-inline-source:not(.guest-international-transfer) .destination-section>h2 { margin-bottom:16px; }
+.guest-inline-source:not(.guest-international-transfer) .card-details-row { margin-top:12px; }
+.guest-inline-source:not(.guest-international-transfer) .destination-section { margin-top:40px; }
+.guest-inline-source:not(.guest-international-transfer) .inline-amount h2 { margin-bottom:16px; }
+.guest-inline-source:not(.guest-international-transfer) .guest-swap-cards { top:calc(100% + 9px); }
+.guest-inline-source:not(.guest-international-transfer) .demo-card-suggestion { top:114px; }
+.guest-inline-source:not(.guest-international-transfer) .source-section>.demo-card-suggestion { top:121px; }
 
 /* Fractional Figma strokes must not be rounded down by CSS border rasterization. */
 .guest-inline-source .destination-field,
@@ -1444,3 +1444,5 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .guest-inline-source .destination-field:has(input[aria-invalid=true]),
 .guest-inline-source .card-details-row input[aria-invalid=true] { --guest-field-stroke:#ff1524; }
 .guest-transfer .guest-transfer-title>span { gap:6.33px; }
+
+.guest-inline-source:not(.guest-international-transfer).has-quote .inline-amount h2 { margin-bottom:16px; }
