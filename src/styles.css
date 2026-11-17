@@ -944,7 +944,7 @@ body:has(.home-screen:not([hidden])) { background:#f3f4f5; }
 .home-screen .quick-actions button img { width:24px; height:24px; }
 .home-screen .history { margin-top:24px; min-height:0; padding-top:0; }
 .home-screen h2 { letter-spacing:-.2px; }
-.home-screen .history-heading { height:50px; padding:0 6px 0 10px; }
+.home-screen .history-heading { height:50px; padding:0 8px; }
 .home-screen .history-heading>button { transform:translateY(4px); }
 .home-screen .all-history { min-width:52px; min-height:26px; padding:4px; display:flex; align-items:center; justify-content:space-between; gap:4px; border-radius:8px; color:#6641fb; background:#e5e2f6; line-height:18px; }
 .home-screen .all-history img { width:12px; height:12px; transform:rotate(90deg); }
