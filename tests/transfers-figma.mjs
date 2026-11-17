@@ -14,7 +14,7 @@ try {
  ['.transfers-menu-header',16,78,370,32],['.transfer-options',16,126,370,262],
  ['.option-russia',16,126,181,164],['.option-own',205,126,181,90],
  ['.option-details',16,298,181,90],['.option-abroad',205,224,181,164],
- ['.payment-options',16,412,373,78],['.menu-favorites',16,514,370,168],['.menu-currency',14,698,370,198],['.tabbar',0,790,402,52]
+ ['.payment-options',16,412,373,78],['.menu-favorites',16,514,370,168],['.menu-currency',16,698,370,198],['.tabbar',0,790,402,52]
  ]) {
  const bounds=await page.locator(selector).boundingBox();
  for(const [key,value]of Object.entries({x,y,width,height}))assert.ok(Math.abs(bounds[key]-value)<1,`${selector} ${key}: ${bounds[key]}`);
@@ -23,6 +23,13 @@ try {
  assert.equal(await page.locator('.menu-favorites .recipient').first().getAttribute('data-action'),'Добавить получателя');
  await mkdir('screenshots',{recursive:true});
  await page.screenshot({path:'screenshots/transfers-figma-402x874.png'});
+ for(const [selector,x,y] of [['.currency-heading h2',32,708],['.currency-subtitle',32,732],['.currency-rows',30,764],['.currency-continue',30,840]]){
+   const rect=await page.locator(selector).boundingBox();assert.equal(rect.x,x,selector+' x');assert.equal(rect.y,y,selector+' y');
+ }
+ await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+ await page.locator('.menu-currency').screenshot({path:'screenshots/currency-island.png'});
+ await page.evaluate(()=>window.scrollTo(0,0));
+
  for(const option of ['russia','abroad']) {
  await page.locator(`[data-option="${option}"]`).click();
  assert.ok(await page.locator('.authorized-transfer').isVisible());
