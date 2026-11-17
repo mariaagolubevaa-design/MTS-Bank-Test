@@ -1,14 +1,14 @@
 import {demoAmountRates} from './amount-currency.js';
 
-// Figma's November opening totals already include the seeded history rows.
+// November demo opening totals already include the seeded history rows.
 export const analyticsDemoPeriod='2026-11';
-const openingTotals={expenses:46831,income:52500};
+const openingTotals={debit:{expenses:46831,income:52500},second:{expenses:732,income:1500}};
 const seedIds=new Set(['t1','t2','t3','t4']);
 export function analyticsFor(data,cardId,now=new Date()) {
   const card=data.cards.find(c=>c.id===cardId);
   const currency=card?.currency||'RUB';
   const period=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const initial=period===analyticsDemoPeriod&&['debit','second'].includes(cardId)?openingTotals:{expenses:0,income:0};
+  const initial=period===analyticsDemoPeriod&&openingTotals[cardId]?openingTotals[cardId]:{expenses:0,income:0};
   let expenses=Math.round(initial.expenses*100),income=Math.round(initial.income*100);
   for(const operation of data.transactions) {
     if(operation.cardId!==cardId||seedIds.has(operation.id)||operation.status&&operation.status!=='Выполнен')continue;
