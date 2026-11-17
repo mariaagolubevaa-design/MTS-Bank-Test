@@ -1490,3 +1490,12 @@ body:has(.guest-direction-sheet[open]) { overflow:hidden; }
 .home-screen[data-active-card=debit] .operation-name,
 .home-screen[data-active-card=debit] .operation-amount { line-height:20px; }
 .home-screen[data-active-card=debit] .operation { padding-block:15px; }
+
+/* Revised dollar-home type — Figma 161:4576. */
+.home-screen[data-active-card=second] h2 { font:700 20px/24px 'Actay Wide',sans-serif; letter-spacing:0; }
+.home-screen[data-active-card=second] .operation-name,
+.home-screen[data-active-card=second] .operation-amount,
+.home-screen[data-active-card=second] .all-history,
+.home-screen[data-active-card=second] .analytics-tile span { line-height:20px; }
+.home-screen[data-active-card=second] .operation { padding-block:15px; }
+.home-screen[data-active-card=second] .quick-actions button { line-height:20px; gap:14px; }
